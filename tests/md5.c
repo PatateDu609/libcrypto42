@@ -39,7 +39,6 @@ void md5_basic(void)
 		get_hash(expected, strs[i]);
 
 		CU_ASSERT_STRING_EQUAL(mine, expected);
-
 		free(mine);
 	}
 }
