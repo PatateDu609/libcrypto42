@@ -71,7 +71,7 @@ struct msg
  *
  * @return A pointer to a structure containing the blocks.
  */
-struct blk *get_blocks(struct msg *data, size_t blk_len, size_t wanted_size, bool le) __hidden;
+struct blk *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_size, bool le) __hidden;
 
 /**
  * @brief Initialize a message structure from a string.

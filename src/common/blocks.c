@@ -6,6 +6,7 @@
  */
 
 #include "common.h"
+#include <stdio.h>
 
 static void append_size(struct blk *blks, __uint128_t len, size_t wanted_size,  bool le)
 {
@@ -46,7 +47,7 @@ static void append_size(struct blk *blks, __uint128_t len, size_t wanted_size,  
 #endif
 }
 
-struct blk *get_blocks(struct msg *data, size_t blk_len, size_t wanted_size, bool le)
+struct blk *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_size, bool le)
 {
 	struct blk *blocks = malloc(sizeof *blocks);
 
@@ -73,7 +74,7 @@ struct blk *get_blocks(struct msg *data, size_t blk_len, size_t wanted_size, boo
 			blocks->data[i] = 0x80; // 0b10000000 (first bit after the last byte of data is always set to 1)
 	}
 
-	append_size(blocks, data->len, wanted_size, le);
+	append_size(blocks, data->len * 8, wanted_size, le);
 
 	return blocks;
 }

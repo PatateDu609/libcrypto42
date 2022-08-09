@@ -1,6 +1,8 @@
 #include "crypto.h"
 #include "internal.h"
 
+#include <stdio.h>
+
 char *md5(char *str)
 {
 	struct md5_ctx ctx;
@@ -10,7 +12,7 @@ char *md5(char *str)
 
 	md5_init(&ctx);
 
-	struct blk *blks = get_blocks(msg, MD5_BLK_LEN, 8, true);
+	struct blk *blks = get_blocks(msg, MD5_BLK_LEN, MD5_SIZE_LAST, true);
 	if (!blks)
 	{
 		free(msg->data);
@@ -19,8 +21,8 @@ char *md5(char *str)
 	}
 
 	size_t nb = blks->len / MD5_BLK_LEN;
-	for (size_t i = 0; i <= nb; i += MD5_BLK_LEN)
-		md5_update(&ctx, blks->data + i);
+	for (size_t i = 0; i < nb; i++)
+		md5_update(&ctx, blks->data + i * MD5_BLK_LEN);
 
 	free(blks->data);
 	free(blks);
