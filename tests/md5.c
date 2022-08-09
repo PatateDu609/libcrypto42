@@ -3,12 +3,12 @@
 #include <openssl/md5.h>
 #include <stdlib.h>
 
-void get_hash(char *hash, size_t s, const char *msg)
+void get_hash(char *hash, const char *msg)
 {
 	int i;
 	unsigned char result[MD5_DIGEST_LENGTH];
 
-	MD5(msg, strlen(msg), result);
+	MD5((const unsigned char *)msg, strlen(msg), result);
 
 	// output
 	for(i = 0; i < MD5_DIGEST_LENGTH; i++)
@@ -36,9 +36,10 @@ void md5_basic(void)
 	int size = sizeof strs / sizeof *strs;
 	for (int i = 0; i < size; i++) {
 		char *mine = md5(strs[i]);
-		get_hash(expected, sizeof expected, strs[i]);
+		get_hash(expected, strs[i]);
 
 		CU_ASSERT_STRING_EQUAL(mine, expected);
+		CU_FAIL("md5");
 
 		free(mine);
 	}
