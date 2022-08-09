@@ -59,9 +59,8 @@ struct msg
 {
 	uint8_t *data;			///< The data of the message.
 	__uint128_t len;		///< The length of the data.
-
-	__uint128_t filesize;
-	bool is_last_part;
+	__uint128_t filesize;	///< The size of the file.
+	bool is_last_part;		///< True if the message is the last part of the file.
 };
 
 /**

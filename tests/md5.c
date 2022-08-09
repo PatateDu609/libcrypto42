@@ -1,5 +1,3 @@
-#define _GNU_SOURCE
-
 #include "tests.h"
 #include <CUnit/Basic.h>
 #include <openssl/md5.h>

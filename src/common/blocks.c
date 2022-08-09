@@ -55,7 +55,6 @@ struct blk *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_siz
 		return NULL;
 
 	blocks->len = data->len / blk_len;
-
 	if (data->is_last_part || data->len == 0)
 		blocks->len++;
 	if (data->len % blk_len >= (blk_len - wanted_size))
