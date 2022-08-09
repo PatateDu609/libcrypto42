@@ -1,4 +1,4 @@
-name: Run tests on libcrypto42
+name: Tests_libcrypto42
 
 on:
   push:
@@ -15,10 +15,10 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
-    
+
     - name: Get CUnit
       run: sudo apt-get install -y libcunit1 libcunit1-doc libcunit1-dev
-      
+
     - name: Compile libft
       run: make -C libft
 

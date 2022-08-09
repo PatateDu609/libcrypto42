@@ -1,6 +1,6 @@
 # libcrypto42
 
-![Tests on main](https://github.com/PatateDu609/libcrypto42/.github/workflows/tests.yml/badge.svg?branch=main)
+![Tests on main](https://github.com/PatateDu609/libcrypto42/Tests_libcrypto42/badge.svg?branch=main)
 
 ## Description
 
