@@ -14,3 +14,4 @@ include mkvars/init.mk
 include mkvars/colors.mk
 include mkvars/SRC.mk
 include mkvars/rules.mk
+include mkvars/tests.mk
