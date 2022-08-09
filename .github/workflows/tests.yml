@@ -26,3 +26,9 @@ jobs:
       run: make
     - name: make check
       run: make check
+  
+  
+    - name: Badge Action
+      uses: emibcn/badge-action@v1.2.4
+      with:
+        label: Testing libcrypto42
