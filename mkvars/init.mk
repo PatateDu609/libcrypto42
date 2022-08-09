@@ -63,8 +63,8 @@ ifeq ($(VERBOSE),0)
 	MKDIR			:=	@$(MKDIR)
 endif
 
-
-CFLAGS				?=	-Wall -Wextra -Werror $(addprefix -I,$(PATH_INC))
+STD					?=	-std=c11
+CFLAGS				?=	-Wall -Wextra -Werror $(addprefix -I,$(PATH_INC)) $(STD)
 ARFLAGS				?=	rcs
 ASFLAGS				?=
 

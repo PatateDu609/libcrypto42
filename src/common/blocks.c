@@ -55,10 +55,12 @@ struct blk *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_siz
 		return NULL;
 
 	blocks->len = data->len / blk_len;
-	if (data->len % blk_len != 0 || data->len == 0)
+
+	if (data->is_last_part || data->len == 0)
 		blocks->len++;
 	if (data->len % blk_len >= (blk_len - wanted_size))
 		blocks->len++;
+
 	blocks->len *= blk_len;
 	blocks->data = malloc(blocks->len * sizeof *blocks->data);
 	if (blocks->data == NULL)
@@ -70,11 +72,13 @@ struct blk *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_siz
 	for (size_t i = 0; i < blocks->len; i++)
 	{
 		blocks->data[i] = (i < data->len) ? data->data[i] : 0;
-		if (i == data->len)
+
+		if (i == data->len && data->is_last_part)
 			blocks->data[i] = 0x80; // 0b10000000 (first bit after the last byte of data is always set to 1)
 	}
 
-	append_size(blocks, data->len * 8, wanted_size, le);
+	if (data->is_last_part)
+		append_size(blocks, data->filesize << 3, wanted_size, le);
 
 	return blocks;
 }

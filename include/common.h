@@ -59,6 +59,9 @@ struct msg
 {
 	uint8_t *data;			///< The data of the message.
 	__uint128_t len;		///< The length of the data.
+
+	__uint128_t filesize;
+	bool is_last_part;
 };
 
 /**
@@ -72,13 +75,5 @@ struct msg
  * @return A pointer to a structure containing the blocks.
  */
 struct blk *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_size, bool le) __hidden;
-
-/**
- * @brief Initialize a message structure from a string.
- *
- * @param str The string to initialize the message with.
- * @return A pointer to the message structure.
- */
-struct msg *str_to_msg(const char *str) __hidden;
 
 #endif

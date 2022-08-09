@@ -29,7 +29,7 @@
 #define I(B, C, D) (C ^ (B | ~D))
 
 #define MD5_HASH_SIZE 16 * 2 + 1
-#define MD5_BLK_LEN 64
+#define MD5_BLK_LEN 1 << 6
 #define MD5_SIZE_LAST 8
 
 /**

@@ -4,6 +4,9 @@
 		"libft.h": "c",
 		"basic.h": "c",
 		"md5.h": "c",
-		"opensslconf.h": "c"
+		"opensslconf.h": "c",
+		"sstream": "c",
+		"tests.h": "c",
+		"stdlib.h": "c"
 	}
 }

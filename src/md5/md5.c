@@ -1,32 +1,110 @@
+#define _GNU_SOURCE
+
 #include "crypto.h"
 #include "internal.h"
+#include "libft.h"
+#include "ft_stream.h"
 
+#include <fcntl.h>
 #include <stdio.h>
 
-char *md5(char *str)
+static bool __intermediate_md5_bytes(const struct msg *msg, struct md5_ctx *ctx)
 {
-	struct md5_ctx ctx;
-	struct msg *msg = str_to_msg(str);
-	if (!msg)
-		return NULL;
-
-	md5_init(&ctx);
-
 	struct blk *blks = get_blocks(msg, MD5_BLK_LEN, MD5_SIZE_LAST, true);
-	if (!blks)
-	{
-		free(msg->data);
-		free(msg);
-		return NULL;
-	}
+	if (blks == NULL)
+		return false;
 
-	size_t nb = blks->len / MD5_BLK_LEN;
+	size_t nb = blks->len / (MD5_BLK_LEN);
 	for (size_t i = 0; i < nb; i++)
-		md5_update(&ctx, blks->data + i * MD5_BLK_LEN);
+		md5_update(ctx, blks->data + (i * MD5_BLK_LEN));
 
 	free(blks->data);
 	free(blks);
-	free(msg->data);
-	free(msg);
+	return true;
+}
+
+char *md5_bytes(uint8_t *bytes, size_t len)
+{
+	struct md5_ctx ctx;
+	struct msg msg = { .data = bytes, .len = len, .is_last_part = true, .filesize = len };
+
+	md5_init(&ctx);
+	if (!__intermediate_md5_bytes(&msg, &ctx))
+	{
+		ft_memset(&ctx, 0, sizeof(ctx));
+		return NULL;
+	}
 	return md5_final(&ctx);
+}
+
+char *md5(char *str)
+{
+	uint8_t *bytes = (uint8_t *)str;
+	size_t len = ft_strlen(str);
+
+	return md5_bytes(bytes, len);
+}
+
+char *md5_descriptor(int fd)
+{
+	struct md5_ctx ctx;
+
+	md5_init(&ctx);
+	ft_stream *stream = ft_sopen_fd(fd);
+	if (!stream)
+		return NULL;
+
+	uint8_t buffer[4096];
+	struct msg msg;
+
+	msg.is_last_part = false;
+
+	bool done_last = false;
+	ssize_t ret;
+	__uint128_t filesize = 0;
+	for (ret = 0; (ret = read(fd, buffer, sizeof buffer)) > 0;)
+	{
+		msg.data = buffer;
+		msg.len = ret;
+		filesize += ret;
+
+		if (ret < (ssize_t)sizeof buffer)
+		{
+			msg.filesize = filesize;
+			msg.is_last_part = true;
+			done_last = true;
+		}
+
+		if (!__intermediate_md5_bytes(&msg, &ctx))
+		{
+			ft_sclose(stream);
+			ft_memset(&ctx, 0, sizeof(ctx));
+			return NULL;
+		}
+	}
+	if (!done_last)
+	{
+		msg.filesize = filesize;
+		msg.is_last_part = true;
+
+		msg.data = (unsigned char *)"";
+		msg.len = 0;
+		if (!__intermediate_md5_bytes(&msg, &ctx))
+		{
+			ft_sclose(stream);
+			ft_memset(&ctx, 0, sizeof(ctx));
+			return NULL;
+		}
+	}
+	return md5_final(&ctx);
+}
+
+char *md5_file(char *filename)
+{
+	int fd = open(filename, O_RDONLY);
+	if (fd == -1)
+		return NULL;
+	char *ret = md5_descriptor(fd);
+	close(fd);
+	return ret;
 }

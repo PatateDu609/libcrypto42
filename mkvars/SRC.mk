@@ -6,7 +6,6 @@ MD5_SRC_BASENAME		=	md5/md5							\
 							md5/final						\
 
 COMMON_SRC_BASENAME		=	common/blocks					\
-							common/msg
 
 BASENAME				:=	$(MD5_SRC_BASENAME)				\
 							$(COMMON_SRC_BASENAME)
