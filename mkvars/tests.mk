@@ -22,6 +22,7 @@ $(PATH_OBJ)/%.o:	%.c
 	$(CC) $(TEST_CFLAGS) -c $< -o $@
 
 $(TEST_NAME):		$(NAME) $(TEST_OBJ)
+	make -C libft/
 	$(ECHO) -e " $(BOLD)$(YELLOW)$(BIGGREATER)$(NORMAL)   Linking $(ITALIC)$(subst $(PATH_OBJ)/,,$@)$(TRESET)"
 	$(CC) $(TEST_OBJ) -o $(TEST_NAME) $(TEST_LDFLAGS)
 
