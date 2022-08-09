@@ -18,6 +18,9 @@ jobs:
     
     - name: Get CUnit
       run: sudo apt-get install -y libcunit1 libcunit1-doc libcunit1-dev
+      
+    - name: Compile libft
+      run: make -C libft
 
     - name: make
       run: make
