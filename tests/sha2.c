@@ -45,6 +45,16 @@ get_hash_file_SHA(512, 512, SHA512_DIGEST_LENGTH)
 		free(actual); \
 	}
 
+#define SHA_FILE_TEST(alg, sha_ctx, size_digest, filename, name) \
+	SHA_FILE_TEST_PROTO(alg, name) \
+	{\
+		char *actual = sha2_##alg##_file(filename); \
+		char expected[size_digest * 2 + 1]; \
+		get_hash_file_sha##alg(expected, filename); \
+		CU_ASSERT_STRING_EQUAL(expected, actual); \
+		free(actual); \
+	}
+
 #define SHA_TEST_SUITE(alg, sha_ctx, size_digest) \
 	SHA_STRING_TEST(alg, sha_ctx, size_digest, "", empty_string) \
 	SHA_STRING_TEST(alg, sha_ctx, size_digest, "a", a) \
@@ -55,7 +65,16 @@ get_hash_file_SHA(512, 512, SHA512_DIGEST_LENGTH)
 	SHA_STRING_TEST(alg, sha_ctx, size_digest, "12345678901234567890123456789012345678901234567890123456789012345678901234567890", num2) \
 	SHA_STRING_TEST(alg, sha_ctx, size_digest, "The quick brown fox jumps over the lazy dog", lorem_ipsum) \
 	SHA_STRING_TEST(alg, sha_ctx, size_digest, "The quick brown fox jumps over the lazy dog.", lorem_ipsum_edit) \
-	SHA_STRING_TEST(alg, sha_ctx, size_digest, "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.", lorem_ipsum_double)
+	SHA_STRING_TEST(alg, sha_ctx, size_digest, "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.", lorem_ipsum_double) \
+	\
+	SHA_FILE_TEST(alg, sha_ctx, size_digest, "tests/resources/empty", empty) \
+	SHA_FILE_TEST(alg, sha_ctx, size_digest, "tests/md5.c", test_md5) \
+	SHA_FILE_TEST(alg, sha_ctx, size_digest, "/etc/passwd", etc_passwd) \
+	SHA_FILE_TEST(alg, sha_ctx, size_digest, "tests/resources/basic", basic) \
+	SHA_FILE_TEST(alg, sha_ctx, size_digest, "tests/resources/big_file", big_file) \
+	SHA_FILE_TEST(alg, sha_ctx, size_digest, "tests/resources/bigger_file", bigger_file) \
+	SHA_FILE_TEST(alg, sha_ctx, size_digest, "tests/resources/huge_file", huge_file)
+
 
 SHA_TEST_SUITE(224, 256, SHA224_DIGEST_LENGTH)
 SHA_TEST_SUITE(256, 256, SHA256_DIGEST_LENGTH)

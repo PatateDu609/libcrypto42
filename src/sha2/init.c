@@ -82,7 +82,7 @@ static void init_sha2_256(struct sha2 *ctx)
 
 static void init_sha2_384(struct sha2 *ctx)
 {
-	ctx->alg.digest_size = SHA2_384_BLOCK_SIZE;
+	ctx->alg.digest_size = SHA2_384_DIGEST_SIZE;
 	ctx->alg.block_size = SHA2_384_BLOCK_SIZE;
 	ctx->alg.wanted_size = SHA2_384_WANTED_SIZE;
 	ctx->alg.nb_rounds = SHA2_384_NB_ROUNDS;
@@ -102,7 +102,7 @@ static void init_sha2_384(struct sha2 *ctx)
 
 static void init_sha2_512(struct sha2 *ctx)
 {
-	ctx->alg.digest_size = SHA2_512_BLOCK_SIZE;
+	ctx->alg.digest_size = SHA2_512_DIGEST_SIZE;
 	ctx->alg.block_size = SHA2_512_BLOCK_SIZE;
 	ctx->alg.wanted_size = SHA2_512_WANTED_SIZE;
 	ctx->alg.nb_rounds = SHA2_512_NB_ROUNDS;

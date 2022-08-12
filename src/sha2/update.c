@@ -93,6 +93,15 @@ static void sha2_64_update(struct sha2_ctx_64 *ctx, uint64_t *blk)
 		b = a;
 		a = t1 + t2;
 	}
+
+	a0 += a;
+	b0 += b;
+	c0 += c;
+	d0 += d;
+	e0 += e;
+	f0 += f;
+	g0 += g;
+	h0 += h;
 }
 
 #undef SSIG0

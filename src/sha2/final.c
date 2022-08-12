@@ -11,9 +11,9 @@
 #include <stdio.h>
 #include <limits.h>
 
-#define STRINGIFY(target, ctx, digest_size) \
+#define STRINGIFY(target, ctx, digest_size, bswap) \
 	for (size_t i = 0; i < 8; i++) \
-		ctx->state[i] = bswap_32(ctx->state[i]); \
+		ctx->state[i] = bswap(ctx->state[i]); \
 	for (size_t i = 0; i < (digest_size); i++) \
 		snprintf(target + i * 2, 3, "%02x", ctx->hash[i]);
 
@@ -25,13 +25,15 @@ char *sha2_final(struct sha2 *ctx)
 
 	if (ctx->alg.alg == SHA2_ALG_224 || ctx->alg.alg == SHA2_ALG_256)
 	{
-		STRINGIFY(str, ctx->ctx_32, ctx->alg.digest_size)
+		STRINGIFY(str, ctx->ctx_32, ctx->alg.digest_size, bswap_32)
+
 		ft_memset(ctx->ctx_32, 0, sizeof *ctx->ctx_32);
 		free(ctx->ctx_32);
 	}
 	else
 	{
-		STRINGIFY(str, ctx->ctx_64, ctx->alg.digest_size)
+		STRINGIFY(str, ctx->ctx_64, ctx->alg.digest_size, bswap_64)
+
 		ft_memset(ctx->ctx_64, 0, sizeof *ctx->ctx_64);
 		free(ctx->ctx_64);
 	}

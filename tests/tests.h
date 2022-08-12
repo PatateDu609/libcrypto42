@@ -19,6 +19,7 @@
 #define MD5_STRING_TEST_PROTO(name) void CAT(md5_string_, name)(void)
 #define MD5_FILE_TEST_PROTO(name) void CAT(md5_file_, name)(void)
 #define SHA_STRING_TEST_PROTO(alg, name) void CAT(sha##alg##_string_, name)(void)
+#define SHA_FILE_TEST_PROTO(alg, name) void CAT(sha##alg##_file_, name)(void)
 
 #define DECLARE_TEST(suite, str, name) \
 	if (CU_add_test(suite, str, MERGE(suite, name)) == NULL) { \
@@ -44,6 +45,18 @@
 	DECLARE_TEST(suite, "lorem_ipsum_edit", lorem_ipsum_edit); \
 	DECLARE_TEST(suite, "lorem_ipsum_double", lorem_ipsum_double); \
 
+#define FILL_FILE_SUITE(suite)	\
+	DECLARE_TEST(suite, "test_md5", test_md5); \
+	DECLARE_TEST(suite, "etc_passwd", etc_passwd); \
+	DECLARE_TEST(suite, "empty", empty); \
+	DECLARE_TEST(suite, "test_md5", test_md5); \
+	DECLARE_TEST(suite, "etc_passwd", etc_passwd); \
+	DECLARE_TEST(suite, "basic", basic); \
+	DECLARE_TEST(suite, "big_file", big_file); \
+	DECLARE_TEST(suite, "bigger_file", bigger_file); \
+	DECLARE_TEST(suite, "huge_file", huge_file); \
+
+
 
 #define SHA_TEST_SUITE_PROTO(alg) \
 	SHA_STRING_TEST_PROTO(alg, empty_string);  \
@@ -56,6 +69,14 @@
 	SHA_STRING_TEST_PROTO(alg, lorem_ipsum); \
 	SHA_STRING_TEST_PROTO(alg, lorem_ipsum_edit); \
 	SHA_STRING_TEST_PROTO(alg, lorem_ipsum_double); \
+	\
+	SHA_FILE_TEST_PROTO(alg, empty); \
+	SHA_FILE_TEST_PROTO(alg, test_md5); \
+	SHA_FILE_TEST_PROTO(alg, etc_passwd); \
+	SHA_FILE_TEST_PROTO(alg, basic); \
+	SHA_FILE_TEST_PROTO(alg, big_file); \
+	SHA_FILE_TEST_PROTO(alg, bigger_file); \
+	SHA_FILE_TEST_PROTO(alg, huge_file);
 
 MD5_STRING_TEST_PROTO(empty_string);
 MD5_STRING_TEST_PROTO(a);
