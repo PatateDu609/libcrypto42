@@ -1,0 +1,7 @@
+a.out
+**.a
+main*.c
+obj
+objs
+.vscode
+test*
