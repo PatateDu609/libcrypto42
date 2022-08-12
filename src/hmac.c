@@ -68,14 +68,9 @@ uint8_t *hmac(struct hmac_req req)
 
 	for (size_t i = 0; i < req.ctx.b; i++)
 	{
-		ipad[i] = 0x36; // Arbitrary values chosen by the author to split the key in two halves.
-		opad[i] = 0x5c;
-	}
-
-	for (size_t i = 0; i < req.ctx.b; i++)
-	{
-		ipad[i] ^= key[i];
-		opad[i] ^= key[i];
+		// Arbitrary values chosen by the author to split the key in two halves.
+		ipad[i] = key[i] ^ 0x36;
+		opad[i] = key[i] ^ 0x5c;
 	}
 
 	{ // Compute the inner hash

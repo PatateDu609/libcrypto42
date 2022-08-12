@@ -30,6 +30,7 @@ $ make check # run tests
 + [x] SHA2 suite (sha224, sha256, sha384, sha512, sha512/224, sha512/256)
 + [ ] SHA3 suite
 + [ ] PBKDF
++ [x] HMAC
 + [ ] DES
 + [ ] Operation modes for symmetric encryption
 + [ ] Base64
