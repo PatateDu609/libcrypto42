@@ -16,6 +16,7 @@ COMMON_SRC_BASENAME		=	common/blocks					\
 BASENAME				:=	$(MD5_SRC_BASENAME)				\
 							$(SHA2_SRC_BASENAME)			\
 							$(COMMON_SRC_BASENAME)			\
+							hmac
 
 SRC						:=	$(addprefix $(PATH_SRC)/,\
 								$(addsuffix $(LANGEXTENSION), $(BASENAME)))

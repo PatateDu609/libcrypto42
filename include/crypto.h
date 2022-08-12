@@ -112,62 +112,197 @@ char *sha2_descriptor(enum SHA2_ALG alg, int fd);
 uint8_t *sha2_descriptor_raw(enum SHA2_ALG alg, int fd, uint8_t *buf);
 
 /// Helper defines for the SHA2 functions above.
+static inline char *sha2_224(const char *input) {
+	return sha2(SHA2_ALG_224, input);
+}
 
-#define sha2_224(input) sha2(SHA2_ALG_224, input)
-#define sha2_256(input) sha2(SHA2_ALG_256, input)
-#define sha2_384(input) sha2(SHA2_ALG_384, input)
-#define sha2_512(input) sha2(SHA2_ALG_512, input)
-#define sha2_512_224(input) sha2(SHA2_ALG_512_224, input)
-#define sha2_512_256(input) sha2(SHA2_ALG_512_256, input)
+static inline char *sha2_256(const char *input) {
+	return sha2(SHA2_ALG_256, input);
+}
 
-#define sha2_224_raw(input, buf) sha2(SHA2_ALG_224, input, buf)
-#define sha2_256_raw(input, buf) sha2(SHA2_ALG_256, input, buf)
-#define sha2_384_raw(input, buf) sha2(SHA2_ALG_384, input, buf)
-#define sha2_512_raw(input, buf) sha2(SHA2_ALG_512, input, buf)
-#define sha2_512_224_raw(input, buf) sha2(SHA2_ALG_512_224, input, buf)
-#define sha2_512_256_raw(input, buf) sha2(SHA2_ALG_512_256, input, buf)
+static inline char *sha2_384(const char *input) {
+	return sha2(SHA2_ALG_384, input);
+}
 
-#define sha2_224_bytes(input, input_size) sha2_bytes(SHA2_ALG_224, input, input_size)
-#define sha2_256_bytes(input, input_size) sha2_bytes(SHA2_ALG_256, input, input_size)
-#define sha2_384_bytes(input, input_size) sha2_bytes(SHA2_ALG_384, input, input_size)
-#define sha2_512_bytes(input, input_size) sha2_bytes(SHA2_ALG_512, input, input_size)
-#define sha2_512_224_bytes(input, input_size) sha2_bytes(SHA2_ALG_512_224, input, input_size)
-#define sha2_512_256_bytes(input, input_size) sha2_bytes(SHA2_ALG_512_256, input, input_size)
+static inline char *sha2_512(const char *input) {
+	return sha2(SHA2_ALG_512, input);
+}
 
-#define sha2_224_bytes_raw(input, input_size, buf) sha2_bytes_raw(SHA2_ALG_224, input, input_size, buf)
-#define sha2_256_bytes_raw(input, input_size, buf) sha2_bytes_raw(SHA2_ALG_256, input, input_size, buf)
-#define sha2_384_bytes_raw(input, input_size, buf) sha2_bytes_raw(SHA2_ALG_384, input, input_size, buf)
-#define sha2_512_bytes_raw(input, input_size, buf) sha2_bytes_raw(SHA2_ALG_512, input, input_size, buf)
-#define sha2_512_224_bytes_raw(input, input_size, buf) sha2_bytes_raw(SHA2_ALG_512_224, input, input_size, buf)
-#define sha2_512_256_bytes_raw(input, input_size, buf) sha2_bytes_raw(SHA2_ALG_512_256, input, input_size, buf)
+static inline char *sha2_512_224(const char *input) {
+	return sha2(SHA2_ALG_512_224, input);
+}
 
-#define sha2_224_file(filepath) sha2_file(SHA2_ALG_224, filepath)
-#define sha2_256_file(filepath) sha2_file(SHA2_ALG_256, filepath)
-#define sha2_384_file(filepath) sha2_file(SHA2_ALG_384, filepath)
-#define sha2_512_file(filepath) sha2_file(SHA2_ALG_512, filepath)
-#define sha2_512_224_file(filepath) sha2_file(SHA2_ALG_512_224, filepath)
-#define sha2_512_256_file(filepath) sha2_file(SHA2_ALG_512_256, filepath)
+static inline char *sha2_512_256(const char *input) {
+	return sha2(SHA2_ALG_512_256, input);
+}
 
-#define sha2_224_file_raw(filepath, buf) sha2_file_raw(SHA2_ALG_224, filepath, buf)
-#define sha2_256_file_raw(filepath, buf) sha2_file_raw(SHA2_ALG_256, filepath, buf)
-#define sha2_384_file_raw(filepath, buf) sha2_file_raw(SHA2_ALG_384, filepath, buf)
-#define sha2_512_file_raw(filepath, buf) sha2_file_raw(SHA2_ALG_512, filepath, buf)
-#define sha2_512_224_file_raw(filepath, buf) sha2_file_raw(SHA2_ALG_512_224, filepath, buf)
-#define sha2_512_256_file_raw(filepath, buf) sha2_file_raw(SHA2_ALG_512_256, filepath, buf)
+static inline uint8_t *sha2_224_raw(const char *input, uint8_t *buf) {
+	return sha2_raw(SHA2_ALG_224, input, buf);
+}
 
-#define sha2_224_descriptor(fd) sha2_descriptor(SHA2_ALG_224, fd)
-#define sha2_256_descriptor(fd) sha2_descriptor(SHA2_ALG_256, fd)
-#define sha2_384_descriptor(fd) sha2_descriptor(SHA2_ALG_384, fd)
-#define sha2_512_descriptor(fd) sha2_descriptor(SHA2_ALG_512, fd)
-#define sha2_512_224_descriptor(fd) sha2_descriptor(SHA2_ALG_512_224, fd)
-#define sha2_512_256_descriptor(fd) sha2_descriptor(SHA2_ALG_512_256, fd)
+static inline uint8_t *sha2_256_raw(const char *input, uint8_t *buf) {
+	return sha2_raw(SHA2_ALG_256, input, buf);
+}
 
-#define sha2_224_descriptor_raw(fd, buf) sha2_descriptor_raw(SHA2_ALG_224, fd, buf)
-#define sha2_256_descriptor_raw(fd, buf) sha2_descriptor_raw(SHA2_ALG_256, fd, buf)
-#define sha2_384_descriptor_raw(fd, buf) sha2_descriptor_raw(SHA2_ALG_384, fd, buf)
-#define sha2_512_descriptor_raw(fd, buf) sha2_descriptor_raw(SHA2_ALG_512, fd, buf)
-#define sha2_512_224_descriptor_raw(fd, buf) sha2_descriptor_raw(SHA2_ALG_512_224, fd, buf)
-#define sha2_512_256_descriptor_raw(fd, buf) sha2_descriptor_raw(SHA2_ALG_512_256, fd, buf)
+static inline uint8_t *sha2_384_raw(const char *input, uint8_t *buf) {
+	return sha2_raw(SHA2_ALG_384, input, buf);
+}
+
+static inline uint8_t *sha2_512_raw(const char *input, uint8_t *buf) {
+	return sha2_raw(SHA2_ALG_512, input, buf);
+}
+
+static inline uint8_t *sha2_512_224_raw(const char *input, uint8_t *buf) {
+	return sha2_raw(SHA2_ALG_512_224, input, buf);
+}
+
+static inline uint8_t *sha2_512_256_raw(const char *input, uint8_t *buf) {
+	return sha2_raw(SHA2_ALG_512_256, input, buf);
+}
+
+static inline char *sha2_224_bytes(const uint8_t *input, size_t input_size) {
+	return sha2_bytes(SHA2_ALG_224, input, input_size);
+}
+
+static inline char *sha2_256_bytes(const uint8_t *input, size_t input_size) {
+	return sha2_bytes(SHA2_ALG_256, input, input_size);
+}
+
+static inline char *sha2_384_bytes(const uint8_t *input, size_t input_size) {
+	return sha2_bytes(SHA2_ALG_384, input, input_size);
+}
+
+static inline char *sha2_512_bytes(const uint8_t *input, size_t input_size) {
+	return sha2_bytes(SHA2_ALG_512, input, input_size);
+}
+
+static inline char *sha2_512_224_bytes(const uint8_t *input, size_t input_size) {
+	return sha2_bytes(SHA2_ALG_512_224, input, input_size);
+}
+
+static inline char *sha2_512_256_bytes(const uint8_t *input, size_t input_size) {
+	return sha2_bytes(SHA2_ALG_512_256, input, input_size);
+}
+
+static inline uint8_t *sha2_224_bytes_raw(const uint8_t *input, size_t input_size, uint8_t *buf) {
+	return sha2_bytes_raw(SHA2_ALG_224, input, input_size, buf);
+}
+
+static inline uint8_t *sha2_256_bytes_raw(const uint8_t *input, size_t input_size, uint8_t *buf) {
+	return sha2_bytes_raw(SHA2_ALG_256, input, input_size, buf);
+}
+
+static inline uint8_t *sha2_384_bytes_raw(const uint8_t *input, size_t input_size, uint8_t *buf) {
+	return sha2_bytes_raw(SHA2_ALG_384, input, input_size, buf);
+}
+
+static inline uint8_t *sha2_512_bytes_raw(const uint8_t *input, size_t input_size, uint8_t *buf) {
+	return sha2_bytes_raw(SHA2_ALG_512, input, input_size, buf);
+}
+
+static inline uint8_t *sha2_512_224_bytes_raw(const uint8_t *input, size_t input_size, uint8_t *buf) {
+	return sha2_bytes_raw(SHA2_ALG_512_224, input, input_size, buf);
+}
+
+static inline uint8_t *sha2_512_256_bytes_raw(const uint8_t *input, size_t input_size, uint8_t *buf) {
+	return sha2_bytes_raw(SHA2_ALG_512_256, input, input_size, buf);
+}
+
+static inline char *sha2_224_file(const char *filepath) {
+	return sha2_file(SHA2_ALG_224, filepath);
+}
+
+static inline char *sha2_256_file(const char *filepath) {
+	return sha2_file(SHA2_ALG_256, filepath);
+}
+
+static inline char *sha2_384_file(const char *filepath) {
+	return sha2_file(SHA2_ALG_384, filepath);
+}
+
+static inline char *sha2_512_file(const char *filepath) {
+	return sha2_file(SHA2_ALG_512, filepath);
+}
+
+static inline char *sha2_512_224_file(const char *filepath) {
+	return sha2_file(SHA2_ALG_512_224, filepath);
+}
+
+static inline char *sha2_512_256_file(const char *filepath) {
+	return sha2_file(SHA2_ALG_512_256, filepath);
+}
+
+static inline uint8_t *sha2_224_file_raw(const char *filepath, uint8_t *buf) {
+	return sha2_file_raw(SHA2_ALG_224, filepath, buf);
+}
+
+static inline uint8_t *sha2_256_file_raw(const char *filepath, uint8_t *buf) {
+	return sha2_file_raw(SHA2_ALG_256, filepath, buf);
+}
+
+static inline uint8_t *sha2_384_file_raw(const char *filepath, uint8_t *buf) {
+	return sha2_file_raw(SHA2_ALG_384, filepath, buf);
+}
+
+static inline uint8_t *sha2_512_file_raw(const char *filepath, uint8_t *buf) {
+	return sha2_file_raw(SHA2_ALG_512, filepath, buf);
+}
+
+static inline uint8_t *sha2_512_224_file_raw(const char *filepath, uint8_t *buf) {
+	return sha2_file_raw(SHA2_ALG_512_224, filepath, buf);
+}
+
+static inline uint8_t *sha2_512_256_file_raw(const char *filepath, uint8_t *buf) {
+	return sha2_file_raw(SHA2_ALG_512_256, filepath, buf);
+}
+
+static inline char *sha2_224_descriptor(int fd) {
+	return sha2_descriptor(SHA2_ALG_224, fd);
+}
+
+static inline char *sha2_256_descriptor(int fd) {
+	return sha2_descriptor(SHA2_ALG_256, fd);
+}
+
+static inline char *sha2_384_descriptor(int fd) {
+	return sha2_descriptor(SHA2_ALG_384, fd);
+}
+
+static inline char *sha2_512_descriptor(int fd) {
+	return sha2_descriptor(SHA2_ALG_512, fd);
+}
+
+static inline char *sha2_512_224_descriptor(int fd) {
+	return sha2_descriptor(SHA2_ALG_512_224, fd);
+}
+
+static inline char *sha2_512_256_descriptor(int fd) {
+	return sha2_descriptor(SHA2_ALG_512_256, fd);
+}
+
+static inline uint8_t *sha2_224_descriptor_raw(int fd, uint8_t *buf) {
+	return sha2_descriptor_raw(SHA2_ALG_224, fd, buf);
+}
+
+static inline uint8_t *sha2_256_descriptor_raw(int fd, uint8_t *buf) {
+	return sha2_descriptor_raw(SHA2_ALG_256, fd, buf);
+}
+
+static inline uint8_t *sha2_384_descriptor_raw(int fd, uint8_t *buf) {
+	return sha2_descriptor_raw(SHA2_ALG_384, fd, buf);
+}
+
+static inline uint8_t *sha2_512_descriptor_raw(int fd, uint8_t *buf) {
+	return sha2_descriptor_raw(SHA2_ALG_512, fd, buf);
+}
+
+static inline uint8_t *sha2_512_224_descriptor_raw(int fd, uint8_t *buf) {
+	return sha2_descriptor_raw(SHA2_ALG_512_224, fd, buf);
+}
+
+static inline uint8_t *sha2_512_256_descriptor_raw(int fd, uint8_t *buf) {
+	return sha2_descriptor_raw(SHA2_ALG_512_256, fd, buf);
+}
 
 /* ************************** MD5 related functions ************************* */
 
