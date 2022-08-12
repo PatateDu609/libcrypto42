@@ -25,7 +25,7 @@ $ make test # run tests
 
 + [x] MD5
 + [ ] SHA1
-+ [ ] SHA2 suite (sha224, sha256, sha384, sha512, sha512/224, sha512/256)
++ [x] SHA2 suite (sha224, sha256, sha384, sha512, sha512/224, sha512/256)
 + [ ] SHA3 suite
 + [ ] PBKDF
 + [ ] DES
