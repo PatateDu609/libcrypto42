@@ -31,4 +31,5 @@ $ make check # run tests
 + [ ] SHA3 suite
 + [ ] PBKDF
 + [ ] DES
++ [ ] Operation modes for symmetric encryption
 + [ ] Base64
