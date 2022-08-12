@@ -102,6 +102,20 @@ char *sha2_descriptor(enum SHA2_ALG alg, int fd);
 char *md5(char *str);
 
 /**
+ * @brief Compute the md5 of a string given as parameter, but put the raw bytes in a given buffer.
+ *
+ * @param str The string to compute the md5 of.
+ * @param output The buffer to put the raw bytes of the md5 in.
+ *
+ * @return A copy of the given buffer.
+ *
+ * @note The returned buffer is in raw bytes, and should be treated as a string.
+ * @note The returned buffer must be at least of size MD5_DIGEST_LENGTH, or it may
+ * end up by a SEGFAULT.
+ */
+uint8_t *md5_raw(char *str, uint8_t *output);
+
+/**
  * @brief Compute the md5 of a fixed length array of bytes given as parameter.
  *
  * @param bytes The array of bytes to compute the md5 of.
@@ -109,6 +123,20 @@ char *md5(char *str);
  * @return The md5 of the array.
  */
 char *md5_bytes(uint8_t *bytes, size_t len);
+
+/**
+ * @brief Compute the md5 of a fixed length array of bytes given as parameter,
+ * but put the raw bytes in a given buffer.
+ *
+ * @param bytes The array of bytes to compute the md5 of.
+ * @param len The length of the array.
+ * @param output The buffer to put the raw bytes of the md5 in.
+ *
+ * @return A copy of the raw bytes of the md5 in the given buffer.
+ *
+ * @see md5_raw
+ */
+uint8_t *md5_bytes_raw(uint8_t *bytes, size_t len, uint8_t *output);
 
 /**
  * @brief Compute the md5 of a file given as parameter.
@@ -119,11 +147,36 @@ char *md5_bytes(uint8_t *bytes, size_t len);
 char *md5_file(char *filename);
 
 /**
+ * @brief Compute the md5 of a file given as parameter, but put the raw bytes in a given buffer.
+ *
+ * @param filename The file to compute the md5 of.
+ * @param output The buffer to put the raw bytes of the md5 in.
+ *
+ * @return A copy of the output buffer.
+ *
+ * @see md5_raw
+ */
+uint8_t *md5_file_raw(char *filename, uint8_t *output);
+
+/**
  * @brief Compute the md5 of a file pointed by the file descriptor given as parameter.
  *
  * @param fd The file descriptor of the file to compute the md5 of.
  * @return The md5 of the pointed file.
  */
 char *md5_descriptor(int fd);
+
+/**
+ * @brief Compute the md5 of a file pointed by the file descriptor given as parameter
+ * but put the raw bytes in a given buffer.
+ *
+ * @param fd The file descriptor of the file to compute the md5 of.
+ * @param output The buffer to put the raw bytes of the md5 in.
+ *
+ * @return A copy of the output buffer.
+ *
+ * @see md5_raw
+ */
+uint8_t *md5_descriptor_raw(int fd, uint8_t *output);
 
 #endif

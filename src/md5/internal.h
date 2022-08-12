@@ -31,6 +31,7 @@
 #define MD5_HASH_SIZE 16 * 2 + 1
 #define MD5_BLK_LEN 1 << 6
 #define MD5_SIZE_LAST 8
+#define MD5_DIGEST_SIZE 16
 
 /**
  * @brief Structure used to store the md5 context.
@@ -78,5 +79,14 @@ void md5_update(struct md5_ctx *ctx, const uint8_t *input) __internal;
  * @note This function will flush the context after generating the hash.
  */
 char *md5_final(struct md5_ctx *ctx) __internal;
+
+/**
+ * @brief Generates the final hash from the md5 context and uses the given buffer to store the hash.
+ *
+ * @param ctx The context to generate the hash from.
+ * @param output The buffer to store the hash in.
+ * @return The buffer containing the hash.
+ */
+uint8_t *md5_final_raw(struct md5_ctx *ctx, uint8_t *output) __internal;
 
 #endif

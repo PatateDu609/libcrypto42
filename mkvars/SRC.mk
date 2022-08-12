@@ -11,6 +11,7 @@ SHA2_SRC_BASENAME		=	sha2/sha2						\
 							sha2/final						\
 
 COMMON_SRC_BASENAME		=	common/blocks					\
+							common/askpass					\
 
 BASENAME				:=	$(MD5_SRC_BASENAME)				\
 							$(SHA2_SRC_BASENAME)			\

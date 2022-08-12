@@ -9,24 +9,25 @@
 #include "internal.h"
 #include <stdio.h>
 
-static void append_int(char *str, uint32_t tp)
-{
-	tp = bswap_32(tp);
-	snprintf(str, 9, "%08x", tp);
-}
-
 char *md5_final(struct md5_ctx *ctx)
 {
-	char *str = malloc(MD5_HASH_SIZE * sizeof *str);
-	if (str == NULL)
-		return NULL;
+	uint8_t buf[MD5_DIGEST_SIZE];
 
-	append_int(str, ctx->a);
-	append_int(str + 8, ctx->b);
-	append_int(str + 16, ctx->c);
-	append_int(str + 24, ctx->d);
+	md5_final_raw(ctx, buf);
+	char *str = stringify_hash(buf, MD5_DIGEST_SIZE);
 
 	// Setting the context to 0 to avoid exposing the internal state of the context.
 	ft_memset(ctx, 0, sizeof *ctx);
 	return str;
+}
+
+uint8_t *md5_final_raw(struct md5_ctx *ctx, uint8_t *output)
+{
+	uint32_t *output_32 = (uint32_t *)output;
+	output_32[0] = ctx->a;
+	output_32[1] = ctx->b;
+	output_32[2] = ctx->c;
+	output_32[3] = ctx->d;
+
+	return output;
 }
