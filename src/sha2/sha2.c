@@ -14,6 +14,27 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+static size_t get_size(enum SHA2_ALG alg)
+{
+	switch (alg)
+	{
+		case SHA2_ALG_224:
+			return SHA2_224_DIGEST_SIZE;
+		case SHA2_ALG_256:
+			return SHA2_256_DIGEST_SIZE;
+		case SHA2_ALG_384:
+			return SHA2_384_DIGEST_SIZE;
+		case SHA2_ALG_512:
+			return SHA2_512_DIGEST_SIZE;
+		case SHA2_ALG_512_224:
+			return SHA2_512_224_DIGEST_SIZE;
+		case SHA2_ALG_512_256:
+			return SHA2_512_256_DIGEST_SIZE;
+		default:
+			return 0;
+	}
+}
+
 static bool __intermediate_sha2_bytes(const struct msg *msg, struct sha2 *ctx)
 {
 	struct blk *blks = get_blocks(msg, ctx->alg.block_size, ctx->alg.wanted_size, false);
@@ -29,7 +50,7 @@ static bool __intermediate_sha2_bytes(const struct msg *msg, struct sha2 *ctx)
 	return true;
 }
 
-char *sha2_bytes(enum SHA2_ALG alg, const uint8_t *bytes, size_t len)
+uint8_t *sha2_bytes_raw(enum SHA2_ALG alg, const uint8_t *bytes, size_t len, uint8_t *buf)
 {
 	struct sha2 ctx;
 	struct msg msg = { .data = bytes, .len = len, .is_last_part = true, .filesize = len };
@@ -40,7 +61,25 @@ char *sha2_bytes(enum SHA2_ALG alg, const uint8_t *bytes, size_t len)
 		ft_memset(&ctx, 0, sizeof(ctx));
 		return NULL;
 	}
-	return sha2_final(&ctx);
+	return sha2_final_raw(&ctx, buf);
+}
+
+char *sha2_bytes(enum SHA2_ALG alg, const uint8_t *bytes, size_t len)
+{
+	size_t size = get_size(alg);
+	if (size == 0)
+		return NULL;
+
+	uint8_t buf[size];
+	uint8_t *res = sha2_bytes_raw(alg, bytes, len, buf);
+	if (res == NULL)
+		return NULL;
+	return stringify_hash(buf, sizeof buf);
+}
+
+uint8_t *sha2_raw(enum SHA2_ALG alg, const char *str, uint8_t *buf)
+{
+	return sha2_bytes_raw(alg, (uint8_t *)str, ft_strlen(str), buf);
 }
 
 char *sha2(enum SHA2_ALG alg, const char *input)
@@ -51,7 +90,7 @@ char *sha2(enum SHA2_ALG alg, const char *input)
 	return sha2_bytes(alg, bytes, len);
 }
 
-char *sha2_descriptor(enum SHA2_ALG alg, int fd)
+uint8_t *sha2_descriptor_raw(enum SHA2_ALG alg, int fd, uint8_t *buf)
 {
 	struct sha2 ctx;
 	sha2_init(&ctx, alg);
@@ -96,7 +135,30 @@ char *sha2_descriptor(enum SHA2_ALG alg, int fd)
 			return NULL;
 		}
 	}
-	return sha2_final(&ctx);
+	return sha2_final_raw(&ctx, buf);
+}
+
+char *sha2_descriptor(enum SHA2_ALG alg, int fd)
+{
+	size_t size = get_size(alg);
+	if (size == 0)
+		return NULL;
+
+	uint8_t buf[size];
+	uint8_t *res = sha2_descriptor_raw(alg, fd, buf);
+	if (res == NULL)
+		return NULL;
+	return stringify_hash(buf, sizeof buf);
+}
+
+uint8_t *sha2_file_raw(enum SHA2_ALG alg, const char *filename, uint8_t *buf)
+{
+	int fd = open(filename, O_RDONLY);
+	if (fd == -1)
+		return NULL;
+	uint8_t *res = sha2_descriptor_raw(alg, fd, buf);
+	close(fd);
+	return res;
 }
 
 char *sha2_file(enum SHA2_ALG alg, const char *path)

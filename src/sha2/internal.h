@@ -149,4 +149,14 @@ void sha2_update(struct sha2 *ctx, void *data);
  */
 char *sha2_final(struct sha2 *ctx);
 
+/**
+ * @brief Put the hash in the given buffer.
+ *
+ * @param ctx The context to get the hash from.
+ * @param buf The buffer to put the hash in.
+ *
+ * @return The buffer itself.
+ */
+uint8_t *sha2_final_raw(struct sha2 *ctx, uint8_t *buf);
+
 #endif
