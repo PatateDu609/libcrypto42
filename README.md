@@ -1,5 +1,7 @@
 # libcrypto42
 
+![Badge workflow](https://github.com/PatateDu609/libcrypto42/actions/workflows/tests.yml/badge.svg)
+
 ## Description
 
 This is a small library designed to work with the 42 projects that would need to use some cryptographic functions.
