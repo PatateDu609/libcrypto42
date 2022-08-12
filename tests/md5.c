@@ -3,22 +3,13 @@
 #include <openssl/md5.h>
 #include <stdlib.h>
 
-static void get_output(const unsigned char *result, char *hash)
-{
-	// output
-	for(int i = 0; i < MD5_DIGEST_LENGTH; i++)
-	{
-		snprintf(&hash[i * 2], 3, "%02x", result[i]);
-	}
-}
-
 static void get_hash(char *hash, const char *msg)
 {
 	unsigned char result[MD5_DIGEST_LENGTH];
 
 	MD5((const unsigned char *)msg, strlen(msg), result);
 
-	get_output(result, hash);
+	get_output(result, MD5_DIGEST_LENGTH, hash);
 }
 
 static void get_hash_file(char *hash, const char *filename)
@@ -38,7 +29,7 @@ static void get_hash_file(char *hash, const char *filename)
 		MD5_Update(&ctx, buffer, bytes);
 	MD5_Final(result, &ctx);
 	fclose(file);
-	get_output(result, hash);
+	get_output(result, MD5_DIGEST_LENGTH, hash);
 }
 
 #define MD5_STRING_TEST(str, name) \

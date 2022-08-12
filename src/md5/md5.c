@@ -3,10 +3,10 @@
 #include "crypto.h"
 #include "internal.h"
 #include "libft.h"
-#include "ft_stream.h"
 
 #include <fcntl.h>
 #include <stdio.h>
+#include <unistd.h>
 
 static bool __intermediate_md5_bytes(const struct msg *msg, struct md5_ctx *ctx)
 {
@@ -50,9 +50,6 @@ char *md5_descriptor(int fd)
 	struct md5_ctx ctx;
 
 	md5_init(&ctx);
-	ft_stream *stream = ft_sopen_fd(fd);
-	if (!stream)
-		return NULL;
 
 	uint8_t buffer[4096];
 	struct msg msg;
@@ -77,7 +74,6 @@ char *md5_descriptor(int fd)
 
 		if (!__intermediate_md5_bytes(&msg, &ctx))
 		{
-			ft_sclose(stream);
 			ft_memset(&ctx, 0, sizeof(ctx));
 			return NULL;
 		}
@@ -91,7 +87,6 @@ char *md5_descriptor(int fd)
 		msg.len = 0;
 		if (!__intermediate_md5_bytes(&msg, &ctx))
 		{
-			ft_sclose(stream);
 			ft_memset(&ctx, 0, sizeof(ctx));
 			return NULL;
 		}

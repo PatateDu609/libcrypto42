@@ -9,18 +9,53 @@
 #define TESTS_H
 
 #include "crypto.h"
+#include <stdio.h>
 
-#define CAT(a, b) a ## b
+#define CAT(a, b) CAT2(a, b)
+#define CAT2(a, b) a##b
 
 #define MERGE(a, b) a##_##b
+
 #define MD5_STRING_TEST_PROTO(name) void CAT(md5_string_, name)(void)
 #define MD5_FILE_TEST_PROTO(name) void CAT(md5_file_, name)(void)
+#define SHA_STRING_TEST_PROTO(alg, name) void CAT(sha##alg##_string_, name)(void)
 
 #define DECLARE_TEST(suite, str, name) \
 	if (CU_add_test(suite, str, MERGE(suite, name)) == NULL) { \
 		CU_cleanup_registry(); \
 		return CU_get_error(); \
 	}
+
+#define DECLARE_SUITE(suite, str, setup, tear_down) \
+	if ((suite = CU_add_suite(str, setup, tear_down)) == NULL) { \
+		CU_cleanup_registry(); \
+		return CU_get_error(); \
+	}
+
+#define FILL_STR_SUITE(suite)	\
+	DECLARE_TEST(suite, "empty_string", empty_string); \
+	DECLARE_TEST(suite, "a", a); \
+	DECLARE_TEST(suite, "abc", abc); \
+	DECLARE_TEST(suite, "message_digest", message_digest); \
+	DECLARE_TEST(suite, "alphabet", alphabet); \
+	DECLARE_TEST(suite, "alnum", alnum); \
+	DECLARE_TEST(suite, "num2", num2); \
+	DECLARE_TEST(suite, "lorem_ipsum", lorem_ipsum); \
+	DECLARE_TEST(suite, "lorem_ipsum_edit", lorem_ipsum_edit); \
+	DECLARE_TEST(suite, "lorem_ipsum_double", lorem_ipsum_double); \
+
+
+#define SHA_TEST_SUITE_PROTO(alg) \
+	SHA_STRING_TEST_PROTO(alg, empty_string);  \
+	SHA_STRING_TEST_PROTO(alg, a); \
+	SHA_STRING_TEST_PROTO(alg, abc); \
+	SHA_STRING_TEST_PROTO(alg, message_digest); \
+	SHA_STRING_TEST_PROTO(alg, alphabet); \
+	SHA_STRING_TEST_PROTO(alg, alnum); \
+	SHA_STRING_TEST_PROTO(alg, num2); \
+	SHA_STRING_TEST_PROTO(alg, lorem_ipsum); \
+	SHA_STRING_TEST_PROTO(alg, lorem_ipsum_edit); \
+	SHA_STRING_TEST_PROTO(alg, lorem_ipsum_double); \
 
 MD5_STRING_TEST_PROTO(empty_string);
 MD5_STRING_TEST_PROTO(a);
@@ -40,5 +75,18 @@ MD5_FILE_TEST_PROTO(basic);
 MD5_FILE_TEST_PROTO(big_file);
 MD5_FILE_TEST_PROTO(bigger_file);
 MD5_FILE_TEST_PROTO(huge_file);
+
+SHA_TEST_SUITE_PROTO(224)
+SHA_TEST_SUITE_PROTO(256)
+SHA_TEST_SUITE_PROTO(384)
+SHA_TEST_SUITE_PROTO(512)
+
+static inline void get_output(const unsigned char *result, int digest_len, char *hash)
+{
+	for(int i = 0; i < digest_len; i++)
+	{
+		snprintf(&hash[i * 2], 3, "%02x", result[i]);
+	}
+}
 
 #endif

@@ -5,10 +5,16 @@ MD5_SRC_BASENAME		=	md5/md5							\
 							md5/update						\
 							md5/final						\
 
+SHA2_SRC_BASENAME		=	sha2/sha2						\
+							sha2/init						\
+							sha2/update						\
+							sha2/final						\
+
 COMMON_SRC_BASENAME		=	common/blocks					\
 
 BASENAME				:=	$(MD5_SRC_BASENAME)				\
-							$(COMMON_SRC_BASENAME)
+							$(SHA2_SRC_BASENAME)			\
+							$(COMMON_SRC_BASENAME)			\
 
 SRC						:=	$(addprefix $(PATH_SRC)/,\
 								$(addsuffix $(LANGEXTENSION), $(BASENAME)))

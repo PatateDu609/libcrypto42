@@ -1,7 +1,5 @@
 # libcrypto42
 
-![Tests on main](https://github.com/PatateDu609/libcrypto42/Tests_libcrypto42/badge.svg?branch=main)
-
 ## Description
 
 This is a small library designed to work with the 42 projects that would need to use some cryptographic functions.

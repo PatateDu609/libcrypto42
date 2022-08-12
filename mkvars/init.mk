@@ -64,7 +64,8 @@ ifeq ($(VERBOSE),0)
 endif
 
 STD					?=	-std=c11
-CFLAGS				?=	-Wall -Wextra -Werror $(addprefix -I,$(PATH_INC)) $(STD)
+OPT_CFLAGS			?=
+CFLAGS				?=	-Wall -Wextra -Werror $(addprefix -I,$(PATH_INC)) $(STD) $(OPT_CFLAGS)
 ARFLAGS				?=	rcs
 ASFLAGS				?=
 

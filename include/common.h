@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define SHL(x, n) ((x) << (n))
+#define SHR(x, n) ((x) >> (n))
 #define ROTL(x, n) (((x) << (n)) | ((x) >> (sizeof(x) * 8 - (n))))
 #define ROTR(x, n) (((x) >> (n)) | ((x) << (sizeof(x) * 8 - (n))))
 
@@ -57,7 +59,7 @@ struct blk
  */
 struct msg
 {
-	uint8_t *data;			///< The data of the message.
+	const uint8_t *data;	///< The data of the message.
 	__uint128_t len;		///< The length of the data.
 	__uint128_t filesize;	///< The size of the file.
 	bool is_last_part;		///< True if the message is the last part of the file.

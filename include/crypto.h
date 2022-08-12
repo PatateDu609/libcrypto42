@@ -13,6 +13,84 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+
+/* ************************* SHA2 related functions ************************* */
+
+enum SHA2_ALG {
+	SHA2_ALG_224,
+	SHA2_ALG_256,
+	SHA2_ALG_384,
+	SHA2_ALG_512,
+	SHA2_ALG_512_224,
+	SHA2_ALG_512_256
+};
+
+/**
+ * @brief Computes the SHA2 digest of the given string.
+ *
+ * @param alg The algorithm to use.
+ * @param str The string to hash.
+ * @return The SHA2 digest of the given string.
+ */
+char *sha2(enum SHA2_ALG alg, const char *input);
+
+/**
+ * @brief Computes the SHA2 digest of the given file.
+ *
+ * @param alg The algorithm to use.
+ * @param path The path to the file to hash.
+ * @return The SHA2 digest of the given file.
+ */
+char *sha2_bytes(enum SHA2_ALG alg, const uint8_t *input, size_t input_size);
+
+/**
+ * @brief Computes the SHA2 digest of the given file.
+ *
+ * @param alg The algorithm to use.
+ * @param path The path to the file to hash.
+ * @return The SHA2 digest of the given file.
+ */
+char *sha2_file(enum SHA2_ALG alg, const char *filepath);
+
+/**
+ * @brief Computes the SHA2 digest of a file pointed by the given file descriptor.
+ *
+ * @param alg The algorithm to use.
+ * @param fd The file descriptor of the file to hash.
+ * @return The SHA2 digest of the given string.
+ */
+char *sha2_descriptor(enum SHA2_ALG alg, int fd);
+
+/// Helper defines for the SHA2 functions above.
+
+#define sha2_224(input) sha2(SHA2_ALG_224, input)
+#define sha2_256(input) sha2(SHA2_ALG_256, input)
+#define sha2_384(input) sha2(SHA2_ALG_384, input)
+#define sha2_512(input) sha2(SHA2_ALG_512, input)
+#define sha2_512_224(input) sha2(SHA2_ALG_512_224, input)
+#define sha2_512_256(input) sha2(SHA2_ALG_512_256, input)
+
+#define sha2_224_bytes(input, input_size) sha2_bytes(SHA2_ALG_224, input, input_size)
+#define sha2_256_bytes(input, input_size) sha2_bytes(SHA2_ALG_256, input, input_size)
+#define sha2_384_bytes(input, input_size) sha2_bytes(SHA2_ALG_384, input, input_size)
+#define sha2_512_bytes(input, input_size) sha2_bytes(SHA2_ALG_512, input, input_size)
+#define sha2_512_224_bytes(input, input_size) sha2_bytes(SHA2_ALG_512_224, input, input_size)
+#define sha2_512_256_bytes(input, input_size) sha2_bytes(SHA2_ALG_512_256, input, input_size)
+
+#define sha2_224_file(filepath) sha2_file(SHA2_ALG_224, filepath)
+#define sha2_256_file(filepath) sha2_file(SHA2_ALG_256, filepath)
+#define sha2_384_file(filepath) sha2_file(SHA2_ALG_384, filepath)
+#define sha2_512_file(filepath) sha2_file(SHA2_ALG_512, filepath)
+#define sha2_512_224_file(filepath) sha2_file(SHA2_ALG_512_224, filepath)
+#define sha2_512_256_file(filepath) sha2_file(SHA2_ALG_512_256, filepath)
+
+#define sha2_224_descriptor(fd) sha2_descriptor(SHA2_ALG_224, fd)
+#define sha2_256_descriptor(fd) sha2_descriptor(SHA2_ALG_256, fd)
+#define sha2_384_descriptor(fd) sha2_descriptor(SHA2_ALG_384, fd)
+#define sha2_512_descriptor(fd) sha2_descriptor(SHA2_ALG_512, fd)
+#define sha2_512_224_descriptor(fd) sha2_descriptor(SHA2_ALG_512_224, fd)
+#define sha2_512_256_descriptor(fd) sha2_descriptor(SHA2_ALG_512_256, fd)
+
 /* ************************** MD5 related functions ************************* */
 
 /**
