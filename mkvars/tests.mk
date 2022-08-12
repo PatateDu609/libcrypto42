@@ -11,6 +11,7 @@ TEST_DEBUG		=	1
 TEST_SRC		=	tests/md5.c			\
 					tests/registry.c	\
 					tests/sha2.c		\
+					tests/hmac.c		\
 
 TEST_OBJ		=	$(addprefix $(PATH_OBJ)/, $(TEST_SRC:.c=.o))
 

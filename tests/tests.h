@@ -110,4 +110,6 @@ static inline void get_output(const unsigned char *result, int digest_len, char 
 	}
 }
 
+void HMAC_sha2_256_test();
+
 #endif
