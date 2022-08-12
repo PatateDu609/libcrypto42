@@ -41,7 +41,6 @@ get_hash_file_SHA(512, 512, SHA512_DIGEST_LENGTH)
 		char expected[size_digest * 2 + 1]; \
 		char *actual = sha2_##alg(msg); \
 		get_hash(expected, SHA##alg, msg, size_digest); \
-		printf("Actual: %s, Expected: %s\n", actual, expected); \
 		CU_ASSERT_STRING_EQUAL(expected, actual); \
 		free(actual); \
 	}

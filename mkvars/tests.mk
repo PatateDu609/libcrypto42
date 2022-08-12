@@ -14,7 +14,7 @@ TEST_SRC		=	tests/md5.c			\
 
 TEST_OBJ		=	$(addprefix $(PATH_OBJ)/, $(TEST_SRC:.c=.o))
 
-TEST_CFLAGS		=	-Iinclude -Ilibft/include -Wall -Werror -Wextra
+TEST_CFLAGS		=	-Iinclude -Ilibft/include -Wall -Werror -Wextra -g3 -ggdb -O0
 TEST_LDFLAGS	=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lcunit
 
 $(PATH_OBJ)/%.o:	%.c
@@ -23,7 +23,7 @@ $(PATH_OBJ)/%.o:	%.c
 	$(CC) $(TEST_CFLAGS) -c $< -o $@
 
 $(TEST_NAME):		$(NAME) $(TEST_OBJ)
-	make -C libft/
+	$(MAKE) -C libft/
 	$(ECHO) -e " $(BOLD)$(YELLOW)$(BIGGREATER)$(NORMAL)   Linking $(ITALIC)$(subst $(PATH_OBJ)/,,$@)$(TRESET)"
 	$(CC) $(TEST_OBJ) -o $(TEST_NAME) $(TEST_LDFLAGS)
 

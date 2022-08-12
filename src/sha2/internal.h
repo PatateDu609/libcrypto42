@@ -80,7 +80,7 @@ struct sha2_alg {
  * @brief Represents a SHA2 context within 32bit (i.e. SHA2-224 or SHA2-256).
  */
 struct sha2_ctx_32 {
-	struct sha2_alg; /**< The algorithm (nested derivation). */
+	struct sha2_alg data; /**< The algorithm. */
 
 	union
 	{
@@ -95,7 +95,7 @@ struct sha2_ctx_32 {
  * @brief Represents a SHA2 context within 64bit (i.e. SHA2-384, SHA2-512, SHA2-512_224 or SHA2-512_256).
  */
 struct sha2_ctx_64 {
-	struct sha2_alg;
+	struct sha2_alg data;
 
 	union
 	{

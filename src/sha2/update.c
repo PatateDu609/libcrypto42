@@ -30,11 +30,11 @@ static void sha2_32_update(struct sha2_ctx_32 *ctx, uint32_t *blk)
 	uint32_t t1, t2;
 
 	for (size_t i = 0; i < 16; i++)
-		w[i] = BSWAP32(blk[i]);
-	for (size_t i = 16; i < 64; i++)
+		w[i] = bswap_32(blk[i]);
+	for (size_t i = 16; i < ctx->data.nb_rounds; i++)
 		w[i] = SSIG1(w[i - 2]) + w[i - 7] + SSIG0(w[i - 15]) + w[i - 16];
 
-	for (size_t i = 0; i < 64; i++)
+	for (size_t i = 0; i < ctx->data.nb_rounds; i++)
 	{
 		t1 = h + BSIG1(e) + Ch(e, f, g) + ctx->cnsts[i] + w[i];
 		t2 = BSIG0(a) + Ma(a, b, c);
@@ -76,11 +76,11 @@ static void sha2_64_update(struct sha2_ctx_64 *ctx, uint64_t *blk)
 	uint64_t t1, t2;
 
 	for (size_t i = 0; i < 16; i++)
-		w[i] = BSWAP64(blk[i]);
-	for (size_t i = 16; i < 80; i++)
+		w[i] = bswap_64(blk[i]);
+	for (size_t i = 16; i < ctx->data.nb_rounds; i++)
 		w[i] = SSIG1(w[i - 2]) + w[i - 7] + SSIG0(w[i - 15]) + w[i - 16];
 
-	for (size_t i = 0; i < 80; i++)
+	for (size_t i = 0; i < ctx->data.nb_rounds; i++)
 	{
 		t1 = h + BSIG1(e) + Ch(e, f, g) + ctx->cnsts[i] + w[i];
 		t2 = BSIG0(a) + Ma(a, b, c);

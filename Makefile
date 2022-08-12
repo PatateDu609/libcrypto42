@@ -7,7 +7,7 @@ LANGUAGE						=	C
 COLORS							:=	256
 DEBUG							:=	1
 RELEASE							:=	0
-OPT_CFLAGS						:=	-fms-extensions
+OPT_CFLAGS						:=
 
 PATH_INC						=	include libft/include
 

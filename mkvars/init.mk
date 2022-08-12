@@ -42,6 +42,7 @@ PATH_INC			?=	include
 CC					?=	gcc
 AS					?=	nasm
 AR					?=	ar
+MAKE				?=	make -s
 ECHO				?=	/bin/echo
 RM					?=	rm -f
 MKDIR				?=	mkdir -p
@@ -61,6 +62,7 @@ ifeq ($(VERBOSE),0)
 	ECHO			:=	@$(ECHO)
 	RM				:=	@$(RM)
 	MKDIR			:=	@$(MKDIR)
+	MAKE			:=	@$(MAKE)
 endif
 
 STD					?=	-std=c11

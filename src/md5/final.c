@@ -11,7 +11,7 @@
 
 static void append_int(char *str, uint32_t tp)
 {
-	tp = BSWAP32(tp);
+	tp = bswap_32(tp);
 	snprintf(str, 9, "%08x", tp);
 }
 

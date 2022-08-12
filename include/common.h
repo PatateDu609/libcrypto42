@@ -11,27 +11,14 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <byteswap.h>
 
 #define SHL(x, n) ((x) << (n))
 #define SHR(x, n) ((x) >> (n))
 #define ROTL(x, n) (((x) << (n)) | ((x) >> (sizeof(x) * 8 - (n))))
 #define ROTR(x, n) (((x) >> (n)) | ((x) << (sizeof(x) * 8 - (n))))
 
-#define BSWAP16(x) ((ROTL(x, 8) & 0xFF00FF00) | (ROTR(x, 8) & 0x00FF00FF))
-
-#define BSWAP32(x) (ROTL(x, 24) & 0xFF00FF00) | (ROTL(x, 8) & 0x00FF00FF) |\
-					(ROTR(x, 8) & 0xFF00FF00) | (ROTR(x, 24) & 0x00FF00FF)
-
-#define BSWAP64(x)	(ROTL(x, 56) & 0xFF00FF00) |\
-					(ROTL(x, 40) & 0x00FF00FF) |\
-					(ROTL(x, 24) & 0x0000FF00) |\
-					(ROTL(x, 8) & 0x000000FF) |\
-					(ROTR(x, 8) & 0xFF000000) |\
-					(ROTR(x, 24) & 0x00FF0000) |\
-					(ROTR(x, 40) & 0xFF000000) |\
-					(ROTR(x, 56) & 0x000000FF)
-
-#define BSWAP128(x) ((BSWAP64(x) << 64) | BSWAP64(x >> 64))
+#define bswap_128(x) ((((__uint128_t)bswap_64(x)) << 64) | bswap_64(x >> 64))
 
 #define __internal __attribute__((visibility("internal")))
 #define __hidden __attribute__((visibility("hidden")))

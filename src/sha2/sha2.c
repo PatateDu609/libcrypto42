@@ -16,7 +16,7 @@
 
 static bool __intermediate_sha2_bytes(const struct msg *msg, struct sha2 *ctx)
 {
-	struct blk *blks = get_blocks(msg, ctx->alg.block_size, ctx->alg.wanted_size, true);
+	struct blk *blks = get_blocks(msg, ctx->alg.block_size, ctx->alg.wanted_size, false);
 	if (blks == NULL)
 		return false;
 

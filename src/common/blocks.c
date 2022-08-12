@@ -6,9 +6,10 @@
  */
 
 #include "common.h"
+#include "libft.h"
 #include <stdio.h>
 
-static void append_size(struct blk *blks, __uint128_t len, size_t wanted_size,  bool le)
+static void append_size(struct blk *blks, __uint128_t len, size_t wanted_size, bool le)
 {
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 
@@ -22,9 +23,15 @@ static void append_size(struct blk *blks, __uint128_t len, size_t wanted_size,  
 	else
 	{
 		if (wanted_size == 8)
-			*((uint64_t *)(blks->data + blks->len - 8)) = BSWAP64((uint64_t)len);
+		{
+			uint64_t tmp = bswap_64((uint64_t)len);
+			ft_memcpy(blks->data + blks->len - 8, &tmp, 8);
+		}
 		else
-			*((__uint128_t *)(blks->data + blks->len - 16)) = BSWAP128(len);
+		{
+			__uint128_t tmp = bswap_128(len);
+			ft_memcpy(blks->data + blks->len - 16, &tmp, 16);
+		}
 	}
 
 #elif __BYTE_ORDER == __BIG_ENDIAN
@@ -32,9 +39,15 @@ static void append_size(struct blk *blks, __uint128_t len, size_t wanted_size,  
 	if (le)
 	{
 		if (wanted_size == 8)
-			*((uint64_t *)(blks->data + blks->len - 8)) = BSWAP64((uint64_t)len);
+		{
+			uint64_t tmp = bswap_64((uint64_t)len);
+			ft_memcpy(blks->data + blks->len - 8, &tmp, 8);
+		}
 		else
-			*((__uint128_t *)(blks->data + blks->len - 16)) = BSWAP128(len);
+		{
+			__uint128_t tmp = bswap_128(len);
+			ft_memcpy(blks->data + blks->len - 16, &tmp, 16);
+		}
 	}
 	else
 	{
