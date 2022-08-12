@@ -20,7 +20,7 @@ And the following libraries (to build and run tests):
 
 ```bash
 $ make # compile only libcrypto42
-$ make test # run tests
+$ make check # run tests
 ```
 
 ## Progress
