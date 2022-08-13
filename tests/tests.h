@@ -110,6 +110,12 @@ static inline void get_output(const unsigned char *result, int digest_len, char 
 	}
 }
 
-void HMAC_sha2_256_test();
+void HMAC_sha2_256_test(void);
+void pbkdf_test_32_1(void);
+void pbkdf_test_32_2(void);
+void pbkdf_test_32_4096(void);
+void pbkdf_test_32_16777216(void);
+void pbkdf_test_40_4096(void);
+void pbkdf_test_16_4096(void);
 
 #endif
