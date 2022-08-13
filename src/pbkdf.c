@@ -18,24 +18,7 @@ uint8_t *pbkdf2(struct pbkdf2_hmac_req req)
 {
 	struct hmac_req hmac_req;
 
-#ifdef DEBUG
-	printf("req:\n");
-	printf("algo: %d\n", req.algo);
-	printf("dklen: %zu\n", req.dklen);
-	printf("iterations: %u\n", req.iterations);
-	printf("password: %s (len = %zu)\n", (char *)req.password, req.password_len);
-	printf("salt: %s (len = %zu)\n", (char *)req.salt, req.salt_len);
-	printf("\n");
-#endif
-
 	hmac_req.ctx = hmac_setup(req.algo);
-
-#ifdef DEBUG
-	printf("hmac_req:\n");
-	printf("hLen: %zu\n", hmac_req.ctx.L);
-	printf("Block size: %zu\n", hmac_req.ctx.b);
-	printf("\n");
-#endif
 
 	if (hmac_req.ctx.H == NULL || hmac_req.ctx.b == 0 || hmac_req.ctx.L == 0)
 		return NULL;
@@ -53,11 +36,6 @@ uint8_t *pbkdf2(struct pbkdf2_hmac_req req)
 
 	size_t l = ceilf((float)req.dklen / (float)hmac_req.ctx.L);
 	size_t r = req.dklen - (l - 1) * hmac_req.ctx.L;
-
-#ifdef DEBUG
-	printf("l: %zu\n", l);
-	printf("r: %zu\n", r);
-#endif
 
 	// Compute the current block of the derived key.
 	for (size_t i = 1; i <= l; i++)
