@@ -12,11 +12,12 @@ TEST_SRC		=	tests/md5.c			\
 					tests/registry.c	\
 					tests/sha2.c		\
 					tests/hmac.c		\
+					tests/pbkdf.c		\
 
 TEST_OBJ		=	$(addprefix $(PATH_OBJ)/, $(TEST_SRC:.c=.o))
 
 TEST_CFLAGS		=	-Iinclude -Ilibft/include -Wall -Werror -Wextra -g3 -ggdb -O0
-TEST_LDFLAGS	=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lcunit
+TEST_LDFLAGS	=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lcunit -lm
 
 $(PATH_OBJ)/%.o:	%.c
 	$(MKDIR) $(dir $@)

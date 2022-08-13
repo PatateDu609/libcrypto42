@@ -16,6 +16,7 @@ int main(void)
 	CU_pSuite sha384_file = NULL;
 	CU_pSuite sha512_file = NULL;
 	CU_pSuite hmac = NULL;
+	CU_pSuite pbkdf = NULL;
 
 	/* initialize the CUnit test registry */
 	if (CUE_SUCCESS != CU_initialize_registry())
@@ -37,6 +38,7 @@ int main(void)
 	DECLARE_SUITE(sha512_file, "SHA512 file", NULL, NULL);
 
 	DECLARE_SUITE(hmac, "HMAC", NULL, NULL);
+	DECLARE_SUITE(pbkdf, "PBKDF", NULL, NULL);
 
 	FILL_STR_SUITE(md5_string);
 	FILL_FILE_SUITE(md5_file);
@@ -54,7 +56,19 @@ int main(void)
 	FILL_STR_SUITE(sha512_string);
 	FILL_FILE_SUITE(sha512_file);
 
-	if (!(CU_add_test(hmac, "HMAC_sha2_256_test", HMAC_sha2_256_test)))
+	if (!(CU_add_test(hmac, "HMAC sha2 256 test", HMAC_sha2_256_test)))
+		return CU_get_error();
+	if (!(CU_add_test(pbkdf, "PBKDF (HMAC-256) dklen = 32, c = 1", pbkdf_test_32_1)))
+		return CU_get_error();
+	if (!(CU_add_test(pbkdf, "PBKDF (HMAC-256) dklen = 32, c = 2", pbkdf_test_32_2)))
+		return CU_get_error();
+	if (!(CU_add_test(pbkdf, "PBKDF (HMAC-256) dklen = 32, c = 4096", pbkdf_test_32_4096)))
+		return CU_get_error();
+	if (!(CU_add_test(pbkdf, "PBKDF (HMAC-256) dklen = 32, c = 16777216", pbkdf_test_32_16777216)))
+		return CU_get_error();
+	if (!(CU_add_test(pbkdf, "PBKDF (HMAC-256) dklen = 40, c = 4096", pbkdf_test_40_4096)))
+		return CU_get_error();
+	if (!(CU_add_test(pbkdf, "PBKDF (HMAC-256) dklen = 16, c = 4096", pbkdf_test_16_4096)))
 		return CU_get_error();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
