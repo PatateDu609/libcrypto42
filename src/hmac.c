@@ -12,18 +12,26 @@
 /**
  * @brief Computes a block sized key ready to be used for the HMAC algorithm.
  *
- * @param key The block sized key to compute.
+ * @param block_key The block sized key to compute.
  * @param req The requested HMAC configuration.
  */
-static void compute_key(uint8_t *key, struct hmac_req req)
+static void compute_key(uint8_t *block_key, struct hmac_req req)
 {
-	if (req.key_len > req.ctx.b)
-		req.ctx.H(req.key, req.key_len, key);
-	else
-		ft_memcpy(key, req.key, req.key_len);
+	size_t start;
 
-	for (size_t i = req.key_len; i < req.ctx.b; i++)
-		key[i] = 0;
+	if (req.key_len > req.ctx.b)
+	{
+		start = req.ctx.L;
+		req.ctx.H(req.key, req.key_len, block_key);
+	}
+	else
+	{
+		start = req.key_len;
+		ft_memcpy(block_key, req.key, req.key_len);
+	}
+
+	for (size_t i = start; i < req.ctx.b; i++)
+		block_key[i] = 0;
 }
 
 struct hmac_func hmac_setup(enum hmac_algorithm alg)
@@ -60,9 +68,12 @@ struct hmac_func hmac_setup(enum hmac_algorithm alg)
 
 uint8_t *hmac(struct hmac_req req)
 {
+	if (req.ctx.H == NULL || req.ctx.b == 0 || req.ctx.L == 0) // Invalid HMAC algorithm
+		return NULL;
+
 	uint8_t ipad[req.ctx.b];
 	uint8_t opad[req.ctx.b];
-	uint8_t key[req.ctx.b];
+	uint8_t key[req.ctx.b]; // Block sized key
 
 	compute_key(key, req);
 
