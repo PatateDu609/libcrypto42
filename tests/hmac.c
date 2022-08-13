@@ -43,7 +43,6 @@ static void HMAC_sha2_256_single_test(const char *key, const char *message)
 
 	get_hmac(EVP_sha256, key, ft_strlen(key), message, ft_strlen(message), expected, size_digest);
 	get_hmac_actual(HMAC_SHA2_256, key, message, actual);
-	printf("actual: %s, expected: %s\n", actual, expected);
 	CU_ASSERT_STRING_EQUAL(actual, expected);
 }
 
