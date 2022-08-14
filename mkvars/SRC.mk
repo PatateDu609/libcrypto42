@@ -10,12 +10,18 @@ SHA2_SRC_BASENAME		=	sha2/sha2						\
 							sha2/update						\
 							sha2/final						\
 
+DES_SRC_BASENAME		=	DES/DES							\
+							DES/key							\
+							DES/permutation					\
+							DES/round						\
+
 COMMON_SRC_BASENAME		=	common/blocks					\
 							common/askpass					\
 
 BASENAME				:=	$(MD5_SRC_BASENAME)				\
 							$(SHA2_SRC_BASENAME)			\
 							$(COMMON_SRC_BASENAME)			\
+							$(DES_SRC_BASENAME)				\
 							hmac							\
 							pbkdf							\
 
