@@ -112,4 +112,57 @@ uint64_t get_random(void);
  */
 uint64_t get_random_range(uint64_t min, uint64_t max);
 
+/**
+ * @brief Fill an array with random bytes
+ *
+ * @param ptr The array to fill.
+ * @param length The length of the array.
+ *
+ * @return A pointer to the array.
+ */
+uint8_t *get_random_bytes_at(uint8_t *ptr, uint64_t length);
+
+/**
+ * @brief Get an array of random bytes.
+ *
+ * @param len The length of the array.
+ * @return A pointer to the array.
+ *
+ * @warning The returned array must be freed.
+ */
+uint8_t *get_random_bytes(size_t len);
+
+/**
+ * @brief Fill a string with random characters.
+ *
+ * @param ptr The string to fill.
+ * @param length The length of the string.
+ *
+ * @return char* The string itself.
+ */
+char *get_random_string_at(char *ptr, uint64_t length);
+
+/**
+ * @brief Get a string of random characters.
+ *
+ * @param len The length of the string.
+ * @return The string.
+ *
+ * @warning The returned string must be freed.
+ */
+char *get_random_string(size_t len);
+
+/**
+ * @brief Get the random string from a given charset.
+ *
+ * @param charset The charset to use (must be terminated by '\0').
+ * @param len The length of the string.
+ * @return The string.
+ *
+ * @warning The returned string must be freed.
+ * @note The charset may contain duplicates, but it will break the pseudo-uniformity
+ * of the distribution.
+ */
+char *get_random_string_from(const char *charset, size_t len);
+
 #endif
