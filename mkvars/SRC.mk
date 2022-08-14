@@ -24,6 +24,7 @@ BASENAME				:=	$(MD5_SRC_BASENAME)				\
 							$(DES_SRC_BASENAME)				\
 							hmac							\
 							pbkdf							\
+							base64							\
 
 SRC						:=	$(addprefix $(PATH_SRC)/,\
 								$(addsuffix $(LANGEXTENSION), $(BASENAME)))

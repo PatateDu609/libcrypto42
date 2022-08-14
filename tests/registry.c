@@ -17,6 +17,7 @@ int main(void)
 	CU_pSuite sha512_file = NULL;
 	CU_pSuite hmac = NULL;
 	CU_pSuite pbkdf = NULL;
+	CU_pSuite base64 = NULL;
 
 	/* initialize the CUnit test registry */
 	if (CUE_SUCCESS != CU_initialize_registry())
@@ -39,6 +40,7 @@ int main(void)
 
 	DECLARE_SUITE(hmac, "HMAC", NULL, NULL);
 	DECLARE_SUITE(pbkdf, "PBKDF", NULL, NULL);
+	DECLARE_SUITE(base64, "Base64", NULL, NULL);
 
 	FILL_STR_SUITE(md5_string);
 	FILL_FILE_SUITE(md5_file);
@@ -69,6 +71,8 @@ int main(void)
 	if (!(CU_add_test(pbkdf, "PBKDF (HMAC-256) dklen = 40, c = 4096", pbkdf_test_40_4096)))
 		return CU_get_error();
 	if (!(CU_add_test(pbkdf, "PBKDF (HMAC-256) dklen = 16, c = 4096", pbkdf_test_16_4096)))
+		return CU_get_error();
+	if (!(CU_add_test(base64, "Base64 encode", base64_test_encode)))
 		return CU_get_error();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);

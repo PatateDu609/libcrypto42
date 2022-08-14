@@ -9,53 +9,41 @@
  */
 
 #include "common.h"
-#include <stdio.h>
+#include <math.h>
 
-char *base64_encode(uint8_t *bytes, size_t len)
+char *base64_encode(const uint8_t *bytes, size_t len)
 {
 	char *set = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	int remaining = (len % 3);
-	int flen = (len / 3) * 4 + remaining;
+	size_t flen = ceil(len / 3.) * 4;
 	char *res = malloc((flen + 1) * sizeof *res);
 
-	for (size_t i = 0, j = 0; i < len; i += 3, j += 4)
+	size_t j = 0;
+	for (size_t i = 0; i < len; i += 3)
 	{
 		uint8_t index = (bytes[i] & 0b11111100) >> 2;
-		res[j] = set[index];
+		res[j++] = set[index];
 
 		if (i + 1 == len)
 		{
-			res[j + 1] = '=';
-			res[j + 2] = '=';
+			res[j++] = set[(bytes[i] & 0b00000011) << 4];
 			break;
 		}
 		index = ((bytes[i] & 0b00000011) << 4) | ((bytes[i + 1] & 0b11110000) >> 4);
-		res[j + 1] = set[index];
+		res[j++] = set[index];
 
 		if (i + 2 == len)
 		{
-			res[j + 1] = '=';
+			res[j++] = set[(bytes[i + 1] & 0b00001111) << 2];
 			break;
 		}
 		index = ((bytes[i + 1] & 0b00001111) << 2) | ((bytes[i + 2] & 0b11000000) >> 6);
-		res[j + 2] = set[index];
+		res[j++] = set[index];
 
 		index = bytes[i + 2] & 0b00111111;
-		res[j + 3] = set[index];
+		res[j++] = set[index];
 	}
-	// while (remaining)
-	// {
-	// 	res[flen - remaining--] = '=';
-	// }
+	for (; j < flen; j++)
+		res[j] = '=';
 	res[flen] = '\0';
 	return res;
-}
-
-#include <string.h>
-int main()
-{
-	char *in = "light work.";
-	char *out = base64_encode((uint8_t *)in, strlen(in));
-
-	printf("out = %s\n", out);
 }
