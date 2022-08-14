@@ -40,3 +40,4 @@ To compile an executable using this library, you need to add the following libra
 + [ ] DES
 + [ ] Operation modes for symmetric encryption
 + [ ] Base64
++ [x] Use of the Kernel CSPRNG
