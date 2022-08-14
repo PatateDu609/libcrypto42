@@ -165,6 +165,15 @@ char *get_random_string(size_t len);
  */
 char *get_random_string_from(const char *charset, size_t len);
 
-
+/**
+ * @brief Encode a byte array in base64.
+ *
+ * @param data The data to encode.
+ * @param len The length of the data.
+ * @return The encoded string.
+ *
+ * @warning The returned string must be freed.
+ */
+char *base64_encode(const uint8_t *data, size_t len);
 
 #endif

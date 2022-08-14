@@ -13,6 +13,7 @@ TEST_SRC		=	tests/md5.c			\
 					tests/sha2.c		\
 					tests/hmac.c		\
 					tests/pbkdf.c		\
+					tests/base64.c		\
 
 TEST_OBJ		=	$(addprefix $(PATH_OBJ)/, $(TEST_SRC:.c=.o))
 
