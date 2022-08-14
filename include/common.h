@@ -95,4 +95,21 @@ static inline char *stringify_hash(const uint8_t *buf, size_t len)
 	return str;
 }
 
+/**
+ * @brief Get a random unsigned 64-bit integer from the system.
+ *
+ * @return The random number.
+ */
+uint64_t get_random(void);
+
+/**
+ * @brief Get a random unsigned 64-bit integer in the given range.
+ *
+ * @param min The minimum value of the range.
+ * @param max The maximum value of the range.
+ *
+ * @return The random number.
+ */
+uint64_t get_random_range(uint64_t min, uint64_t max);
+
 #endif
