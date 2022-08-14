@@ -7,8 +7,8 @@
  * @warning All the functions in this file return malloc-ed strings that must be freed by the user.
  */
 
-#ifndef MD5_H
-#define MD5_H
+#ifndef CRYPTO_H
+#define CRYPTO_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -392,4 +392,4 @@ char *md5_descriptor(int fd);
  */
 uint8_t *md5_descriptor_raw(int fd, uint8_t *output);
 
-#endif
+#endif /* CRYPTO_H */
