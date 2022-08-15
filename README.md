@@ -39,5 +39,5 @@ To compile an executable using this library, you need to add the following libra
 + [x] HMAC
 + [ ] DES
 + [ ] Operation modes for symmetric encryption
-+ [ ] Base64
++ [x] Base64
 + [x] Use of the Kernel CSPRNG

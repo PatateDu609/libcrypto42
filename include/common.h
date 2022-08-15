@@ -176,4 +176,15 @@ char *get_random_string_from(const char *charset, size_t len);
  */
 char *base64_encode(const uint8_t *data, size_t len);
 
+/**
+ * @brief Decode a base64 string.
+ *
+ * @param str The string to decode.
+ * @param flen The length of the resulting data.
+ *
+ * @return The decoded data.
+ * @warning The returned array must be freed.
+ */
+uint8_t *base64_decode(const char *str, size_t *flen);
+
 #endif

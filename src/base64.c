@@ -10,6 +10,7 @@
 
 #include "common.h"
 #include <math.h>
+#include <string.h>
 
 char *base64_encode(const uint8_t *bytes, size_t len)
 {
@@ -17,6 +18,7 @@ char *base64_encode(const uint8_t *bytes, size_t len)
 	size_t flen = ceil(len / 3.) * 4;
 	char *res = malloc((flen + 1) * sizeof *res);
 
+	printf("encoded flen = %zu\n", flen);
 	size_t j = 0;
 	for (size_t i = 0; i < len; i += 3)
 	{
@@ -45,5 +47,47 @@ char *base64_encode(const uint8_t *bytes, size_t len)
 	for (; j < flen; j++)
 		res[j] = '=';
 	res[flen] = '\0';
+	return res;
+}
+
+uint8_t *base64_decode(const char *str, size_t *flen)
+{
+	char *set = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	size_t len = strlen(str);
+	size_t padding = 0;
+
+	// Count padding and check if the string is valid in the same time.
+	for (size_t i = 0; i < len; i++)
+	{
+		if (str[i] == '=')
+			padding++;
+		else if (strchr(set, str[i]) == NULL || padding) // Invalid character or padding in the middle.
+			return NULL;
+	}
+	if (padding > 2) // Invalid padding.
+		return NULL;
+	printf("Padding = %zu\n", padding);
+	*flen = (len / 4) * 3 - padding;
+	printf("decoded flen = %zu\n", *flen);
+
+	// It is a raw array not a string. \0 can be part of the array and should not be used as a terminator
+	uint8_t *res = malloc(*flen * sizeof *res);
+	size_t j = 0;
+	for (size_t i = 0; i < len - padding; i += 4)
+	{
+		uint8_t indices[4] = {
+			strchr(set, str[i]) - set,
+			strchr(set, str[i + 1]) - set,
+			strchr(set, str[i + 2]) - set,
+			strchr(set, str[i + 3]) - set
+		};
+		res[j++] = (indices[0] << 2) | (indices[1] >> 4);
+		if (i + 2 == len - padding)
+			break;
+		res[j++] = ((indices[1] & 0b00001111) << 4) | (indices[2] >> 2);
+		if (i + 3 == len - padding)
+			break;
+		res[j++] = ((indices[2] & 0b00000011) << 6) | indices[3];
+	}
 	return res;
 }
