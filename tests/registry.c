@@ -74,6 +74,8 @@ int main(void)
 		return CU_get_error();
 	if (!(CU_add_test(base64, "Base64 encode", base64_test_encode)))
 		return CU_get_error();
+	if (!(CU_add_test(base64, "Base64 decode", base64_test_decode)))
+		return CU_get_error();
 
 	CU_basic_set_mode(CU_BRM_VERBOSE);
 	CU_basic_run_tests();

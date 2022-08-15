@@ -118,5 +118,6 @@ void pbkdf_test_32_16777216(void);
 void pbkdf_test_40_4096(void);
 void pbkdf_test_16_4096(void);
 void base64_test_encode(void);
+void base64_test_decode(void);
 
 #endif
