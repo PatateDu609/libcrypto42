@@ -14,6 +14,39 @@
 #include <stdbool.h>
 #include <byteswap.h>
 
+/**
+ * @brief All possible errors for the library.
+ */
+enum crypto_error
+{
+	CRYPTO_SUCCESS = 0,					///< Success
+	CRYPTO_CTX_NULL,					///< Context is NULL
+
+	CRYPTO_KEY_NULL,					///< Key is NULL
+	CRYPTO_KEY_LEN_ZERO,				///< Key length is zero
+	CRYPTO_PLAINTEXT_NULL,				///< Plaintext is NULL
+	CRYPTO_PLAINTEXT_LEN_ZERO,			///< Plaintext length is zero
+	CRYPTO_CIPHERTEXT_NULL,				///< Ciphertext is NULL
+	CRYPTO_CIPHERTEXT_LEN_ZERO,			///< Ciphertext length is zero
+	CRYPTO_IV_NULL,						///< IV is NULL
+	CRYPTO_IV_LEN_ZERO,					///< IV length is zero
+	CRYPTO_NONCE_NULL,					///< Nonce is NULL
+	CRYPTO_NONCE_LEN_ZERO,				///< Nonce length is zero
+
+	CRYPTO_BLKSIZE_ZERO,				///< Block size is zero
+	CRYPTO_BLKSIZE_INVALID,				///< Block size must be either 8 or 16
+	CRYPTO_CIPHERTEXT_BLKSIZE_UNMATCH,	///< Ciphertext should be a multiple of the block size
+	CRYPTO_IV_BLKSIZE_UNMATCH,			///< IV should be equal to the block size
+
+	CRYPTO_ALGO_UNKNOWN,				///< Unknown algorithm
+	CRYPTO_ALGO_INVALID_BLKSIZE,		///< Invalid block size for the algorithm
+};
+
+/**
+ * @brief Stores errors from the library.
+ */
+extern crypto_error crypto42_errno;
+
 #define SHL(x, n) ((x) << (n))
 #define SHR(x, n) ((x) >> (n))
 #define ROTL(x, n) (((x) << (n)) | ((x) >> (sizeof(x) * 8 - (n))))
@@ -105,11 +138,7 @@ uint64_t get_random(void);
 /**
  * @brief Get a random unsigned 64-bit integer in the given range.
  *
- * @param min The minimum value of the range.
- * @param max The maximum value of the range.
- *
- * @return The random number.
- */
+ * @param min The minimum value of the range.crypto_error
 uint64_t get_random_range(uint64_t min, uint64_t max);
 
 /**
@@ -186,5 +215,12 @@ char *base64_encode(const uint8_t *data, size_t len);
  * @warning The returned array must be freed.
  */
 uint8_t *base64_decode(const char *str, size_t *flen);
+
+/**
+ * @brief Translate errors into human readable strings.
+ *
+ * @param err The error to translate.
+ */
+const char *crypto42_strerror(crypto_error err);
 
 #endif
