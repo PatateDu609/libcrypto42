@@ -13,17 +13,19 @@
  * @brief Performs an ECB encryption on the given context, using block size of 8 bytes.
  *
  * @param ctx The context to use for the encryption.
- * @param padding The padding to use for the encryption.
  *
  * @return Returns a copy of the pointer given in the context for the ciphertext.
  */
-uint8_t *__ECB_encrypt_8(struct cipher_ctx *ctx, uint8_t padding)
+uint8_t *__ECB_encrypt_8(struct cipher_ctx *ctx)
 {
 	uint64_t *plaintext = (uint64_t *)ctx->plaintext;
 	uint64_t *ciphertext = (uint64_t *)ctx->ciphertext;
 
+	uint64_t key;
+	memcpy(&key, ctx->key, 8);
+
 	for (size_t i = 0, nb = ctx->plaintext_len / 8; i < nb; i++)
-		ciphertext[i] = ctx->algo.blk8.enc(plaintext[i], ctx->key);
+		ciphertext[i] = ctx->algo.blk8.enc(plaintext[i], key);
 	return ctx->ciphertext;
 }
 
@@ -37,7 +39,7 @@ uint8_t *ECB_encrypt(struct cipher_ctx *ctx)
 	uint8_t padding = ctx->plaintext_len % blk_size;
 	if (padding == 0)
 		padding = blk_size;
-	pad(ctx->plaintext_len, &ctx->plaintext, padding);
+	pad(ctx->plaintext, &ctx->plaintext_len, padding);
 
 	ctx->cipher_len = ctx->plaintext_len;
 	ctx->ciphertext = malloc(ctx->cipher_len);
@@ -45,7 +47,7 @@ uint8_t *ECB_encrypt(struct cipher_ctx *ctx)
 	switch(blk_size)
 	{
 		case 8:
-			return __ECB_encrypt_8(ctx, padding);
+			return __ECB_encrypt_8(ctx);
 		default:
 		{
 			crypto42_errno = CRYPTO_BLKSIZE_INVALID;
@@ -70,8 +72,11 @@ static uint8_t *__ECB_decrypt_8(struct cipher_ctx *ctx)
 	uint64_t *plaintext = (uint64_t *)ctx->plaintext;
 	uint64_t *ciphertext = (uint64_t *)ctx->ciphertext;
 
+	uint64_t key;
+	memcpy(&key, ctx->key, 8);
+
 	for (size_t i = 0, nb =  ctx->plaintext_len / 8; i < nb; i++)
-		plaintext[i] = ctx->algo.blk8.dec(ciphertext[i], ctx->key);
+		plaintext[i] = ctx->algo.blk8.dec(ciphertext[i], key);
 	return ctx->plaintext;
 }
 

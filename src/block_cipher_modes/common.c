@@ -87,7 +87,7 @@ uint8_t *pad(uint8_t *plaintext, size_t *len, uint8_t padding)
 		return NULL;
 	memcpy(p, plaintext, *len);
 
-	for (size_t i = len; i < *len + padding; i++)
+	for (size_t i = *len; i < *len + padding; i++)
 		p[i] = padding; // Padding is the same for all bytes
 	*len += padding;
 	return p;

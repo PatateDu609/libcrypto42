@@ -45,7 +45,7 @@ enum crypto_error
 /**
  * @brief Stores errors from the library.
  */
-extern crypto_error crypto42_errno;
+extern enum crypto_error crypto42_errno;
 
 #define SHL(x, n) ((x) << (n))
 #define SHR(x, n) ((x) >> (n))
@@ -139,6 +139,9 @@ uint64_t get_random(void);
  * @brief Get a random unsigned 64-bit integer in the given range.
  *
  * @param min The minimum value of the range.crypto_error
+ * @param max The maximum value of the range.
+ * @return The random number.
+ */
 uint64_t get_random_range(uint64_t min, uint64_t max);
 
 /**
@@ -221,6 +224,6 @@ uint8_t *base64_decode(const char *str, size_t *flen);
  *
  * @param err The error to translate.
  */
-const char *crypto42_strerror(crypto_error err);
+const char *crypto42_strerror(enum crypto_error err);
 
 #endif
