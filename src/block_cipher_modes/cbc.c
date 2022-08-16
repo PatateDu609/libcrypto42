@@ -1,0 +1,115 @@
+/**
+ * @file cbc.c
+ * @author Ghali Boucetta (gboucett@student.42.fr)
+ * @brief CBC block cipher mode implementation
+ * @date 2022-08-16
+ */
+
+#include "cipher.h"
+
+#include "cipher.h"
+#include "internal.h"
+#include <stdio.h>
+
+/**
+ * @brief Performs an CBC encryption on the given context, using block size of 8 bytes.
+ *
+ * @param ctx The context to use for the encryption.
+ *
+ * @return Returns a copy of the pointer given in the context for the ciphertext.
+ */
+uint8_t *__CBC_encrypt_8(struct cipher_ctx *ctx)
+{
+	uint64_t *plaintext = (uint64_t *)ctx->plaintext;
+	uint64_t *ciphertext = (uint64_t *)ctx->ciphertext;
+
+	uint64_t last;
+	memcpy(&last, ctx->iv, 8);
+
+	for (size_t i = 0, nb = ctx->plaintext_len / 8; i < nb; i++)
+	{
+		ciphertext[i] = ctx->algo.blk8.enc(plaintext[i] ^ last, ctx->key);
+		last = ciphertext[i];
+	}
+
+	return ctx->ciphertext;
+}
+
+uint8_t *CBC_encrypt(struct cipher_ctx *ctx)
+{
+	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_CBC, true))
+		return NULL;
+
+	uint8_t blk_size = ctx->algo.blk_size;
+
+	uint8_t padding = ctx->plaintext_len % blk_size;
+	if (padding == 0)
+		padding = blk_size;
+	pad(ctx->plaintext_len, &ctx->plaintext, padding);
+
+	ctx->cipher_len = ctx->plaintext_len;
+	ctx->ciphertext = malloc(ctx->cipher_len);
+
+	switch(blk_size)
+	{
+		case 8:
+			return __CBC_encrypt_8(ctx);
+		default:
+		{
+			crypto42_errno = CRYPTO_BLKSIZE_INVALID;
+			free(ctx->ciphertext);
+			return NULL;
+		}
+	}
+}
+
+/**
+ * @brief Performs an CBC decryption on the given context, using block size of 8 bytes.
+ *
+ * @param ctx The context to use for the decryption.
+ *
+ * @return Returns a copy of the pointer given in the context for the plaintext.
+ */
+uint8_t *__CBC_decrypt_8(struct cipher_ctx *ctx)
+{
+	uint64_t *plaintext = (uint64_t *)ctx->plaintext;
+	uint64_t *ciphertext = (uint64_t *)ctx->ciphertext;
+
+	uint64_t last;
+	memcpy(&last, ctx->iv, 8);
+
+	for (size_t i = 0, nb = ctx->plaintext_len / 8; i < nb; i++)
+	{
+		plaintext[i] = ctx->algo.blk8.dec(ciphertext[i], ctx->key) ^ last;
+		last = ciphertext[i];
+	}
+	return ctx->plaintext;
+}
+
+uint8_t *CBC_decrypt(struct cipher_ctx *ctx)
+{
+	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_CBC, false))
+		return NULL;
+
+	uint8_t blk_size = ctx->algo.blk_size;
+	ctx->plaintext_len = ctx->cipher_len;
+	ctx->plaintext = malloc(ctx->plaintext_len);
+
+	switch(blk_size)
+	{
+		case 8:
+			__CBC_decrypt_8(ctx);
+			break;
+		default:
+		{
+			crypto42_errno = CRYPTO_BLKSIZE_INVALID;
+			free(ctx->plaintext);
+			return NULL;
+		}
+	}
+
+	uint8_t *temp = unpad(ctx->plaintext, &ctx->plaintext_len);
+	free(ctx->plaintext);
+	ctx->plaintext = temp;
+	return ctx->plaintext;
+}
