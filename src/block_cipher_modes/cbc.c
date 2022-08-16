@@ -23,12 +23,14 @@ uint8_t *__CBC_encrypt_8(struct cipher_ctx *ctx)
 	uint64_t *plaintext = (uint64_t *)ctx->plaintext;
 	uint64_t *ciphertext = (uint64_t *)ctx->ciphertext;
 
+	uint64_t key;
+	memcpy(&key, ctx->key, 8);
 	uint64_t last;
 	memcpy(&last, ctx->iv, 8);
 
 	for (size_t i = 0, nb = ctx->plaintext_len / 8; i < nb; i++)
 	{
-		ciphertext[i] = ctx->algo.blk8.enc(plaintext[i] ^ last, ctx->key);
+		ciphertext[i] = ctx->algo.blk8.enc(plaintext[i] ^ last, key);
 		last = ciphertext[i];
 	}
 
@@ -45,7 +47,7 @@ uint8_t *CBC_encrypt(struct cipher_ctx *ctx)
 	uint8_t padding = ctx->plaintext_len % blk_size;
 	if (padding == 0)
 		padding = blk_size;
-	pad(ctx->plaintext_len, &ctx->plaintext, padding);
+	pad(ctx->plaintext, &ctx->plaintext_len, padding);
 
 	ctx->cipher_len = ctx->plaintext_len;
 	ctx->ciphertext = malloc(ctx->cipher_len);
@@ -75,12 +77,15 @@ uint8_t *__CBC_decrypt_8(struct cipher_ctx *ctx)
 	uint64_t *plaintext = (uint64_t *)ctx->plaintext;
 	uint64_t *ciphertext = (uint64_t *)ctx->ciphertext;
 
+	uint64_t key;
+	memcpy(&key, ctx->key, 8);
+
 	uint64_t last;
 	memcpy(&last, ctx->iv, 8);
 
 	for (size_t i = 0, nb = ctx->plaintext_len / 8; i < nb; i++)
 	{
-		plaintext[i] = ctx->algo.blk8.dec(ciphertext[i], ctx->key) ^ last;
+		plaintext[i] = ctx->algo.blk8.dec(ciphertext[i], key) ^ last;
 		last = ciphertext[i];
 	}
 	return ctx->plaintext;
