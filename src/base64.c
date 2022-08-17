@@ -96,7 +96,7 @@ uint8_t *base64_decode(const char *str, size_t *flen)
 
 char *base64_encode_file(const char *filename)
 {
-	FILE *file = fopen(filename, "r");
+	FILE *file = filename ? fopen(filename, "r") : stdin;
 	if (file == NULL)
 		return NULL;
 	uint8_t buffer[528]; // It is a common multiple of 3 and 4, so we do not have padding.
@@ -121,7 +121,7 @@ char *base64_encode_file(const char *filename)
 
 uint8_t *base64_decode_file(const char *filename, size_t *flen)
 {
-	FILE *file = fopen(filename, "r");
+	FILE *file = filename ? fopen(filename, "r") : stdin;
 	if (file == NULL)
 		return NULL;
 	char line[128]; // A line is exactly 64 characters long, but as a security measure we read 128.
