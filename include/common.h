@@ -209,6 +209,18 @@ char *get_random_string_from(const char *charset, size_t len);
 char *base64_encode(const uint8_t *data, size_t len);
 
 /**
+ * @brief Encode a file in base64.
+ *
+ * @param filename The name of the file to encode.
+ *
+ * @return The encoded string.
+ *
+ * @warning The returned string must be freed.
+ * @see base64_encode
+ */
+char *base64_encode_file(const char *filename);
+
+/**
  * @brief Decode a base64 string.
  *
  * @param str The string to decode.
@@ -218,6 +230,17 @@ char *base64_encode(const uint8_t *data, size_t len);
  * @warning The returned array must be freed.
  */
 uint8_t *base64_decode(const char *str, size_t *flen);
+
+/**
+ * @brief Decode a base64 string from a file.
+ *
+ * @param filename The name of the file to decode.
+ *
+ * @return The decoded data.
+ * @warning The returned array must be freed.
+ * @see base64_decode
+ */
+uint8_t *base64_decode_file(const char *filename, size_t *flen);
 
 /**
  * @brief Translate errors into human readable strings.
