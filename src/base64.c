@@ -11,6 +11,8 @@
 #include "common.h"
 #include <math.h>
 #include <string.h>
+#include <stdlib.h>
+#include <stddef.h>
 
 char *base64_encode(const uint8_t *bytes, size_t len)
 {
@@ -89,5 +91,54 @@ uint8_t *base64_decode(const char *str, size_t *flen)
 			break;
 		res[j++] = ((indices[2] & 0b00000011) << 6) | indices[3];
 	}
+	return res;
+}
+
+char *base64_encode_file(const char *filename)
+{
+	FILE *file = fopen(filename, "r");
+	if (file == NULL)
+		return NULL;
+	uint8_t buffer[528]; // It is a common multiple of 3 and 4, so we do not have padding.
+
+	size_t flen = 0;
+	size_t ret = 0;
+	char *res = NULL;
+	while ((ret = fread(buffer, 1, sizeof buffer, file)) > 0)
+	{
+		char *tmp = base64_encode(buffer, ret);
+		size_t tmp_len = strlen(res);
+		flen += tmp_len;
+
+		res = realloc(res, (flen + 1) * sizeof *res);
+		memcpy(res + flen - ret, tmp, ret);
+		free(tmp);
+	}
+	fclose(file);
+	res[flen] = '\0';
+	return res;
+}
+
+uint8_t *base64_decode_file(const char *filename, size_t *flen)
+{
+	FILE *file = fopen(filename, "r");
+	if (file == NULL)
+		return NULL;
+	char line[128]; // A line is exactly 64 characters long, but as a security measure we read 128.
+
+	*flen = 0;
+	uint8_t *res = NULL;
+	while (fgets(line, sizeof line, file))
+	{
+		size_t len;
+		uint8_t *tmp = base64_decode(line, &len);
+		if (tmp == NULL)
+			return NULL;
+
+		*flen += len;
+		res = realloc(res, (*flen + 1) * sizeof *res);
+		memcpy(res + *flen - len, tmp, len);
+	}
+	fclose(file);
 	return res;
 }
