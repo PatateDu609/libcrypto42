@@ -20,7 +20,6 @@ char *base64_encode(const uint8_t *bytes, size_t len)
 	size_t flen = ceil(len / 3.) * 4;
 	char *res = malloc((flen + 1) * sizeof *res);
 
-	printf("encoded flen = %zu\n", flen);
 	size_t j = 0;
 	for (size_t i = 0; i < len; i += 3)
 	{
@@ -103,18 +102,21 @@ char *base64_encode_file(const char *filename)
 
 	size_t flen = 0;
 	size_t ret = 0;
+	size_t pos = 0;
 	char *res = NULL;
 	while ((ret = fread(buffer, 1, sizeof buffer, file)) > 0)
 	{
 		char *tmp = base64_encode(buffer, ret);
-		size_t tmp_len = strlen(res);
+		size_t tmp_len = strlen(tmp);
 		flen += tmp_len;
 
 		res = realloc(res, (flen + 1) * sizeof *res);
-		memcpy(res + flen - ret, tmp, ret);
+		memcpy(res + pos, tmp, tmp_len);
+		pos += tmp_len;
 		free(tmp);
 	}
-	fclose(file);
+	if (filename)
+		fclose(file);
 	res[flen] = '\0';
 	return res;
 }
@@ -139,6 +141,7 @@ uint8_t *base64_decode_file(const char *filename, size_t *flen)
 		res = realloc(res, (*flen + 1) * sizeof *res);
 		memcpy(res + *flen - len, tmp, len);
 	}
-	fclose(file);
+	if (filename)
+		fclose(file);
 	return res;
 }
