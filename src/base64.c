@@ -67,9 +67,7 @@ uint8_t *base64_decode(const char *str, size_t *flen)
 	}
 	if (padding > 2) // Invalid padding.
 		return NULL;
-	printf("Padding = %zu\n", padding);
 	*flen = (len / 4) * 3 - padding;
-	printf("decoded flen = %zu\n", *flen);
 
 	// It is a raw array not a string. \0 can be part of the array and should not be used as a terminator
 	uint8_t *res = malloc(*flen * sizeof *res);
@@ -130,16 +128,19 @@ uint8_t *base64_decode_file(const char *filename, size_t *flen)
 
 	*flen = 0;
 	uint8_t *res = NULL;
+	size_t pos = 0;
 	while (fgets(line, sizeof line, file))
 	{
 		size_t len;
+		line[strcspn(line, "\r\n")] = '\0'; // Remove newline.
 		uint8_t *tmp = base64_decode(line, &len);
 		if (tmp == NULL)
 			return NULL;
 
 		*flen += len;
 		res = realloc(res, (*flen + 1) * sizeof *res);
-		memcpy(res + *flen - len, tmp, len);
+		memcpy(res + pos, tmp, len);
+		pos += len;
 	}
 	if (filename)
 		fclose(file);
