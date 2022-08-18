@@ -17,6 +17,7 @@ DES_SRC_BASENAME			=	DES/DES							\
 
 COMMON_SRC_BASENAME			=	common/blocks					\
 								common/askpass					\
+								common/gensalt					\
 
 CIPHER_MODE_SRC_BASENAME	=	block_cipher_modes/common					\
 								block_cipher_modes/cbc						\
