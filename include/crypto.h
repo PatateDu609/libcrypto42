@@ -312,7 +312,7 @@ static inline uint8_t *sha2_512_256_descriptor_raw(int fd, uint8_t *buf) {
  * @param str The string to compute the md5 of.
  * @return The md5 of the string.
  */
-char *md5(char *str);
+char *md5(const char *str);
 
 /**
  * @brief Compute the md5 of a string given as parameter, but put the raw bytes in a given buffer.
@@ -326,7 +326,7 @@ char *md5(char *str);
  * @note The returned buffer must be at least of size MD5_DIGEST_LENGTH, or it may
  * end up by a SEGFAULT.
  */
-uint8_t *md5_raw(char *str, uint8_t *output);
+uint8_t *md5_raw(const char *str, uint8_t *output);
 
 /**
  * @brief Compute the md5 of a fixed length array of bytes given as parameter.
@@ -335,7 +335,7 @@ uint8_t *md5_raw(char *str, uint8_t *output);
  * @param len The length of the array.
  * @return The md5 of the array.
  */
-char *md5_bytes(uint8_t *bytes, size_t len);
+char *md5_bytes(const uint8_t *bytes, size_t len);
 
 /**
  * @brief Compute the md5 of a fixed length array of bytes given as parameter,
@@ -349,7 +349,7 @@ char *md5_bytes(uint8_t *bytes, size_t len);
  *
  * @see md5_raw
  */
-uint8_t *md5_bytes_raw(uint8_t *bytes, size_t len, uint8_t *output);
+uint8_t *md5_bytes_raw(const uint8_t *bytes, size_t len, uint8_t *output);
 
 /**
  * @brief Compute the md5 of a file given as parameter.
@@ -357,7 +357,7 @@ uint8_t *md5_bytes_raw(uint8_t *bytes, size_t len, uint8_t *output);
  * @param filename The file to compute the md5 of.
  * @return The md5 of the file.
  */
-char *md5_file(char *filename);
+char *md5_file(const char *filename);
 
 /**
  * @brief Compute the md5 of a file given as parameter, but put the raw bytes in a given buffer.
@@ -369,7 +369,7 @@ char *md5_file(char *filename);
  *
  * @see md5_raw
  */
-uint8_t *md5_file_raw(char *filename, uint8_t *output);
+uint8_t *md5_file_raw(const char *filename, uint8_t *output);
 
 /**
  * @brief Compute the md5 of a file pointed by the file descriptor given as parameter.

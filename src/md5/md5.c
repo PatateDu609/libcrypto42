@@ -23,7 +23,7 @@ static bool __intermediate_md5_bytes(const struct msg *msg, struct md5_ctx *ctx)
 	return true;
 }
 
-uint8_t *md5_bytes_raw(uint8_t *bytes, size_t len, uint8_t *output)
+uint8_t *md5_bytes_raw(const uint8_t *bytes, size_t len, uint8_t *output)
 {
 	struct md5_ctx ctx;
 	struct msg msg = { .data = bytes, .len = len, .is_last_part = true, .filesize = len };
@@ -39,19 +39,19 @@ uint8_t *md5_bytes_raw(uint8_t *bytes, size_t len, uint8_t *output)
 	return md5_final_raw(&ctx, output);
 }
 
-char *md5_bytes(uint8_t *bytes, size_t len)
+char *md5_bytes(const uint8_t *bytes, size_t len)
 {
 	uint8_t buf[MD5_DIGEST_SIZE];
 	md5_bytes_raw(bytes, len, buf);
 	return stringify_hash(buf, MD5_DIGEST_SIZE);
 }
 
-uint8_t *md5_raw(char *str, uint8_t *output)
+uint8_t *md5_raw(const char *str, uint8_t *output)
 {
 	return md5_bytes_raw((uint8_t *)str, ft_strlen(str), output);
 }
 
-char *md5(char *str)
+char *md5(const char *str)
 {
 	uint8_t *bytes = (uint8_t *)str;
 	size_t len = ft_strlen(str);
@@ -115,7 +115,7 @@ char *md5_descriptor(int fd)
 	return stringify_hash(buf, MD5_DIGEST_SIZE);
 }
 
-uint8_t *md5_file_raw(char *filename, uint8_t *output)
+uint8_t *md5_file_raw(const char *filename, uint8_t *output)
 {
 	int fd = open(filename, O_RDONLY);
 	if (fd == -1)
@@ -125,7 +125,7 @@ uint8_t *md5_file_raw(char *filename, uint8_t *output)
 	return out;
 }
 
-char *md5_file(char *filename)
+char *md5_file(const char *filename)
 {
 	int fd = open(filename, O_RDONLY);
 	if (fd == -1)
