@@ -249,4 +249,14 @@ uint8_t *base64_decode_file(const char *filename, size_t *flen);
  */
 const char *crypto42_strerror(enum crypto_error err);
 
+/**
+ * @brief Generate a random salt.
+ *
+ * @param len The length of the salt.
+ *
+ * @return The salt.
+ * @warning The returned array must be freed.
+ */
+uint8_t *gensalt(size_t len);
+
 #endif
