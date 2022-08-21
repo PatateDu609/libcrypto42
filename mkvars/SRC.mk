@@ -16,8 +16,10 @@ DES_SRC_BASENAME			=	DES/DES							\
 								DES/round						\
 
 COMMON_SRC_BASENAME			=	common/blocks					\
+								common/rand						\
 								common/askpass					\
 								common/gensalt					\
+								common/strerror					\
 
 CIPHER_MODE_SRC_BASENAME	=	block_cipher_modes/common					\
 								block_cipher_modes/cbc						\

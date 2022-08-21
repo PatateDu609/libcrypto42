@@ -9,6 +9,7 @@
 
 #include "common.h"
 #include <unistd.h>
+#include <string.h>
 #include <fcntl.h>
 
 uint64_t get_random_range(uint64_t min, uint64_t max)
@@ -44,7 +45,7 @@ uint8_t *get_random_bytes(size_t len)
 	uint8_t *bytes = malloc(len);
 	if (!bytes)
 		return NULL;
-	return get_random_bytes_into(bytes, len);
+	return get_random_bytes_at(bytes, len);
 }
 
 char *get_random_string_at(char *ptr, uint64_t length)
