@@ -73,21 +73,19 @@ static uint32_t substitute(uint64_t block)
 		uint8_t current = (block >> (i * 6)) & 0b111111;
 
 		// Get the 2 outer bits of the current block
-		uint8_t row = (block & 0b000001) | ((current >> 4) & 0b10);
+		uint8_t row = (current & 0b000001) | ((current >> 4) & 0b10);
 		// Get the 4 inner bits of the current block
 		uint8_t col = (current & 0b011110) >> 1;
 
-		new_block |= (substitution_box[i][row * 16 + col] << (i * 4));
+		// Least significant block is substitued using S8
+		new_block |= substitution_box[7 - i][row * 16 + col] << (i * 4);
 	}
 
 	return new_block;
 }
 
-uint64_t feistel(uint64_t block, uint64_t subkey)
+void feistel(uint64_t subkey, uint32_t *l32, uint32_t *r32)
 {
-	union blk_split new_block = {.raw = block};
-	uint64_t right = new_block.right;
-
 	const uint8_t E[48] = {
 		32,		1,		2,		3,		4,		5,
 		4,		5,		6,		7,		8,		9,
@@ -106,12 +104,12 @@ uint64_t feistel(uint64_t block, uint64_t subkey)
 		19,		13,		30,		6,		22,		11,		4,		25,
 	};
 
-	right = permute(right, E, 48);
-	right ^= subkey;
-	right = substitute(right);
-	right = permute(right, P, 32);
+	uint64_t res = permute(*r32, 32, E, 48);
+	res ^= subkey;
+	uint32_t fres = substitute(res);
+	fres = permute(fres, 32, P, 32);
 
-	new_block.right = new_block.left ^ right;
-	new_block.left = right;
-	return new_block.raw;
+	uint32_t tmp = *r32;
+	*r32 = *l32 ^ fres;
+	*l32 = tmp;
 }

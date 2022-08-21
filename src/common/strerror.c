@@ -10,7 +10,7 @@
 
 enum crypto_error crypto42_errno = CRYPTO_SUCCESS;
 
-char *crypto42_strerror(enum crypto_error err)
+const char *crypto42_strerror(enum crypto_error err)
 {
 	switch (err)
 	{

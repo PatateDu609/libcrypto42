@@ -39,7 +39,7 @@ static uint64_t process_input(uint64_t block, bool init)
 		33,		1,		41,		9,		49,		17,		57,		25,
 	};
 
-	return permute(block, init ? initial_perm_table : final_perm_table, 64);
+	return permute(block, 64, init ? initial_perm_table : final_perm_table, 64);
 }
 
 uint64_t des_encrypt(uint64_t block, uint64_t key)
@@ -48,20 +48,29 @@ uint64_t des_encrypt(uint64_t block, uint64_t key)
 	uint64_t subkeys[NB_ROUNDS];
 	key_schedule(key, subkeys);
 
+	uint32_t left, right;
+	left = block >> 32;
+	right = block;
 	for (int i = 0; i < NB_ROUNDS; i++)
-		block = feistel(block, subkeys[i]);
+		feistel(subkeys[i], &left, &right);
 
+	// Concatenate backward
+	block = ((uint64_t)right) << 32 | left;
 	return process_input(block, false);
 }
 
 uint64_t des_decrypt(uint64_t block, uint64_t key)
 {
-	block = process_input(block, false);
+	block = process_input(block, true);
 	uint64_t subkeys[NB_ROUNDS];
 	key_schedule(key, subkeys);
 
-	for (int i = NB_ROUNDS - 1; i >= 0; i--)
-		block = feistel(block, subkeys[i]);
+	uint32_t left, right;
+	left = block;
+	right = block >> 32;
+	for (int i = 0; i < NB_ROUNDS; i++)
+		feistel(subkeys[NB_ROUNDS - i - 1], &right, &left);
 
-	return process_input(block, true);
+	block = ((uint64_t)left) << 32 | right;
+	return process_input(block, false);
 }
