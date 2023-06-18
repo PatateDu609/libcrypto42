@@ -14,7 +14,7 @@ static void get_hash(char *hash, const char *msg)
 
 static void get_hash_file(char *hash, const char *filename)
 {
-	FILE *file = fopen(filename, "r");
+	FILE *file = fopen(filename, "r+");
 	size_t bytes = 0;
 
 	if (!file)

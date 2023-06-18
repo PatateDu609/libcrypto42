@@ -15,7 +15,7 @@ static void get_hash(char *hash, unsigned char *(*SHA)(const unsigned char *, si
 #define get_hash_file_SHA(alg, sha_ctx, size_digest) \
 	__attribute__((unused)) static void get_hash_file_sha##alg(char *hash, const char *filename) \
 	{ \
-		FILE *file = fopen(filename, "r"); \
+		FILE *file = fopen(filename, "r+"); \
 		size_t bytes = 0; \
 		if (!file) \
 			return; \
