@@ -57,16 +57,17 @@ char *askpass(const char *prompt)
 		}
 
 		size_t new_size = (pass ? strlen(pass) : 0) + ret + 1;
-		pass = realloc(pass, new_size);
+		char *tmp = realloc(pass, new_size);
+		if (!tmp)
+		{
+			fprintf(stderr, "Error: Failed to allocate memory.\n");
+			break;
+		}
+		pass = tmp;
 		if (first)
 		{
 			pass[0] = 0;
 			first = false;
-		}
-		if (!pass)
-		{
-			fprintf(stderr, "Error: Failed to allocate memory.\n");
-			break;
 		}
 		strncat(pass, buffer, new_size);
 	}

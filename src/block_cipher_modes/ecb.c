@@ -16,10 +16,9 @@
  *
  * @return Returns a copy of the pointer given in the context for the ciphertext.
  */
-uint8_t *__ECB_encrypt_8(struct cipher_ctx *ctx)
-{
-	uint64_t *plaintext = (uint64_t *)ctx->plaintext;
-	uint64_t *ciphertext = (uint64_t *)ctx->ciphertext;
+uint8_t *__ECB_encrypt_8(struct cipher_ctx *ctx) {
+	uint64_t *plaintext = (uint64_t *) ctx->plaintext;
+	uint64_t *ciphertext = (uint64_t *) ctx->ciphertext;
 
 	uint64_t key;
 	memcpy(&key, ctx->key, 8);
@@ -29,8 +28,7 @@ uint8_t *__ECB_encrypt_8(struct cipher_ctx *ctx)
 	return ctx->ciphertext;
 }
 
-uint8_t *ECB_encrypt(struct cipher_ctx *ctx)
-{
+uint8_t *ECB_encrypt(struct cipher_ctx *ctx) {
 	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_ECB, true))
 		return NULL;
 
@@ -44,16 +42,12 @@ uint8_t *ECB_encrypt(struct cipher_ctx *ctx)
 	ctx->cipher_len = ctx->plaintext_len;
 	ctx->ciphertext = malloc(ctx->cipher_len);
 
-	switch(blk_size)
-	{
-		case 8:
-			return __ECB_encrypt_8(ctx);
-		default:
-		{
-			crypto42_errno = CRYPTO_BLKSIZE_INVALID;
-			free(ctx->ciphertext);
-			return NULL;
-		}
+	if (blk_size == 8)
+		return __ECB_encrypt_8(ctx);
+	else {
+		crypto42_errno = CRYPTO_BLKSIZE_INVALID;
+		free(ctx->ciphertext);
+		return NULL;
 	}
 }
 
@@ -67,21 +61,19 @@ uint8_t *ECB_encrypt(struct cipher_ctx *ctx)
  * @warning This function assumes that the ciphertext (and the plaintext as well)
  * is a multiple of the block size.
  */
-static uint8_t *__ECB_decrypt_8(struct cipher_ctx *ctx)
-{
-	uint64_t *plaintext = (uint64_t *)ctx->plaintext;
-	uint64_t *ciphertext = (uint64_t *)ctx->ciphertext;
+static uint8_t *__ECB_decrypt_8(struct cipher_ctx *ctx) {
+	uint64_t *plaintext = (uint64_t *) ctx->plaintext;
+	uint64_t *ciphertext = (uint64_t *) ctx->ciphertext;
 
 	uint64_t key;
 	memcpy(&key, ctx->key, 8);
 
-	for (size_t i = 0, nb =  ctx->plaintext_len / 8; i < nb; i++)
+	for (size_t i = 0, nb = ctx->plaintext_len / 8; i < nb; i++)
 		plaintext[i] = ctx->algo.blk8.dec(ciphertext[i], key);
 	return ctx->plaintext;
 }
 
-uint8_t *ECB_decrypt(struct cipher_ctx *ctx)
-{
+uint8_t *ECB_decrypt(struct cipher_ctx *ctx) {
 	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_ECB, false))
 		return NULL;
 
@@ -89,18 +81,15 @@ uint8_t *ECB_decrypt(struct cipher_ctx *ctx)
 	ctx->plaintext_len = ctx->cipher_len;
 	ctx->plaintext = malloc(ctx->plaintext_len);
 
-	switch(blk_size)
-	{
-		case 8:
-			__ECB_decrypt_8(ctx);
-			break;
-		default:
-		{
-			crypto42_errno = CRYPTO_BLKSIZE_INVALID;
-			free(ctx->plaintext);
-			return NULL;
-		}
+	if (blk_size == 8)
+		__ECB_decrypt_8(ctx);
+	else {
+		crypto42_errno = CRYPTO_BLKSIZE_INVALID;
+		free(ctx->plaintext);
+		return NULL;
+
 	}
+
 	uint8_t *temp = unpad(ctx->plaintext, &ctx->plaintext_len);
 	free(ctx->plaintext);
 	ctx->plaintext = temp;
