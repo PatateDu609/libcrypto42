@@ -99,7 +99,7 @@ char *base64_encode_file(const char *filename)
 	uint8_t buffer[528]; // It is a common multiple of 3 and 4, so we do not have padding.
 
 	size_t flen = 0;
-	size_t ret = 0;
+	size_t ret;
 	size_t pos = 0;
 	char *res = NULL;
 	while ((ret = fread(buffer, 1, sizeof buffer, file)) > 0)
