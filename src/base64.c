@@ -215,7 +215,6 @@ size_t stream_base64_dec(FILE *in, uint8_t *buf, size_t len) {
 				stream_sanitize_buffer(in, __buf, res);
 				stream_base64_dec_update_buf(__buf);
 			} else if (ferror(in)) {// error...
-				fprintf(stderr, "result = %zu, res = %zu, fd = %d\n", result, res, fileno(in));
 				perror("error: couldn't read stream");
 				exit(1);
 			}
