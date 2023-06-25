@@ -1,7 +1,5 @@
 #include "cipher.h"
-
 #include "internal.h"
-#include <stdio.h>
 
 /**
  * @brief Performs an CBC encryption on the given context, using block size of 8 bytes.
@@ -38,7 +36,7 @@ uint8_t *CBC_encrypt(struct cipher_ctx *ctx) {
 
 	uint8_t blk_size = ctx->algo.blk_size;
 
-	uint8_t padding  = (ctx->plaintext_len % blk_size);
+	uint8_t padding  = ctx->plaintext_len % blk_size;
 	if (padding == 0 && ctx->plaintext_len == 0)
 		padding = blk_size;
 	else if (padding != 0)

@@ -1,3 +1,4 @@
+#define _POSIX_SOURCE
 #include "common.h"
 #include <ctype.h>
 #include <math.h>
@@ -201,8 +202,10 @@ size_t stream_base64_dec(FILE *in, uint8_t *buf, size_t len) {
 
 			char   __buf[65];
 			memset(__buf, 0, sizeof __buf);
+
 			size_t size = sizeof __buf[0];
 			size_t n = (sizeof __buf) - size;
+
 			size_t res = fread(__buf, size, n, in);
 
 			if (res == n || (feof(in) && !feof_seen)) {
@@ -212,6 +215,7 @@ size_t stream_base64_dec(FILE *in, uint8_t *buf, size_t len) {
 				stream_sanitize_buffer(in, __buf, res);
 				stream_base64_dec_update_buf(__buf);
 			} else if (ferror(in)) {// error...
+				fprintf(stderr, "result = %zu, res = %zu, fd = %d\n", result, res, fileno(in));
 				perror("error: couldn't read stream");
 				exit(1);
 			}
