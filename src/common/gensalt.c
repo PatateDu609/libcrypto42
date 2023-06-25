@@ -1,11 +1,3 @@
-/**
- * @file gensalt.c
- * @author Ghali Boucetta (gboucett@student.42.fr)
- * @brief A simple implementation of a function to generate a salt.
- * @date 2022-08-18
- *
- */
-
 #include "common.h"
 
 uint8_t *gensalt(size_t len) {

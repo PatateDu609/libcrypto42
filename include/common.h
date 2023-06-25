@@ -8,38 +8,41 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
 #include <byteswap.h>
+#include <inttypes.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 /**
  * @brief All possible errors for the library.
  */
-enum crypto_error
-{
-	CRYPTO_SUCCESS = 0,					///< Success
-	CRYPTO_CTX_NULL,					///< Context is NULL
+enum crypto_error {
+	CRYPTO_SUCCESS = 0,               ///< Success
+	CRYPTO_CTX_NULL,                  ///< Context is NULL
 
-	CRYPTO_KEY_NULL,					///< Key is NULL
-	CRYPTO_KEY_LEN_ZERO,				///< Key length is zero
-	CRYPTO_PLAINTEXT_NULL,				///< Plaintext is NULL
-	CRYPTO_PLAINTEXT_LEN_ZERO,			///< Plaintext length is zero
-	CRYPTO_CIPHERTEXT_NULL,				///< Ciphertext is NULL
-	CRYPTO_CIPHERTEXT_LEN_ZERO,			///< Ciphertext length is zero
-	CRYPTO_IV_NULL,						///< IV is NULL
-	CRYPTO_IV_LEN_ZERO,					///< IV length is zero
-	CRYPTO_NONCE_NULL,					///< Nonce is NULL
-	CRYPTO_NONCE_LEN_ZERO,				///< Nonce length is zero
+	CRYPTO_KEY_NULL,                  ///< Key is NULL
+	CRYPTO_KEY_LEN_ZERO,              ///< Key length is zero
+	CRYPTO_PLAINTEXT_NULL,            ///< Plaintext is NULL
+	CRYPTO_PLAINTEXT_LEN_ZERO,        ///< Plaintext length is zero
+	CRYPTO_CIPHERTEXT_NULL,           ///< Ciphertext is NULL
+	CRYPTO_CIPHERTEXT_LEN_ZERO,       ///< Ciphertext length is zero
+	CRYPTO_IV_NULL,                   ///< IV is NULL
+	CRYPTO_IV_LEN_ZERO,               ///< IV length is zero
+	CRYPTO_NONCE_NULL,                ///< Nonce is NULL
+	CRYPTO_NONCE_LEN_ZERO,            ///< Nonce length is zero
 
-	CRYPTO_BLKSIZE_ZERO,				///< Block size is zero
-	CRYPTO_BLKSIZE_INVALID,				///< Block size must be either 8 or 16
-	CRYPTO_CIPHERTEXT_BLKSIZE_UNMATCH,	///< Ciphertext should be a multiple of the block size
-	CRYPTO_IV_BLKSIZE_UNMATCH,			///< IV should be equal to the block size
+	CRYPTO_BLKSIZE_ZERO,              ///< Block size is zero
+	CRYPTO_BLKSIZE_INVALID,           ///< Block size must be either 8 or 16
+	CRYPTO_CIPHERTEXT_BLKSIZE_UNMATCH,///< Ciphertext should be a multiple of the block size
+	CRYPTO_IV_BLKSIZE_UNMATCH,        ///< IV should be equal to the block size
 
-	CRYPTO_ALGO_UNKNOWN,				///< Unknown algorithm
-	CRYPTO_ALGO_INVALID_BLKSIZE,		///< Invalid block size for the algorithm
+	CRYPTO_ALGO_UNKNOWN,              ///< Unknown algorithm
+	CRYPTO_ALGO_INVALID_BLKSIZE,      ///< Invalid block size for the algorithm
 };
 
 /**
@@ -52,7 +55,7 @@ extern enum crypto_error crypto42_errno;
 #define ROTL(x, n) (((x) << (n)) | ((x) >> (sizeof(x) * 8 - (n))))
 #define ROTR(x, n) (((x) >> (n)) | ((x) << (sizeof(x) * 8 - (n))))
 
-#define bswap_128(x) ((((__uint128_t)bswap_64(x)) << 64) | bswap_64(x >> 64))
+#define bswap_128(x) ((((__uint128_t) bswap_64(x)) << 64) | bswap_64(x >> 64))
 
 #define __internal __attribute__((visibility("internal")))
 #define __hidden __attribute__((visibility("hidden")))
@@ -67,10 +70,9 @@ extern enum crypto_error crypto42_errno;
  *
  * @note It may not contain all the blocks as the file may not be read in full.
  */
-struct blk
-{
-	uint8_t *data;	///< The data of the block.
-	size_t len;		///< The length of the data.
+struct blk {
+	uint8_t *data;///< The data of the block.
+	size_t   len; ///< The length of the data.
 };
 
 /**
@@ -78,12 +80,11 @@ struct blk
  *
  * @note It may not contain all the data as the file may not be read in full.
  */
-struct msg
-{
-	const uint8_t *data;	///< The data of the message.
-	__uint128_t len;		///< The length of the data.
-	__uint128_t filesize;	///< The size of the file.
-	bool is_last_part;		///< True if the message is the last part of the file.
+struct msg {
+	const uint8_t *data;        ///< The data of the message.
+	__uint128_t    len;         ///< The length of the data.
+	__uint128_t    filesize;    ///< The size of the file.
+	bool           is_last_part;///< True if the message is the last part of the file.
 };
 
 /**
@@ -96,7 +97,7 @@ struct msg
  *
  * @return A pointer to a structure containing the blocks.
  */
-struct blk *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_size, bool le) __hidden;
+struct blk         *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_size, bool le) __hidden;
 
 /**
  * @brief Ask for a password without printing it to the terminal.
@@ -106,7 +107,7 @@ struct blk *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_siz
  * @return The password.
  * @note The returned string must be freed.
  */
-char *askpass(const char *prompt);
+char               *askpass(const char *prompt);
 
 /**
  * @brief Transforms a hex buffer into a string.
@@ -117,14 +118,12 @@ char *askpass(const char *prompt);
  *
  * @warning The returned string must be freed.
  */
-static inline char *stringify_hash(const uint8_t *buf, size_t len)
-{
+static inline char *stringify_hash(const uint8_t *buf, size_t len) {
 	char *str = malloc(len * 2 + 1);
 
 	if (!str)
 		return NULL;
-	for (size_t i = 0; i < len; i++)
-		snprintf(str + i * 2, 3, "%02x", buf[i]);
+	for (size_t i = 0; i < len; i++) snprintf(str + i * 2, 3, "%02x", buf[i]);
 	return str;
 }
 
@@ -133,7 +132,7 @@ static inline char *stringify_hash(const uint8_t *buf, size_t len)
  *
  * @return The random number.
  */
-uint64_t get_random(void);
+uint64_t    get_random(void);
 
 /**
  * @brief Get a random unsigned 64-bit integer in the given range.
@@ -142,7 +141,7 @@ uint64_t get_random(void);
  * @param max The maximum value of the range.
  * @return The random number.
  */
-uint64_t get_random_range(uint64_t min, uint64_t max);
+uint64_t    get_random_range(uint64_t min, uint64_t max);
 
 /**
  * @brief Fill an array with random bytes
@@ -152,7 +151,7 @@ uint64_t get_random_range(uint64_t min, uint64_t max);
  *
  * @return A pointer to the array.
  */
-uint8_t *get_random_bytes_at(uint8_t *ptr, uint64_t length);
+uint8_t    *get_random_bytes_at(uint8_t *ptr, uint64_t length);
 
 /**
  * @brief Get an array of random bytes.
@@ -162,7 +161,7 @@ uint8_t *get_random_bytes_at(uint8_t *ptr, uint64_t length);
  *
  * @warning The returned array must be freed.
  */
-uint8_t *get_random_bytes(size_t len);
+uint8_t    *get_random_bytes(size_t len);
 
 /**
  * @brief Fill a string with random characters.
@@ -172,7 +171,7 @@ uint8_t *get_random_bytes(size_t len);
  *
  * @return char* The string itself.
  */
-char *get_random_string_at(char *ptr, uint64_t length);
+char       *get_random_string_at(char *ptr, uint64_t length);
 
 /**
  * @brief Get a string of random characters.
@@ -182,7 +181,7 @@ char *get_random_string_at(char *ptr, uint64_t length);
  *
  * @warning The returned string must be freed.
  */
-char *get_random_string(size_t len);
+char       *get_random_string(size_t len);
 
 /**
  * @brief Get the random string from a given charset.
@@ -195,7 +194,7 @@ char *get_random_string(size_t len);
  * @note The charset may contain duplicates, but it will break the pseudo-uniformity
  * of the distribution.
  */
-char *get_random_string_from(const char *charset, size_t len);
+char       *get_random_string_from(const char *charset, size_t len);
 
 /**
  * @brief Encode a byte array in base64.
@@ -206,19 +205,7 @@ char *get_random_string_from(const char *charset, size_t len);
  *
  * @warning The returned string must be freed.
  */
-char *base64_encode(const uint8_t *data, size_t len);
-
-/**
- * @brief Encode a file in base64.
- *
- * @param filename The name of the file to encode.
- *
- * @return The encoded string.
- *
- * @warning The returned string must be freed.
- * @see base64_encode
- */
-char *base64_encode_file(const char *filename);
+char       *base64_encode(const uint8_t *data, size_t len);
 
 /**
  * @brief Decode a base64 string.
@@ -229,18 +216,62 @@ char *base64_encode_file(const char *filename);
  * @return The decoded data.
  * @warning The returned array must be freed.
  */
-uint8_t *base64_decode(const char *str, size_t *flen);
+uint8_t    *base64_decode(const char *str, size_t *flen);
+
 
 /**
- * @brief Decode a base64 string from a file.
+ * @brief Encode a buffer in base64 into a stream. The actual writing may happen or not depending
+ * on the settings of the given stream.
  *
- * @param filename The name of the file to decode.
+ * @param out The stream
+ * @param buf The buffer to write
+ * @param len Its length
  *
- * @return The decoded data.
- * @warning The returned array must be freed.
- * @see base64_decode
+ * @warning The given file must be at least open for writing. However, if the buffer is read/write,
+ * and if there is operations of both reading and writing, the whole base64 streaming may break.
+ *
+ * @note If the buffer have to be flushed, please use stream_base64_enc_flush
+ * @see stream_base64_enc_flush
  */
-uint8_t *base64_decode_file(const char *filename, size_t *flen);
+void        stream_base64_enc(FILE *out, const uint8_t *buf, size_t len);
+
+/**
+ * @brief Flush the base64 encoding stream
+ *
+ * @param out The targeted stream file.
+ *
+ * @warning The given file must be at least open for writing. However, if the buffer is read/write,
+ * and if there is operations of both reading and writing, the whole base64 streaming may break.
+ */
+void        stream_base64_enc_flush(FILE *out);
+
+/**
+ * @brief Decodes the given input stream into the given buffer which has a fixed length.
+ *
+ * @param in Input stream
+ * @param buf Target buffer
+ * @param len Target buffer's length
+ *
+ * @return Size of the actual data put into the buffer.
+ * @warning The given file must be at least open for reading. However, if the buffer is read/write,
+ * and if there is operations of both reading and writing, the whole base64 streaming may break.
+ */
+size_t      stream_base64_dec(FILE *in, uint8_t *buf, size_t len);
+
+/**
+ * @brief Moves the pointer in the base64 stream.
+ *
+ * @warning This operation does not relay on an actual seek operation, because of the nature of base64
+ *
+ * @param in Input stream.
+ * @param off How much decoded bytes the call should skip.
+ */
+void        stream_base64_seek(FILE *in, off_t off);
+
+/**
+ * @brief Resets the current state of the streaming functions.
+ */
+void        stream_base64_reset_all();
 
 /**
  * @brief Translate errors into human readable strings.
@@ -257,6 +288,6 @@ const char *crypto42_strerror(enum crypto_error err);
  * @return The salt.
  * @warning The returned array must be freed.
  */
-uint8_t *gensalt(size_t len);
+uint8_t    *gensalt(size_t len);
 
 #endif
