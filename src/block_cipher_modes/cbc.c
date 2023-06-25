@@ -27,10 +27,15 @@ uint8_t *__CBC_encrypt_8(struct cipher_ctx *ctx) {
 	uint64_t last;
 	memcpy(&last, ctx->iv, 8);
 
+	key = bswap_64(key);
+
 	for (size_t i = 0, nb = ctx->plaintext_len / 8; i < nb; i++) {
-		ciphertext[i] = ctx->algo.blk8.enc(plaintext[i] ^ last, key);
-		last          = ciphertext[i];
+		ciphertext[i] = last = ctx->algo.blk8.enc(bswap_64(plaintext[i] ^ last), key);
+		ciphertext[i]        = bswap_64(ciphertext[i]);
 	}
+
+	last = bswap_64(last);
+	memcpy(ctx->iv, &last, ctx->iv_len);
 
 	return ctx->ciphertext;
 }
@@ -41,13 +46,19 @@ uint8_t *CBC_encrypt(struct cipher_ctx *ctx) {
 
 	uint8_t blk_size = ctx->algo.blk_size;
 
-	uint8_t padding  = ctx->plaintext_len % blk_size;
+	uint8_t padding  = (ctx->plaintext_len % blk_size);
 	if (padding == 0 && ctx->plaintext_len == 0)
 		padding = blk_size;
+	else if (padding != 0)
+		padding = blk_size - padding;
 	pad(ctx->plaintext, &ctx->plaintext_len, padding);
 
-	ctx->ciphertext_len = ctx->plaintext_len;
-	ctx->ciphertext     = malloc(ctx->ciphertext_len);
+	if (ctx->ciphertext_len == ctx->plaintext_len && ctx->ciphertext) {
+		memset(ctx->ciphertext, 0, ctx->ciphertext_len);
+	} else {
+		ctx->ciphertext_len = ctx->plaintext_len;
+		ctx->ciphertext     = malloc(ctx->ciphertext_len);
+	}
 
 	if (blk_size == 8)
 		return __CBC_encrypt_8(ctx);
