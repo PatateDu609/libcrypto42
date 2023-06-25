@@ -1,7 +1,6 @@
 #include "cipher.h"
 #include "internal.h"
 #include "common.h"
-#include <errno.h>
 
 struct block_cipher_ctx setup_algo(enum block_cipher algo)
 {
@@ -84,6 +83,10 @@ uint8_t *pad(uint8_t *plaintext, size_t *len, uint8_t padding)
 uint8_t *unpad(uint8_t *plaintext, size_t *len)
 {
 	uint8_t padding = plaintext[*len - 1];
+
+	if (!(0 < padding && padding < 16))
+		return NULL;
+
 	size_t new_size = *len - padding;
 
 	uint8_t *p = malloc(new_size);

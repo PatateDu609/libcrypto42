@@ -105,6 +105,7 @@ uint8_t                *CBC_encrypt(struct cipher_ctx *ctx);
  *
  * @return Returns a copy of the pointer given in the context for the plaintext.
  */
+uint8_t                *CBC_decrypt(struct cipher_ctx *ctx);
 
 /* ************************** DES related functions ************************* */
 

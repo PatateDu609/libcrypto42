@@ -72,7 +72,7 @@ ARFLAGS				?=	rcs
 ASFLAGS				?=
 
 ifeq ($(DEBUG),1)
-	CFLAGS			+=	-g3 -O0 -DDEBUG -ggdb
+	CFLAGS			+=	-g3 -O0 -DDEBUG -ggdb -fno-omit-frame-pointer -fdiagnostics-color=always
 	ASFLAGS			+=	-g
 endif
 

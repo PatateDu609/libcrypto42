@@ -1,13 +1,5 @@
-/**
- * @file cbc.c
- * @author Ghali Boucetta (gboucett@student.42.fr)
- * @brief CBC block cipher mode implementation
- * @date 2022-08-16
- */
-
 #include "cipher.h"
 
-#include "cipher.h"
 #include "internal.h"
 #include <stdio.h>
 
@@ -82,14 +74,23 @@ uint8_t *__CBC_decrypt_8(struct cipher_ctx *ctx) {
 
 	uint64_t  key;
 	memcpy(&key, ctx->key, 8);
-
 	uint64_t last;
 	memcpy(&last, ctx->iv, 8);
 
+	key = bswap_64(key);
+	last = bswap_64(last);
+
 	for (size_t i = 0, nb = ctx->plaintext_len / 8; i < nb; i++) {
+		ciphertext[i] = bswap_64(ciphertext[i]);
 		plaintext[i] = ctx->algo.blk8.dec(ciphertext[i], key) ^ last;
 		last         = ciphertext[i];
+
+		plaintext[i] = bswap_64(plaintext[i]);
 	}
+
+	last = bswap_64(last);
+	memcpy(ctx->iv, &last, ctx->iv_len);
+
 	return ctx->plaintext;
 }
 
@@ -99,21 +100,22 @@ uint8_t *CBC_decrypt(struct cipher_ctx *ctx) {
 
 	uint8_t blk_size   = ctx->algo.blk_size;
 	ctx->plaintext_len = ctx->ciphertext_len;
-	ctx->plaintext     = malloc(ctx->plaintext_len);
+	ctx->plaintext     = calloc(sizeof *ctx->plaintext, ctx->plaintext_len);
+	if (!ctx->plaintext)
+		return NULL;
 
-	switch (blk_size) {
-		case 8:
-			__CBC_decrypt_8(ctx);
-			break;
-		default: {
-			crypto42_errno = CRYPTO_BLKSIZE_INVALID;
-			free(ctx->plaintext);
-			return NULL;
-		}
+	if (blk_size == 8)
+		__CBC_decrypt_8(ctx);
+	else {
+		crypto42_errno = CRYPTO_BLKSIZE_INVALID;
+		free(ctx->plaintext);
+		return NULL;
 	}
 
 	uint8_t *temp = unpad(ctx->plaintext, &ctx->plaintext_len);
-	free(ctx->plaintext);
-	ctx->plaintext = temp;
+	if (temp) {
+		free(ctx->plaintext);
+		ctx->plaintext = temp;
+	}
 	return ctx->plaintext;
 }
