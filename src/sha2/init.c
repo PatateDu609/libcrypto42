@@ -168,3 +168,15 @@ void sha2_init(struct sha2 *ctx, enum SHA2_ALG alg) {
 
 	init[alg](ctx);
 }
+
+void sha2_free(struct sha2 *ctx, enum SHA2_ALG alg) {
+	if (alg == SHA2_ALG_224 || alg == SHA2_ALG_256)
+	{
+		free(ctx->ctx_32);
+		ctx->ctx_32 = NULL;
+	}
+	else {
+		free(ctx->ctx_64);
+		ctx->ctx_64 = NULL;
+	}
+}

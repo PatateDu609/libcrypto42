@@ -12,8 +12,8 @@
 
 #include <fcntl.h>
 #include <stdbool.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
 
 static size_t get_size(enum SHA2_ALG alg) {
 	switch (alg) {
@@ -56,7 +56,9 @@ uint8_t *sha2_bytes_raw(enum SHA2_ALG alg, const uint8_t *bytes, size_t len, uin
 		ft_memset(&ctx, 0, sizeof(ctx));
 		return NULL;
 	}
-	return sha2_final_raw(&ctx, buf);
+	uint8_t *raw = sha2_final_raw(&ctx, buf);
+	sha2_free(&ctx, alg);
+	return raw;
 }
 
 char *sha2_bytes(enum SHA2_ALG alg, const uint8_t *bytes, size_t len) {
@@ -121,7 +123,10 @@ uint8_t *sha2_descriptor_raw(enum SHA2_ALG alg, int fd, uint8_t *buf) {
 			return NULL;
 		}
 	}
-	return sha2_final_raw(&ctx, buf);
+
+	uint8_t *raw = sha2_final_raw(&ctx, buf);
+	sha2_free(&ctx, alg);
+	return raw;
 }
 
 char *sha2_descriptor(enum SHA2_ALG alg, int fd) {

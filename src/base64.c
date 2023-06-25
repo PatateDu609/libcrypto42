@@ -113,6 +113,8 @@ void stream_base64_enc_flush(FILE *out) {
 		fwrite(encoded + before_break, 1, len - before_break, out);
 		encoder.ref %= 64;// line length
 	}
+
+	free(encoded);
 }
 
 /**
@@ -180,6 +182,8 @@ static void stream_base64_dec_update_buf(char *__buf) {
 	memset(decoder.buf, 0, sizeof decoder.buf);
 	memcpy(decoder.buf, decoded, decoded_len);
 	decoder.ref = decoded_len;
+
+	free(decoded);
 }
 
 size_t stream_base64_dec(FILE *in, uint8_t *buf, size_t len) {
@@ -195,11 +199,13 @@ size_t stream_base64_dec(FILE *in, uint8_t *buf, size_t len) {
 		if (!decoder.buf[0] || decoder.pos >= sizeof decoder.buf) {
 			decoder.pos = 0;
 
-			char   __buf[64];
+			char   __buf[65];
 			memset(__buf, 0, sizeof __buf);
-			size_t res = fread(__buf, sizeof __buf[0], sizeof __buf, in);
+			size_t size = sizeof __buf[0];
+			size_t n = (sizeof __buf) - size;
+			size_t res = fread(__buf, size, n, in);
 
-			if (res == sizeof __buf || (feof(in) && !feof_seen)) {
+			if (res == n || (feof(in) && !feof_seen)) {
 				if (feof(in))
 					feof_seen = true;
 

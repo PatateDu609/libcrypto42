@@ -126,6 +126,14 @@ struct sha2 {
 void     sha2_init(struct sha2 *ctx, enum SHA2_ALG alg);
 
 /**
+ * @brief Frees the context after using it.
+ *
+ * @param ctx The context to free.
+ * @param alg The algorithm.
+ */
+void     sha2_free(struct sha2 *ctx, enum SHA2_ALG alg);
+
+/**
  * @brief Update the context with the given data.
  *
  * @param ctx The context to update.
