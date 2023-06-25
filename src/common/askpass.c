@@ -8,10 +8,9 @@
 #define _GNU_SOURC
 #include "common.h"
 #include "libft.h"
-#include <unistd.h>
+#include <string.h>
 #include <termios.h>
-#include <string.h>
-#include <string.h>
+#include <unistd.h>
 
 #define BUFFER_SIZE 4096
 
@@ -20,8 +19,7 @@
  *
  * @param echo True to enable echoing, false to disable.
  */
-static void toggle_echo(bool echo)
-{
+static void toggle_echo(bool echo) {
 	struct termios t;
 
 	tcgetattr(STDIN_FILENO, &t);
@@ -32,42 +30,37 @@ static void toggle_echo(bool echo)
 	tcsetattr(STDIN_FILENO, TCSANOW, &t);
 }
 
-char *askpass(const char *prompt)
-{
+char *askpass(const char *prompt) {
 	printf("%s", prompt);
 	fflush(stdout);
 
 	toggle_echo(false);
-	char buffer[BUFFER_SIZE + 1];
-	char *pass = NULL;
+	char    buffer[BUFFER_SIZE + 1];
+	char   *pass = NULL;
 
 	ssize_t ret;
-	bool first = true;
-	bool last = false;
+	bool    first = true;
+	bool    last  = false;
 
-	while (!last && (ret = read(STDIN_FILENO, buffer, BUFFER_SIZE)) > 0)
-	{
+	while (!last && (ret = read(STDIN_FILENO, buffer, BUFFER_SIZE)) > 0) {
 		buffer[ret] = '\0';
 
-		char *r = strchr(buffer, '\n');
-		if (r)
-		{
-			*r = '\0';
+		char *r     = strchr(buffer, '\n');
+		if (r) {
+			*r   = '\0';
 			last = true;
 		}
 
 		size_t new_size = (pass ? strlen(pass) : 0) + ret + 1;
-		char *tmp = realloc(pass, new_size);
-		if (!tmp)
-		{
+		char  *tmp      = realloc(pass, new_size);
+		if (!tmp) {
 			fprintf(stderr, "Error: Failed to allocate memory.\n");
 			break;
 		}
 		pass = tmp;
-		if (first)
-		{
+		if (first) {
 			pass[0] = 0;
-			first = false;
+			first   = false;
 		}
 		strncat(pass, buffer, new_size);
 	}

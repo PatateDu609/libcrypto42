@@ -5,12 +5,11 @@
  * @date 2022-08-09
  */
 
-#include "libft.h"
 #include "internal.h"
+#include "libft.h"
 #include <stdio.h>
 
-char *md5_final(struct md5_ctx *ctx)
-{
+char *md5_final(struct md5_ctx *ctx) {
 	uint8_t buf[MD5_DIGEST_SIZE];
 
 	md5_final_raw(ctx, buf);
@@ -21,13 +20,12 @@ char *md5_final(struct md5_ctx *ctx)
 	return str;
 }
 
-uint8_t *md5_final_raw(struct md5_ctx *ctx, uint8_t *output)
-{
-	uint32_t *output_32 = (uint32_t *)output;
-	output_32[0] = ctx->a;
-	output_32[1] = ctx->b;
-	output_32[2] = ctx->c;
-	output_32[3] = ctx->d;
+uint8_t *md5_final_raw(struct md5_ctx *ctx, uint8_t *output) {
+	uint32_t *output_32 = (uint32_t *) output;
+	output_32[0]        = ctx->a;
+	output_32[1]        = ctx->b;
+	output_32[2]        = ctx->c;
+	output_32[3]        = ctx->d;
 
 	return output;
 }

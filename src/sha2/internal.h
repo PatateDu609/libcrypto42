@@ -8,10 +8,10 @@
 #ifndef SHA2_INTERNAL_H
 #define SHA2_INTERNAL_H
 
-#include <stdint.h>
-#include <stddef.h>
-#include <stdlib.h>
 #include "crypto.h"
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 #define SHA2_224_DIGEST_SIZE 28
 #define SHA2_256_DIGEST_SIZE 32
@@ -68,12 +68,12 @@
  * @brief Represents a SHA2 algorithm.
  */
 struct sha2_alg {
-	enum SHA2_ALG alg; /**< The algorithm. */
+	enum SHA2_ALG alg;         /**< The algorithm. */
 
-	size_t digest_size; /**< The size of the digest. */
-	size_t block_size; /**< The size of the block. */
-	size_t wanted_size; /**< The size of the wanted digest. */
-	size_t nb_rounds; /**< The number of rounds. */
+	size_t        digest_size; /**< The size of the digest. */
+	size_t        block_size;  /**< The size of the block. */
+	size_t        wanted_size; /**< The size of the wanted digest. */
+	size_t        nb_rounds;   /**< The number of rounds. */
 };
 
 /**
@@ -82,10 +82,9 @@ struct sha2_alg {
 struct sha2_ctx_32 {
 	struct sha2_alg data; /**< The algorithm. */
 
-	union
-	{
+	union {
 		uint32_t state[8]; /**< The state. */
-		uint8_t hash[32]; /**< The current hash. */
+		uint8_t  hash[32]; /**< The current hash. */
 	};
 
 	const uint32_t *cnsts; /**< The constants. */
@@ -97,10 +96,9 @@ struct sha2_ctx_32 {
 struct sha2_ctx_64 {
 	struct sha2_alg data;
 
-	union
-	{
+	union {
 		uint64_t state[8]; /**< The state. */
-		uint8_t hash[64]; /**< The current hash. */
+		uint8_t  hash[64]; /**< The current hash. */
 	};
 
 	const uint64_t *cnsts; /**< The constants. */
@@ -109,11 +107,10 @@ struct sha2_ctx_64 {
 /**
  * @brief Represents a SHA2 context with every thing needed to compute a SHA2 hash.
  */
-struct sha2
-{
+struct sha2 {
 	struct sha2_alg alg; /**< The algorithm. */
 
-	union // As its an union of pointers it takes exactly 8 bytes and avoid the need of a pointer to void.
+	union// As its an union of pointers it takes exactly 8 bytes and avoid the need of a pointer to void.
 	{
 		struct sha2_ctx_32 *ctx_32; /**< The context for 32bit. */
 		struct sha2_ctx_64 *ctx_64; /**< The context for 64bit. */
@@ -126,7 +123,7 @@ struct sha2
  * @param ctx The context to initialize.
  * @param alg The algorithm.
  */
-void sha2_init(struct sha2 *ctx, enum SHA2_ALG alg);
+void     sha2_init(struct sha2 *ctx, enum SHA2_ALG alg);
 
 /**
  * @brief Update the context with the given data.
@@ -136,7 +133,7 @@ void sha2_init(struct sha2 *ctx, enum SHA2_ALG alg);
  *
  * @note The data must be a void pointer since we do not know which kind of algorithm we are using.
  */
-void sha2_update(struct sha2 *ctx, void *data);
+void     sha2_update(struct sha2 *ctx, void *data);
 
 /**
  * @brief Return the final hash string.
@@ -147,7 +144,7 @@ void sha2_update(struct sha2 *ctx, void *data);
  *
  * @warning This function returns a malloc-ed string which must be freed by the caller.
  */
-char *sha2_final(struct sha2 *ctx);
+char    *sha2_final(struct sha2 *ctx);
 
 /**
  * @brief Put the hash in the given buffer.

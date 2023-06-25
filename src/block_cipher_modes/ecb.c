@@ -39,8 +39,8 @@ uint8_t *ECB_encrypt(struct cipher_ctx *ctx) {
 		padding = blk_size;
 	pad(ctx->plaintext, &ctx->plaintext_len, padding);
 
-	ctx->cipher_len = ctx->plaintext_len;
-	ctx->ciphertext = malloc(ctx->cipher_len);
+	ctx->ciphertext_len = ctx->plaintext_len;
+	ctx->ciphertext = malloc(ctx->ciphertext_len);
 
 	if (blk_size == 8)
 		return __ECB_encrypt_8(ctx);
@@ -78,7 +78,7 @@ uint8_t *ECB_decrypt(struct cipher_ctx *ctx) {
 		return NULL;
 
 	uint8_t blk_size = ctx->algo.blk_size;
-	ctx->plaintext_len = ctx->cipher_len;
+	ctx->plaintext_len = ctx->ciphertext_len;
 	ctx->plaintext = malloc(ctx->plaintext_len);
 
 	if (blk_size == 8)

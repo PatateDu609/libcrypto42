@@ -1,14 +1,3 @@
-/**
- * @file common.c
- * @author Ghali Boucetta (gboucett@student.42.fr)
- * @brief
- * @version 0.1
- * @date 2022-08-15
- *
- * @copyright Copyright (c) 2022
- *
- */
-
 #include "cipher.h"
 #include "internal.h"
 #include "common.h"
@@ -60,9 +49,9 @@ bool __cipher_ctx_valid(struct cipher_ctx *ctx, enum cipher_mode cipher_mode, bo
 	{
 		if (ctx->ciphertext == NULL)
 			crypto42_errno = CRYPTO_CIPHERTEXT_NULL;
-		if (ctx->cipher_len == 0)
+		if (ctx->ciphertext_len == 0)
 			crypto42_errno = CRYPTO_CIPHERTEXT_LEN_ZERO;
-		if (ctx->cipher_len % ctx->algo.blk_size != 0)
+		if (ctx->ciphertext_len % ctx->algo.blk_size != 0)
 			crypto42_errno = CRYPTO_CIPHERTEXT_BLKSIZE_UNMATCH;
 	}
 	if (cipher_mode != CIPHER_MODE_ECB)
@@ -75,17 +64,16 @@ bool __cipher_ctx_valid(struct cipher_ctx *ctx, enum cipher_mode cipher_mode, bo
 			crypto42_errno = CRYPTO_IV_BLKSIZE_UNMATCH;
 	}
 
-	return err != crypto42_errno;
+	return err == crypto42_errno;
 
 	//TODO: Add more checks for CTR mode (nonce check)
 }
 
 uint8_t *pad(uint8_t *plaintext, size_t *len, uint8_t padding)
 {
-	uint8_t *p = malloc(*len + padding);
+	uint8_t *p = realloc(plaintext,*len + padding);
 	if (p == NULL)
 		return NULL;
-	memcpy(p, plaintext, *len);
 
 	for (size_t i = *len; i < *len + padding; i++)
 		p[i] = padding; // Padding is the same for all bytes

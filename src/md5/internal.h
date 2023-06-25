@@ -8,8 +8,8 @@
 #ifndef MD5_INTERNAL_H
 #define MD5_INTERNAL_H
 
-#include "crypto.h"
 #include "common.h"
+#include "crypto.h"
 #include <stdlib.h>
 
 #undef F
@@ -36,14 +36,13 @@
 /**
  * @brief Structure used to store the md5 context.
  */
-struct md5_ctx
-{
-	uint32_t a, b, c, d;	///< Current state
+struct md5_ctx {
+	uint32_t        a, b, c, d;///< Current state
 
 	///< These values point to static variables in the init.c
 	///< @see init.c
-	const uint32_t *buf;	///< Precomputed constants (for speed up, formula: floor(abs(sin(i + 1)) * 2**32))
-	const uint8_t *shift;		///< Shift amounts
+	const uint32_t *buf;  ///< Precomputed constants (for speed up, formula: floor(abs(sin(i + 1)) * 2**32))
+	const uint8_t  *shift;///< Shift amounts
 };
 
 
@@ -56,7 +55,7 @@ struct md5_ctx
  * @warning This function is internal and should not be called by the user.
  * @warning This function must be called before any operation related to md5.
  */
-void md5_init(struct md5_ctx *ctx) __internal;
+void     md5_init(struct md5_ctx *ctx) __internal;
 
 /**
  * @brief Updates the md5 context with the given data.
@@ -69,7 +68,7 @@ void md5_init(struct md5_ctx *ctx) __internal;
  *
  * @see md5_init
  */
-void md5_update(struct md5_ctx *ctx, const uint8_t *input) __internal;
+void     md5_update(struct md5_ctx *ctx, const uint8_t *input) __internal;
 
 /**
  * @brief Generates the final hash from the md5 context.
@@ -78,7 +77,7 @@ void md5_update(struct md5_ctx *ctx, const uint8_t *input) __internal;
  * @warning This function is internal and should not be called by the user.
  * @note This function will flush the context after generating the hash.
  */
-char *md5_final(struct md5_ctx *ctx) __internal;
+char    *md5_final(struct md5_ctx *ctx) __internal;
 
 /**
  * @brief Generates the final hash from the md5 context and uses the given buffer to store the hash.

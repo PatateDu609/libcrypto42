@@ -8,14 +8,14 @@
 #ifndef DES_INTERNAL_H
 #define DES_INTERNAL_H
 
-#include <stdint.h>
 #include "common.h"
+#include <stdint.h>
 
 #define NB_ROUNDS 16
-#define OVERFLOW_MASK_28 0b0001111111111111111111111111111 // Force exactly 28 bits
+#define OVERFLOW_MASK_28 0b0001111111111111111111111111111// Force exactly 28 bits
 
 #ifndef __nonnull
-# define __nonnull __attribute__((nonnull))
+#define __nonnull __attribute__((nonnull))
 #endif
 #define __pure __attribute__((pure))
 #define __const __attribute__((const))
@@ -26,8 +26,7 @@
  */
 union blk_split {
 	uint64_t raw;
-	struct
-	{
+	struct {
 		uint32_t right;
 		uint32_t left;
 	};
@@ -43,8 +42,7 @@ union blk_split {
  *
  * @return The permuted block
  */
-uint64_t permute(uint64_t block, size_t size_input, const uint8_t *table, size_t size)
-	__internal __nonnull((3));
+uint64_t permute(uint64_t block, size_t size_input, const uint8_t *table, size_t size) __internal __nonnull((3));
 
 /**
  * @brief Setup a subkey array from a given key.
@@ -52,7 +50,7 @@ uint64_t permute(uint64_t block, size_t size_input, const uint8_t *table, size_t
  * @param key The key to use
  * @param subkeys The subkey array to setup (must be at least NB_ROUNDS long)
  */
-void key_schedule(uint64_t key, uint64_t subkeys[static NB_ROUNDS]) __internal;
+void     key_schedule(uint64_t key, uint64_t subkeys[static NB_ROUNDS]) __internal;
 
 /**
  * @brief The Feistel function.
@@ -61,6 +59,6 @@ void key_schedule(uint64_t key, uint64_t subkeys[static NB_ROUNDS]) __internal;
  * @param l32 Pointer to the left component of the final block
  * @param r32 Pointer to the right component of the final block
  */
-void feistel(uint64_t subkey, uint32_t *l32, uint32_t *r32) __internal;
+void     feistel(uint64_t subkey, uint32_t *l32, uint32_t *r32) __internal;
 
 #endif

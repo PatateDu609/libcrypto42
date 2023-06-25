@@ -9,26 +9,19 @@
 #include "libft.h"
 #include <stdio.h>
 
-static void append_size(struct blk *blks, __uint128_t len, size_t wanted_size, bool le)
-{
+static void append_size(struct blk *blks, __uint128_t len, size_t wanted_size, bool le) {
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 
-	if (le)
-	{
+	if (le) {
 		if (wanted_size == 8)
-			*((uint64_t *)(blks->data + blks->len - 8)) = (uint64_t)len;
+			*((uint64_t *) (blks->data + blks->len - 8)) = (uint64_t) len;
 		else
-			*((__uint128_t *)(blks->data + blks->len - 16)) = len;
-	}
-	else
-	{
-		if (wanted_size == 8)
-		{
-			uint64_t tmp = bswap_64((uint64_t)len);
+			*((__uint128_t *) (blks->data + blks->len - 16)) = len;
+	} else {
+		if (wanted_size == 8) {
+			uint64_t tmp = bswap_64((uint64_t) len);
 			ft_memcpy(blks->data + blks->len - 8, &tmp, 8);
-		}
-		else
-		{
+		} else {
 			__uint128_t tmp = bswap_128(len);
 			ft_memcpy(blks->data + blks->len - 16, &tmp, 16);
 		}
@@ -36,32 +29,25 @@ static void append_size(struct blk *blks, __uint128_t len, size_t wanted_size, b
 
 #elif __BYTE_ORDER == __BIG_ENDIAN
 
-	if (le)
-	{
-		if (wanted_size == 8)
-		{
-			uint64_t tmp = bswap_64((uint64_t)len);
+	if (le) {
+		if (wanted_size == 8) {
+			uint64_t tmp = bswap_64((uint64_t) len);
 			ft_memcpy(blks->data + blks->len - 8, &tmp, 8);
-		}
-		else
-		{
+		} else {
 			__uint128_t tmp = bswap_128(len);
 			ft_memcpy(blks->data + blks->len - 16, &tmp, 16);
 		}
-	}
-	else
-	{
+	} else {
 		if (wanted_size == 8)
-			*((uint64_t *)(blks->data + blks->len - 8)) = (uint64_t)len;
+			*((uint64_t *) (blks->data + blks->len - 8)) = (uint64_t) len;
 		else
-			*((__uint128_t *)(blks->data + blks->len - 16)) = len;
+			*((__uint128_t *) (blks->data + blks->len - 16)) = len;
 	}
 
 #endif
 }
 
-struct blk *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_size, bool le)
-{
+struct blk *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_size, bool le) {
 	struct blk *blocks = malloc(sizeof *blocks);
 
 	if (blocks == NULL)
@@ -75,18 +61,16 @@ struct blk *get_blocks(const struct msg *data, size_t blk_len, size_t wanted_siz
 
 	blocks->len *= blk_len;
 	blocks->data = malloc(blocks->len * sizeof *blocks->data);
-	if (blocks->data == NULL)
-	{
+	if (blocks->data == NULL) {
 		free(blocks);
 		return NULL;
 	}
 
-	for (size_t i = 0; i < blocks->len; i++)
-	{
+	for (size_t i = 0; i < blocks->len; i++) {
 		blocks->data[i] = (i < data->len) ? data->data[i] : 0;
 
 		if (i == data->len && data->is_last_part)
-			blocks->data[i] = 0x80; // 0b10000000 (first bit after the last byte of data is always set to 1)
+			blocks->data[i] = 0x80;// 0b10000000 (first bit after the last byte of data is always set to 1)
 	}
 
 	if (data->is_last_part)

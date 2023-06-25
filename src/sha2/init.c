@@ -40,14 +40,13 @@ static const uint64_t csts64[80] = {
 	0x431d67c49c100d4c, 0x4cc5d4becb3e42b6, 0x597f299cfc657e2a, 0x5fcb6fab3ad6faec, 0x6c44198c4a475817,
 };
 
-static void init_sha2_224(struct sha2 *ctx)
-{
-	ctx->alg.digest_size = SHA2_224_DIGEST_SIZE;
-	ctx->alg.block_size = SHA2_224_BLOCK_SIZE;
-	ctx->alg.wanted_size = SHA2_224_WANTED_SIZE;
-	ctx->alg.nb_rounds = SHA2_224_NB_ROUNDS;
+static void init_sha2_224(struct sha2 *ctx) {
+	ctx->alg.digest_size  = SHA2_224_DIGEST_SIZE;
+	ctx->alg.block_size   = SHA2_224_BLOCK_SIZE;
+	ctx->alg.wanted_size  = SHA2_224_WANTED_SIZE;
+	ctx->alg.nb_rounds    = SHA2_224_NB_ROUNDS;
 
-	ctx->ctx_32->data = ctx->alg;
+	ctx->ctx_32->data     = ctx->alg;
 	ctx->ctx_32->state[0] = 0xc1059ed8;
 	ctx->ctx_32->state[1] = 0x367cd507;
 	ctx->ctx_32->state[2] = 0x3070dd17;
@@ -57,17 +56,16 @@ static void init_sha2_224(struct sha2 *ctx)
 	ctx->ctx_32->state[6] = 0x64f98fa7;
 	ctx->ctx_32->state[7] = 0xbefa4fa4;
 
-	ctx->ctx_32->cnsts = csts32;
+	ctx->ctx_32->cnsts    = csts32;
 }
 
-static void init_sha2_256(struct sha2 *ctx)
-{
-	ctx->alg.digest_size = SHA2_256_DIGEST_SIZE;
-	ctx->alg.block_size = SHA2_256_BLOCK_SIZE;
-	ctx->alg.wanted_size = SHA2_256_WANTED_SIZE;
-	ctx->alg.nb_rounds = SHA2_256_NB_ROUNDS;
+static void init_sha2_256(struct sha2 *ctx) {
+	ctx->alg.digest_size  = SHA2_256_DIGEST_SIZE;
+	ctx->alg.block_size   = SHA2_256_BLOCK_SIZE;
+	ctx->alg.wanted_size  = SHA2_256_WANTED_SIZE;
+	ctx->alg.nb_rounds    = SHA2_256_NB_ROUNDS;
 
-	ctx->ctx_32->data = ctx->alg;
+	ctx->ctx_32->data     = ctx->alg;
 	ctx->ctx_32->state[0] = 0x6a09e667;
 	ctx->ctx_32->state[1] = 0xbb67ae85;
 	ctx->ctx_32->state[2] = 0x3c6ef372;
@@ -77,17 +75,16 @@ static void init_sha2_256(struct sha2 *ctx)
 	ctx->ctx_32->state[6] = 0x1f83d9ab;
 	ctx->ctx_32->state[7] = 0x5be0cd19;
 
-	ctx->ctx_32->cnsts = csts32;
+	ctx->ctx_32->cnsts    = csts32;
 }
 
-static void init_sha2_384(struct sha2 *ctx)
-{
-	ctx->alg.digest_size = SHA2_384_DIGEST_SIZE;
-	ctx->alg.block_size = SHA2_384_BLOCK_SIZE;
-	ctx->alg.wanted_size = SHA2_384_WANTED_SIZE;
-	ctx->alg.nb_rounds = SHA2_384_NB_ROUNDS;
+static void init_sha2_384(struct sha2 *ctx) {
+	ctx->alg.digest_size  = SHA2_384_DIGEST_SIZE;
+	ctx->alg.block_size   = SHA2_384_BLOCK_SIZE;
+	ctx->alg.wanted_size  = SHA2_384_WANTED_SIZE;
+	ctx->alg.nb_rounds    = SHA2_384_NB_ROUNDS;
 
-	ctx->ctx_64->data = ctx->alg;
+	ctx->ctx_64->data     = ctx->alg;
 	ctx->ctx_64->state[0] = 0xcbbb9d5dc1059ed8;
 	ctx->ctx_64->state[1] = 0x629a292a367cd507;
 	ctx->ctx_64->state[2] = 0x9159015a3070dd17;
@@ -97,17 +94,16 @@ static void init_sha2_384(struct sha2 *ctx)
 	ctx->ctx_64->state[6] = 0xdb0c2e0d64f98fa7;
 	ctx->ctx_64->state[7] = 0x47b5481dbefa4fa4;
 
-	ctx->ctx_64->cnsts = csts64;
+	ctx->ctx_64->cnsts    = csts64;
 }
 
-static void init_sha2_512(struct sha2 *ctx)
-{
-	ctx->alg.digest_size = SHA2_512_DIGEST_SIZE;
-	ctx->alg.block_size = SHA2_512_BLOCK_SIZE;
-	ctx->alg.wanted_size = SHA2_512_WANTED_SIZE;
-	ctx->alg.nb_rounds = SHA2_512_NB_ROUNDS;
+static void init_sha2_512(struct sha2 *ctx) {
+	ctx->alg.digest_size  = SHA2_512_DIGEST_SIZE;
+	ctx->alg.block_size   = SHA2_512_BLOCK_SIZE;
+	ctx->alg.wanted_size  = SHA2_512_WANTED_SIZE;
+	ctx->alg.nb_rounds    = SHA2_512_NB_ROUNDS;
 
-	ctx->ctx_64->data = ctx->alg;
+	ctx->ctx_64->data     = ctx->alg;
 	ctx->ctx_64->state[0] = 0x6a09e667f3bcc908;
 	ctx->ctx_64->state[1] = 0xbb67ae8584caa73b;
 	ctx->ctx_64->state[2] = 0x3c6ef372fe94f82b;
@@ -117,17 +113,16 @@ static void init_sha2_512(struct sha2 *ctx)
 	ctx->ctx_64->state[6] = 0x1f83d9abfb41bd6b;
 	ctx->ctx_64->state[7] = 0x5be0cd19137e2179;
 
-	ctx->ctx_64->cnsts = csts64;
+	ctx->ctx_64->cnsts    = csts64;
 }
 
-static void init_sha2_512_224(struct sha2 *ctx)
-{
-	ctx->alg.digest_size = SHA2_512_224_DIGEST_SIZE;
-	ctx->alg.block_size = SHA2_512_224_BLOCK_SIZE;
-	ctx->alg.wanted_size = SHA2_512_224_WANTED_SIZE;
-	ctx->alg.nb_rounds = SHA2_512_224_NB_ROUNDS;
+static void init_sha2_512_224(struct sha2 *ctx) {
+	ctx->alg.digest_size  = SHA2_512_224_DIGEST_SIZE;
+	ctx->alg.block_size   = SHA2_512_224_BLOCK_SIZE;
+	ctx->alg.wanted_size  = SHA2_512_224_WANTED_SIZE;
+	ctx->alg.nb_rounds    = SHA2_512_224_NB_ROUNDS;
 
-	ctx->ctx_64->data = ctx->alg;
+	ctx->ctx_64->data     = ctx->alg;
 	ctx->ctx_64->state[0] = 0x8c3d37c819544da2;
 	ctx->ctx_64->state[1] = 0x73e1996689dcd4d6;
 	ctx->ctx_64->state[2] = 0x1dfab7ae32ff9c82;
@@ -137,17 +132,16 @@ static void init_sha2_512_224(struct sha2 *ctx)
 	ctx->ctx_64->state[6] = 0x3f9d85a86a1d36c8;
 	ctx->ctx_64->state[7] = 0x1112e6ad91d692a1;
 
-	ctx->ctx_64->cnsts = csts64;
+	ctx->ctx_64->cnsts    = csts64;
 }
 
-static void init_sha2_512_256(struct sha2 *ctx)
-{
-	ctx->alg.digest_size = SHA2_512_256_DIGEST_SIZE;
-	ctx->alg.block_size = SHA2_512_256_BLOCK_SIZE;
-	ctx->alg.wanted_size = SHA2_512_256_WANTED_SIZE;
-	ctx->alg.nb_rounds = SHA2_512_256_NB_ROUNDS;
+static void init_sha2_512_256(struct sha2 *ctx) {
+	ctx->alg.digest_size  = SHA2_512_256_DIGEST_SIZE;
+	ctx->alg.block_size   = SHA2_512_256_BLOCK_SIZE;
+	ctx->alg.wanted_size  = SHA2_512_256_WANTED_SIZE;
+	ctx->alg.nb_rounds    = SHA2_512_256_NB_ROUNDS;
 
-	ctx->ctx_64->data = ctx->alg;
+	ctx->ctx_64->data     = ctx->alg;
 	ctx->ctx_64->state[0] = 0x22312194fc2bf72c;
 	ctx->ctx_64->state[1] = 0x9f555fa3c84c64c2;
 	ctx->ctx_64->state[2] = 0x2393b86b6f53b151;
@@ -157,11 +151,10 @@ static void init_sha2_512_256(struct sha2 *ctx)
 	ctx->ctx_64->state[6] = 0x2b0199fc2c85b8aa;
 	ctx->ctx_64->state[7] = 0x0eb72ddc81c52ca2;
 
-	ctx->ctx_64->cnsts = csts64;
+	ctx->ctx_64->cnsts    = csts64;
 }
 
-void sha2_init(struct sha2 *ctx, enum SHA2_ALG alg)
-{
+void sha2_init(struct sha2 *ctx, enum SHA2_ALG alg) {
 	ctx->alg.alg = alg;
 
 	if (alg == SHA2_ALG_224 || alg == SHA2_ALG_256)
@@ -170,12 +163,7 @@ void sha2_init(struct sha2 *ctx, enum SHA2_ALG alg)
 		ctx->ctx_64 = malloc(sizeof *ctx->ctx_64);
 
 	void (*init[])(struct sha2 *) = {
-		init_sha2_224,
-		init_sha2_256,
-		init_sha2_384,
-		init_sha2_512,
-		init_sha2_512_224,
-		init_sha2_512_256,
+		init_sha2_224, init_sha2_256, init_sha2_384, init_sha2_512, init_sha2_512_224, init_sha2_512_256,
 	};
 
 	init[alg](ctx);

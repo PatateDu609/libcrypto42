@@ -9,42 +9,40 @@
 
 #include "internal.h"
 
-#define ROUND1(a, b, c, d, f, g, i) \
-	{                               \
-		f = F(b, c, d);             \
-		g = i;                      \
+#define ROUND1(a, b, c, d, f, g, i)                                                                                    \
+	{                                                                                                                  \
+		f = F(b, c, d);                                                                                                \
+		g = i;                                                                                                         \
 	}
 
-#define ROUND2(a, b, c, d, f, g, i) \
-	{                               \
-		f = G(b, c, d);             \
-		g = (5 * i + 1) % 16;       \
+#define ROUND2(a, b, c, d, f, g, i)                                                                                    \
+	{                                                                                                                  \
+		f = G(b, c, d);                                                                                                \
+		g = (5 * i + 1) % 16;                                                                                          \
 	}
 
-#define ROUND3(a, b, c, d, f, g, i) \
-	{                               \
-		f = H(b, c, d);             \
-		g = (3 * i + 5) % 16;       \
+#define ROUND3(a, b, c, d, f, g, i)                                                                                    \
+	{                                                                                                                  \
+		f = H(b, c, d);                                                                                                \
+		g = (3 * i + 5) % 16;                                                                                          \
 	}
 
-#define ROUND4(a, b, c, d, f, g, i) \
-	{                               \
-		f = I(b, c, d);             \
-		g = (7 * i) % 16;           \
+#define ROUND4(a, b, c, d, f, g, i)                                                                                    \
+	{                                                                                                                  \
+		f = I(b, c, d);                                                                                                \
+		g = (7 * i) % 16;                                                                                              \
 	}
 
-void md5_update(struct md5_ctx *ctx, const uint8_t *input)
-{
-	uint32_t *data = (uint32_t *)input;
-	uint32_t a, b, c, d;
+void md5_update(struct md5_ctx *ctx, const uint8_t *input) {
+	uint32_t *data = (uint32_t *) input;
+	uint32_t  a, b, c, d;
 
 	a = ctx->a;
 	b = ctx->b;
 	c = ctx->c;
 	d = ctx->d;
 
-	for (int i = 0; i < 64; i++)
-	{
+	for (int i = 0; i < 64; i++) {
 		uint32_t f, g;
 
 		if (0 <= i && i < 16)
