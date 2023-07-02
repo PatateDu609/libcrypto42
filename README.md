@@ -1,6 +1,6 @@
 # libcrypto42
 
-![Badge workflow](https://github.com/PatateDu609/libcrypto42/actions/workflows/tests.yml/badge.svg)
+![Badge workflow](https://badgen.net/https/github.com/PatateDu609/libcrypto42/actions/workflows/tests.yml/badge.svg)
 
 ## Description
 
@@ -35,7 +35,7 @@ To compile an executable using this library, you need to add the following libra
 
 + [x] MD5
 + [ ] SHA1
-+ [x] SHA2 suite (sha224, sha256, sha384, sha512, sha512/224, sha512/256)
++ [x] SHA2 suite (sha224, sha256, sha384, sha512, sha512/224, sha512/256)[README.md](README.md)
 + [ ] SHA3 suite
 + [x] PBKDF
 + [x] HMAC
