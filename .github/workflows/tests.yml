@@ -55,7 +55,7 @@ jobs:
       - name: Create destination directory
         env:
           BADGE_PATH: "${{ steps.unit.outputs.paths }}"
-        run: mkdir -p "${BADGE_PATHS%/*}"
+        run: mkdir -p "${BADGE_PATH%/*}"
       - name: Generate the badge SVG image
         uses: emibcn/badge-action@v2.0.2
         id: badge
