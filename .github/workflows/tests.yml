@@ -3,16 +3,22 @@ name: 'Unit tests'
 on:
   push:
     paths:
+      - ".github/workflows/test.yml"
       - "./src/**.c"
       - "./include/**.h"
       - "./tests/**.c"
       - "**.test.c"
+      - Makefile
+      - "mkvars/**.mk"
   pull_request:
     paths:
+      - ".github/workflows/test.yml"
       - "./src/**.c"
       - "./include/**.h"
       - "./tests/**.c"
       - "**.test.c"
+      - Makefile
+      - "mkvars/**.mk"
 
 jobs:
   unit_test:
