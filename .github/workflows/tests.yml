@@ -49,7 +49,7 @@ jobs:
           # output values used in other steps
           echo "path=${BADGE_PATH}" >> "${GITHUB_OUTPUT}"
           echo "branch=${BRANCH}" >> "${GITHUB_OUTPUT}"
-        with:
+        env:
           BADGE_PATH: ${{ steps.extract_branch.outputs.branch }}/test-badge.svg
           BRANCH: badges
       - name: Create destination directory
