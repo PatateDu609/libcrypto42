@@ -3,7 +3,7 @@ name: 'Unit tests'
 on:
   push:
     paths:
-      - ".github/workflows/test.yml"
+      - ".github/workflows/tests.yml"
       - "./src/**.c"
       - "./include/**.h"
       - "./tests/**.c"
@@ -12,7 +12,7 @@ on:
       - "mkvars/**.mk"
   pull_request:
     paths:
-      - ".github/workflows/test.yml"
+      - ".github/workflows/tests.yml"
       - "./src/**.c"
       - "./include/**.h"
       - "./tests/**.c"
