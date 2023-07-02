@@ -12,23 +12,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: recursive
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
 
-    - name: Get criterion
-      run: sudo apt-get install -y libcriterion-dev
+      - name: Get criterion
+        run: sudo apt-get install -y libcriterion-dev
 
-    - name: Compile libft
-      run: make -C libft
+      - name: Compile libft
+        run: make -C libft
 
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-  
-  
-    - name: Badge Action
-      uses: emibcn/badge-action@v1.2.4
-      with:
-        label: Testing libcrypto42
+      - name: make
+        run: make
+      - name: make check
+        run: make check
+
+
+      - name: Badge Action
+        uses: emibcn/badge-action@v2.0.2
+        id: badge
+        with:
+          label: Unit tests
+          path: ${{ steps.unit.outputs.path }}
+
+      - name: Upload badge as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: badge
+          path: ${{ steps.unit.outputs.path }}
+          if-no-files-found: error
+
+      - name: Commit badge
+        continue-on-error: true
+        env:
+          BADGE: ${{ steps.unit.outputs.path }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add "${BADGE}"
+          git commit -m "Add/Update badge"
+      - name: Push badge commit
+        uses: ad-m/github-push-action@master
+        if: ${{ success() }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.unit.outputs.branch }}
