@@ -3,8 +3,18 @@ BasedOnStyle: GNU
 AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
 AlignArrayOfStructures: Left
-AlignConsecutiveAssignments: AcrossEmptyLinesAndComments
-AlignConsecutiveBitFields: AcrossEmptyLinesAndComments
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossComments: true
+  AcrossEmptyLines: false
+  AlignCompound: true
+  PadOperators: true
+AlignConsecutiveBitFields:
+  Enabled: true
+  PadOperators: true
+  AlignCompound: true
+  AcrossComments: true
+  AcrossEmptyLines: false
 AlignConsecutiveDeclarations: AcrossEmptyLinesAndComments
 AlignTrailingComments: Always
 AlignOperands: Align
@@ -41,8 +51,9 @@ BreakInheritanceList: BeforeColon
 ColumnLimit: 120
 CompactNamespaces: false
 ContinuationIndentWidth: 8
-IndentCaseLabels: true
-IndentPPDirectives: None
+Language: Cpp
+IndentCaseLabels: false
+IndentPPDirectives: AfterHash
 IndentWidth: 4
 KeepEmptyLinesAtTheStartOfBlocks: true
 MaxEmptyLinesToKeep: 2
@@ -50,7 +61,9 @@ NamespaceIndentation: All
 ObjCSpaceAfterProperty: false
 ObjCSpaceBeforeProtocolList: true
 PointerAlignment: Right
-ReflowComments: false
+ReflowComments: true
+RemoveSemicolon: true
+SortIncludes: CaseSensitive
 SpaceAfterCStyleCast: true
 SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: false
@@ -65,7 +78,19 @@ SpacesBeforeTrailingComments: 0
 SpacesInAngles: false
 SpacesInCStyleCastParentheses: false
 SpacesInContainerLiterals: false
+SpacesInLineCommentPrefix:
+  Maximum: 4
+  Minimum: 1
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
+#QualifierOrder:
+#  - friend
+#  - static
+#  - inline
+#  - const
+#  - constexpr
+#  - volatile
+#  - restrict
+#  - type
 TabWidth: 4
-UseTab: AlignWithSpaces
+UseTab: Always

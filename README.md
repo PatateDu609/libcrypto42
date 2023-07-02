@@ -8,13 +8,14 @@ This is a small library designed to work with the 42 projects that would need to
 
 ## Dependencies
 
-+ make (only tested with make 4.3)
-+ gcc (only tested with gcc 12.1.1)
++ make (version 4.3 or greater)
++ gcc (version 13.1.1 or greater)
 + The bundled libft (another library that I created in the context of 42)
 + libm
 
 And the following libraries (to build and run tests):
-+ CUnit (only tested with CUnit 2.1.3)
+
++ Criterion (only tested with Criterion 2.4.2)
 + openssl itself to use its library
 
 ## How to use it
@@ -25,9 +26,10 @@ $ make check # run tests
 ```
 
 To compile an executable using this library, you need to add the following libraries:
-+ libcrypto42.a (-L\<path to libcrypto42> -lcrypto42)
-+ libft.a (-L\<path to libft> -lft)
-+ The system math library (-lm)
+
++ `libcrypto42.a` (`-L<path to libcrypto42> -lcrypto42`)
++ `libft.a` (`-L<path to libft> -lft`)
++ The system math library (`-lm`)
 
 ## Progress
 
@@ -37,7 +39,19 @@ To compile an executable using this library, you need to add the following libra
 + [ ] SHA3 suite
 + [x] PBKDF
 + [x] HMAC
-+ [ ] DES
++ [x] DES
++ [ ] AES
+    + [ ] AES128
+    + [ ] AES192
+    + [ ] AES256
++ [ ] 3DES (EDE only)
+    + [ ] 2 Keys option
+    + [ ] 3 Keys option
 + [ ] Operation modes for symmetric encryption
+    + [x] ECB
+    + [x] CBC
+    + [ ] CFB
+    + [ ] OFB
+    + [ ] CTR
 + [x] Base64
 + [x] Use of the Kernel CSPRNG

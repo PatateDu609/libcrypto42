@@ -8,17 +8,15 @@ TEST_LANGUAGE	=	C
 TEST_COLORS		=	256
 TEST_DEBUG		=	1
 
-TEST_SRC		=	tests/md5.c			\
-					tests/registry.c	\
-					tests/sha2.c		\
+TEST_SRC		=	tests/digest.c		\
+					tests/base64.c		\
 					tests/hmac.c		\
 					tests/pbkdf.c		\
-					tests/base64.c		\
 
 TEST_OBJ		=	$(addprefix $(PATH_OBJ)/, $(TEST_SRC:.c=.o))
 
 TEST_CFLAGS		=	-Iinclude -Ilibft/include -Wall -Werror -Wextra -g3 -ggdb -O0
-TEST_LDFLAGS	=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lcunit -lm
+TEST_LDFLAGS	=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lcriterion -lm
 
 $(PATH_OBJ)/%.o:	%.c
 	$(MKDIR) $(dir $@)

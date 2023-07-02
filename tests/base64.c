@@ -1,48 +1,37 @@
-#include "tests.h"
 #include "common.h"
-#include "CUnit/Basic.h"
+#include <criterion/criterion.h>
+#include <criterion/new/assert.h>
 
-void base64_test_encode(void)
-{
-	char *tests[][2] = {
-		{"", ""},
-		{"f", "Zg=="},
-		{"fo", "Zm8="},
-		{"foo", "Zm9v"},
-		{"foob", "Zm9vYg=="},
-		{"fooba", "Zm9vYmE="},
-		{"foobar", "Zm9vYmFy"},
-	};
+static char *test_strings[][2] = {
+	{"",		  ""		 },
+	{ "f",	   "Zg=="	  },
+	{ "fo",		"Zm8="	   },
+	{ "foo",	 "Zm9v"	},
+	{ "foob",	  "Zm9vYg=="},
+	{ "fooba",  "Zm9vYmE="},
+	{ "foobar", "Zm9vYmFy"},
+};
 
-	for (size_t i = 0; i < sizeof tests / sizeof *tests; i++)
-	{
-		char *res = base64_encode((uint8_t *)tests[i][0], strlen(tests[i][0]));
+Test(base64, encode) {
+	for (size_t i = 0; i < sizeof test_strings / sizeof *test_strings; i++) {
+		char *res = base64_encode((uint8_t *) test_strings[i][0], strlen(test_strings[i][0]));
 
-		CU_ASSERT_STRING_EQUAL(res, tests[i][1]);
+		cr_expect(eq(str, res, test_strings[i][1], "expected %s, got %s", test_strings[i][1], res));
 
 		free(res);
 	}
 }
 
-void base64_test_decode(void)
-{
-	char *tests[][2] = {
-		{"", ""},
-		{"f", "Zg=="},
-		{"fo", "Zm8="},
-		{"foo", "Zm9v"},
-		{"foob", "Zm9vYg=="},
-		{"fooba", "Zm9vYmE="},
-		{"foobar", "Zm9vYmFy"},
-	};
+Test(base64, decode) {
+	for (size_t i = 0; i < sizeof test_strings / sizeof *test_strings; i++) {
+		char		 *str = test_strings[i][1];
+		size_t		  len;
+		uint8_t		 *res = base64_decode(str, &len);
 
-	for (size_t i = 0; i < sizeof tests / sizeof *tests; i++)
-	{
-		size_t len;
-		uint8_t *res = base64_decode(tests[i][1], &len);
+		struct cr_mem expected_mem = { .data = test_strings[i][0], .size = strlen(test_strings[i][0]) };
+		struct cr_mem actual_mem   = { .data = res, .size = len };
 
-		CU_ASSERT_EQUAL(len, strlen(tests[i][0]));
-		CU_ASSERT_EQUAL(memcmp(res, tests[i][0], len), 0);
+		cr_expect(eq(mem, actual_mem, expected_mem));
 
 		free(res);
 	}
