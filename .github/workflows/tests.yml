@@ -52,11 +52,11 @@ jobs:
         id: unit
         run: |
           # output values used in other steps
-          echo "path=${BADGE_PATH}" >> "${GITHUB_OUTPUT}"
+          echo "path=${GITHUB_WORKSPACE}/branch_ref/${BADGE_PATH}" >> "${GITHUB_OUTPUT}"
           echo "workspace=${GITHUB_WORKSPACE}" >> "${GITHUB_OUTPUT}"
           echo "branch=${BRANCH}" >> "${GITHUB_OUTPUT}"
         env:
-          BADGE_PATH: $GITHUB_WORKSPACE/branch_ref/${{ steps.extract_branch.outputs.branch }}/test-badge.svg
+          BADGE_PATH: ${{ steps.extract_branch.outputs.branch }}/test-badge.svg
           BRANCH: badges
       - name: Create destination directory
         env:
@@ -80,8 +80,9 @@ jobs:
         continue-on-error: true
         env:
           BADGE: ${{ steps.unit.outputs.path }}
+          WORKSPACE: ${{ steps.unit.outputs.workspace }}
         run: |
-          cd $GITHUB_WORKSPACE/branch_ref
+          cd ${WORKSPACE}/branch_ref
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add "${BADGE}"
