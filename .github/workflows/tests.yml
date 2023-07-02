@@ -40,6 +40,14 @@ jobs:
         run: make check
 
 
+      - name: Checkout badge branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${BRANCH}
+          path: ${PATH}
+        env:
+          BRANCH: badges
+          PATH: /tmp/branch_ref
       - name: Extract branch name
         id: extract_branch
         run: echo "branch=${GITHUB_REF#refs/heads/}" >> "${GITHUB_OUTPUT}"
@@ -50,7 +58,7 @@ jobs:
           echo "path=${BADGE_PATH}" >> "${GITHUB_OUTPUT}"
           echo "branch=${BRANCH}" >> "${GITHUB_OUTPUT}"
         env:
-          BADGE_PATH: ${{ steps.extract_branch.outputs.branch }}/test-badge.svg
+          BADGE_PATH: /tmp/branch_ref/${{ steps.extract_branch.outputs.branch }}/test-badge.svg
           BRANCH: badges
       - name: Create destination directory
         env:
@@ -72,6 +80,7 @@ jobs:
 
       - name: Commit badge
         continue-on-error: true
+        working-directory: /tmp/branch_ref
         env:
           BADGE: ${{ steps.unit.outputs.path }}
         run: |
@@ -85,3 +94,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.unit.outputs.branch }}
+          directory: /tmp/branch_ref
