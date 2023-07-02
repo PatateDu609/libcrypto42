@@ -2,16 +2,16 @@ name: 'Unit tests'
 
 on:
   push:
-    branches:
-      - '!badges'
+    branches-ignore:
+      - 'badges'
     paths:
       - "./src/**.c"
       - "./include/**.h"
       - "./tests/**.c"
       - "**.test.c"
   pull_request:
-    branches:
-      - '!badges'
+    branches-ignore:
+      - 'badges'
     paths:
       - "./src/**.c"
       - "./include/**.h"
