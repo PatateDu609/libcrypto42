@@ -5,7 +5,7 @@ on:
     branches-ignore:
       - 'badges'
     paths:
-      - .github/workflow/tests.yml
+      - .github/workflows/tests.yml
       - "./src/**.c"
       - "./include/**.h"
       - "./tests/**.c"
@@ -14,7 +14,7 @@ on:
     branches-ignore:
       - 'badges'
     paths:
-      - .github/workflow/tests.yml
+      - .github/workflows/tests.yml
       - "./src/**.c"
       - "./include/**.h"
       - "./tests/**.c"
