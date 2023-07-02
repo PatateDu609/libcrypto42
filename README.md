@@ -1,6 +1,6 @@
 # libcrypto42
 
-![Badge workflow](https://badgen.net/https/github.com/PatateDu609/libcrypto42/actions/workflows/tests.yml/badge.svg)
+![Badge workflow](https://github.com/PatateDu609/libcrypto42/actions/workflows/tests.yml/badge.svg)
 
 ## Description
 
