@@ -1,14 +1,25 @@
-name: Tests_libcrypto42
+name: 'Unit tests'
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - '!badges'
+    paths:
+      - "./src/**.c"
+      - "./include/**.h"
+      - "./tests/**.c"
+      - "**.test.c"
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - '!badges'
+    paths:
+      - "./src/**.c"
+      - "./include/**.h"
+      - "./tests/**.c"
+      - "**.test.c"
 
 jobs:
-  build:
-
+  unit_test:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,23 +27,38 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Get criterion
+      - name: Installing criterion
         run: sudo apt-get install -y libcriterion-dev
 
       - name: Compile libft
         run: make -C libft
-
-      - name: make
+      - name: Compile libcrypto42
         run: make
-      - name: make check
+      - name: Running tests
         run: make check
 
 
-      - name: Badge Action
+      - name: Extract branch name
+        id: extract_branch
+        run: echo "branch=${GITHUB_REF#refs/heads/}" >> "${GITHUB_OUTPUT}"
+      - name: Preparing badge environment
+        id: unit
+        run: |
+          # output values used in other steps
+          echo "path=${BADGE_PATH}" >> "${GITHUB_OUTPUT}"
+          echo "branch=${BRANCH}" >> "${GITHUB_OUTPUT}"
+        with:
+          BADGE_PATH: ${{ steps.extract_branch.outputs.branch }}/test-badge.svg
+          BRANCH: badges
+      - name: Create destination directory
+        env:
+          BADGE_PATH: "${{ steps.unit.outputs.paths }}"
+        run: mkdir -p "${BADGE_PATHS%/*}"
+      - name: Generate the badge SVG image
         uses: emibcn/badge-action@v2.0.2
         id: badge
         with:
-          label: Unit tests
+          label: 'Unit tests'
           path: ${{ steps.unit.outputs.path }}
 
       - name: Upload badge as artifact
