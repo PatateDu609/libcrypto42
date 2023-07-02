@@ -15,8 +15,8 @@ TEST_SRC		=	tests/digest.c		\
 
 TEST_OBJ		=	$(addprefix $(PATH_OBJ)/, $(TEST_SRC:.c=.o))
 
-TEST_CFLAGS		=	-Iinclude -Ilibft/include -Wall -Werror -Wextra -g3 -ggdb -O0
-TEST_LDFLAGS	=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lcriterion -lm
+TEST_CFLAGS		:=	-Iinclude -Ilibft/include -Wall -Werror -Wextra -g3 -ggdb -O0
+TEST_LDFLAGS	:=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lcriterion -lm
 
 $(PATH_OBJ)/%.o:	%.c
 	$(MKDIR) $(dir $@)
@@ -28,5 +28,5 @@ $(TEST_NAME):		$(NAME) $(TEST_OBJ)
 	$(ECHO) -e " $(BOLD)$(YELLOW)$(BIGGREATER)$(NORMAL)   Linking $(ITALIC)$(subst $(PATH_OBJ)/,,$@)$(TRESET)"
 	$(CC) $(TEST_OBJ) -o $(TEST_NAME) $(TEST_LDFLAGS)
 
-check:			$(TEST_NAME)
-	@./$(TEST_NAME) --full-stats
+check:				$(TEST_NAME)
+	@./$(TEST_NAME) --full-stats --verbose
