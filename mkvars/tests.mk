@@ -29,4 +29,4 @@ $(TEST_NAME):		$(NAME) $(TEST_OBJ)
 	$(CC) $(TEST_OBJ) -o $(TEST_NAME) $(TEST_LDFLAGS)
 
 check:			$(TEST_NAME)
-	@./$(TEST_NAME)
+	@./$(TEST_NAME) --full-stats
