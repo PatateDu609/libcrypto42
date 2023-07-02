@@ -10,12 +10,13 @@ ifndef DEPS
 $(error "DEPS is not defined")
 endif
 
-all:							$(NAME)
+all:							$(NAME) $(TEST_NAME)
 
 $(PATH_OBJ)/%.o:			$(PATH_SRC)/%$(LANGEXTENSION)
 	$(MKDIR) $(dir $@)
 	$(ECHO) -e " $(BOLD)$(BLUE)$(GREATER)$(NORMAL)   Compiling $(ITALIC)$(subst $(PATH_SRC)/,,$<)$(TRESET)"
 	$(CC) $(CFLAGS) -c -MMD $< -o $@
+
 
 -include $(DEPS)
 
