@@ -61,7 +61,7 @@ CFLAGS				?=	-Wall -Wextra -Werror $(addprefix -I,$(PATH_INC)) $(STD) $(OPT_CFLA
 ARFLAGS				?=	rcs
 ASFLAGS				?=
 
-ifeq ($(shell $(NCC) --version | grep -oahr -m 1 'clang' | head -1 | tr -d '\n'),clang)
+ifeq ($(shell $(NCC) --version | grep -o 'clang' | head -1 | tr -d '\n'),clang)
 	CFLAGS			+=	-DHAVE_CLANG_COMPILER
 else ifeq ($(shell $(NCC) --version | grep -oahr -m 1 'gcc' | head -1),gcc)
 	CFLAGS			+=	-DHAVE_GCC_COMPILER
