@@ -22,7 +22,7 @@ $(TEST_NAME):		 CFLAGS	+= -Isrc/tests
 $(TEST_NAME):		 CFLAGS	:= $(filter-out -Werror,$(CFLAGS))
 $(TEST_NAME):		$(NAME) $(TEST_OBJ)
 	$(MAKE) -C libft/
-	$(ECHO) " $(BOLD)$(YELLOW)$(BIGGREATER)$(NORMAL)   Linking $(ITALIC)$(subst $(PATH_OBJ)/,,$@)$(TRESET)"
+	$(PRINTF) " $(BOLD)$(YELLOW)$(BIGGREATER)$(NORMAL)   Linking $(ITALIC)$(subst $(PATH_OBJ)/,,$@)$(TRESET)\n"
 	$(CC) $(TEST_OBJ) -o $(TEST_NAME) $(TEST_LDFLAGS)
 
 check:				$(TEST_NAME)

@@ -43,13 +43,14 @@ CC					?=	cc
 AS					?=	nasm
 AR					?=	ar
 MAKE				?=	make -s
-ECHO				?=	/bin/echo
+PRINTF				?=	printf
 RM					?=	rm -f
 MKDIR				?=	mkdir -p
 STRIP				?=	strip
 
 NCC					:= $(CC)
 NAS					:= $(AS)
+NPRINTF				:= $(PRINTF)
 NAR					:= $(AR)
 NRM					:= $(RM)
 NMKDIR				:= $(MKDIR)
@@ -72,18 +73,13 @@ endif
 
 ifeq ($(shell uname),Darwin)
 	CFLAGS			+=	-I/opt/homebrew/include
-	ECHO			:=	echo
-else
-	ECHO			:=	/bin/echo -e
 endif
-
-NECHO				:= $(ECHO)
 
 ifeq ($(VERBOSE),0)
 	CC				:=	@$(CC)
 	AS				:=	@$(AS)
 	AR				:=	@$(AR)
-	ECHO			:=	@$(ECHO)
+	PRINTF			:=	@$(PRINTF)
 	RM				:=	@$(RM)
 	MKDIR			:=	@$(MKDIR)
 	MAKE			:=	@$(MAKE)
