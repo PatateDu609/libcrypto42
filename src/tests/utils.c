@@ -1,4 +1,6 @@
 #include "test.h"
+#include <criterion/criterion.h>
+#include <criterion/parameterized.h>
 #include <string.h>
 
 void dupe_str_array(const char **arr, size_t len, char **target) {

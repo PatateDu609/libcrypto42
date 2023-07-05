@@ -1,13 +1,12 @@
-/**
- * @file permutation.c
- * @author Ghali Boucetta (gboucett@student.42,fr)
- * @brief DES permutation module
- * @date 2022-08-13
- */
-
 #include "internal.h"
 
-uint64_t permute(uint64_t block, size_t input_size, const uint8_t *table, size_t size) {
+#ifdef HAVE_CLANG_COMPILER
+uint64_t permute(uint64_t block, size_t input_size, const uint8_t *__nonnull table, size_t size)
+#else
+uint64_t permute(uint64_t block, size_t input_size, const uint8_t *table, size_t size)
+#endif
+{
+
 	uint64_t permuted = 0;
 
 	for (uint64_t i = 0; i < size; i++) {

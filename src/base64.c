@@ -1,4 +1,7 @@
+#ifndef HAVE_CLANG_COMPILER
 #define _POSIX_SOURCE
+#endif
+
 #include "common.h"
 #include <ctype.h>
 #include <math.h>

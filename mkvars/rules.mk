@@ -14,7 +14,10 @@ all:							$(NAME) $(TEST_NAME)
 
 $(PATH_OBJ)/%.o:			$(PATH_SRC)/%$(LANGEXTENSION)
 	$(MKDIR) $(dir $@)
-	$(ECHO) -e " $(BOLD)$(BLUE)$(GREATER)$(NORMAL)   Compiling $(ITALIC)$(subst $(PATH_SRC)/,,$<)$(TRESET)"
+
+	$(ECHO) " $(BOLD)$(if $(filter $(shell echo $< | grep 'tests/' ; echo $$?),1),$(if $(filter $(shell echo $< | grep -E '\.test\.c' ; echo $$?),0),$(MAGENTA),$(BLUE)),$(CYAN))"
+	$(ECHO) "$(GREATER)$(NORMAL)   Compiling $(ITALIC)$(subst $(PATH_SRC)/,,$<)$(TRESET)"
+
 	$(CC) $(CFLAGS) -c -MMD $< -o $@
 
 
@@ -23,17 +26,17 @@ $(PATH_OBJ)/%.o:			$(PATH_SRC)/%$(LANGEXTENSION)
 $(NAME):						$(OBJS)
 ifeq ($(TYPE),exec)
 
-	$(ECHO) -e " $(BOLD)$(GREEN)$(BIGGREATER)$(NORMAL)   Linking $(ITALIC)$(subst $(PATH_OBJ)/,,$@)$(TRESET)"
+	$(ECHO) " $(BOLD)$(GREEN)$(BIGGREATER)$(NORMAL)   Linking $(ITALIC)$(subst $(PATH_OBJ)/,,$@)$(TRESET)"
 	$(CC) -o $@ $(OBJS) $(LDFLAGS)
 
 else ifeq ($(TYPE),static)
 
-	$(ECHO) -e " $(BOLD)$(GREEN)$(BIGGREATER)$(NORMAL)   Creating $(ITALIC)$(subst $(PATH_LIB)/,,$@)$(TRESET)"
+	$(ECHO) " $(BOLD)$(GREEN)$(BIGGREATER)$(NORMAL)   Creating $(ITALIC)$(subst $(PATH_LIB)/,,$@)$(TRESET)"
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 
 else ifeq ($(TYPE),shared)
 
-	$(ECHO) -e " $(BOLD)$(GREEN)$(BIGGREATER)$(NORMAL)   Creating $(ITALIC)$(subst $(PATH_LIB)/,,$@)$(TRESET)"
+	$(ECHO) " $(BOLD)$(GREEN)$(BIGGREATER)$(NORMAL)   Creating $(ITALIC)$(subst $(PATH_LIB)/,,$@)$(TRESET)"
 	$(CC) -shared -o $@ $(OBJS) $(LDFLAGS)
 
 endif
@@ -52,15 +55,15 @@ info:							test_colors info_vars
 
 test_colors:
 	$(ECHO) "Testing colors..."
-	$(ECHO) -e "$(RED)RED$(TRESET)"
-	$(ECHO) -e "$(GREEN)GREEN$(TRESET)"
-	$(ECHO) -e "$(YELLOW)YELLOW$(TRESET)"
-	$(ECHO) -e "$(BLUE)BLUE$(TRESET)"
-	$(ECHO) -e "$(MAGENTA)MAGENTA$(TRESET)"
-	$(ECHO) -e "$(CYAN)CYAN$(TRESET)"
+	$(ECHO) "$(RED)RED$(TRESET)"
+	$(ECHO) "$(GREEN)GREEN$(TRESET)"
+	$(ECHO) "$(YELLOW)YELLOW$(TRESET)"
+	$(ECHO) "$(BLUE)BLUE$(TRESET)"
+	$(ECHO) "$(MAGENTA)MAGENTA$(TRESET)"
+	$(ECHO) "$(CYAN)CYAN$(TRESET)"
 
-	$(ECHO) -e "$(UNDERLINE)UNDERLINE$(TRESET)"
-	$(ECHO) -e "$(BOLD)BOLD$(TRESET)\n"
+	$(ECHO) "$(UNDERLINE)UNDERLINE$(TRESET)"
+	$(ECHO) "$(BOLD)BOLD$(TRESET)\n"
 
 
 info_vars:

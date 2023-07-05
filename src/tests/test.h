@@ -1,7 +1,6 @@
 #ifndef LIBCRYPTO42_TEST_H
 #define LIBCRYPTO42_TEST_H
 
-#include <criterion/parameterized.h>
 #include <openssl/evp.h>
 #include <stdio.h>
 
@@ -20,6 +19,7 @@ extern const char *digest_test_filenames[NB_DIGEST_TEST_FILES];
 struct digest_params {
 	char *str;
 };
+struct criterion_test_params;
 
 
 void run_digest_string_test(const EVP_MD *md, const char *arg, char *(*mine)(const char *) );
