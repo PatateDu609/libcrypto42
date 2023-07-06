@@ -19,6 +19,7 @@ on:
       - "**.test.c"
       - Makefile
       - "mkvars/**.mk"
+  workflow_dispatch:
 
 jobs:
   unit_test:
