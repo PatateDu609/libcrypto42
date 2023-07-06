@@ -30,3 +30,6 @@ check:				$(TEST_NAME)
 
 check_gdb:			$(TEST_NAME)
 	@./$(TEST_NAME) --full-stats --verbose --debug=gdb
+
+check_lldb:			$(TEST_NAME)
+	@./$(TEST_NAME)	--full-stats --verbose --debug=lldb
