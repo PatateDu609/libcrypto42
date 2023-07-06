@@ -1,10 +1,3 @@
-/**
- * @file blocks.c
- * @author Ghali Boucetta (gboucett@student.42.fr)
- * @brief Functions to split data into blocks.
- * @date 2022-08-09
- */
-
 #include "common.h"
 #include "libft.h"
 #include <stdio.h>

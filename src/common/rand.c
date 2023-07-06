@@ -1,12 +1,3 @@
-/**
- * @file rand.c
- * @author Ghali Boucetta (gboucett@student.42.fr)
- * @brief A cryptographycally safe random number generator.
- * @date 2022-08-14
- *
- * @note This implementation uses the /dev/urandom device
- */
-
 #include "common.h"
 #include <fcntl.h>
 #include <string.h>

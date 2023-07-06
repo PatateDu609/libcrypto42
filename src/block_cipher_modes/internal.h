@@ -36,14 +36,14 @@ bool __cipher_ctx_valid(struct cipher_ctx *ctx, enum cipher_mode cipher_mode, bo
  *
  * @param plaintext The plaintext to pad.
  * @param len The length of the plaintext, this will be updated according to the padding.
- * @param padding The padding to use.
+ * @param blk_size The block size, used to determine the padding needed.
  *
  * @return Returns the padded plaintext.
  *
  * @note The padding algorithm follows PKCS#5 and PKCS#7, and is described by the RFC5652.
  * @see https://tools.ietf.org/html/rfc5652#section-6.3
  */
-uint8_t *pad(uint8_t *plaintext, size_t *len, uint8_t padding) __internal;
+uint8_t *pad(uint8_t *plaintext, size_t *len, size_t blk_size) __internal;
 
 /**
  * @brief Unpad the plaintext, it is assumed that the plaintext is padded with

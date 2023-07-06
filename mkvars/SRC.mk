@@ -15,6 +15,10 @@ DES_SRC_BASENAME			=	DES/DES							\
 								DES/permutation					\
 								DES/round						\
 
+AES_SRC_BASENAME			=	AES/AES							\
+								AES/key							\
+								AES/steps						\
+
 COMMON_SRC_BASENAME			=	common/blocks					\
 								common/rand						\
 								common/askpass					\
@@ -32,6 +36,7 @@ CIPHER_MODE_SRC_BASENAME	=	block_cipher_modes/common					\
 BASENAME					:=	$(MD5_SRC_BASENAME)				\
 								$(SHA2_SRC_BASENAME)			\
 								$(COMMON_SRC_BASENAME)			\
+								$(AES_SRC_BASENAME)				\
 								$(DES_SRC_BASENAME)				\
 								$(CIPHER_MODE_SRC_BASENAME)		\
 								hmac							\

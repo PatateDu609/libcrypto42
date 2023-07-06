@@ -20,8 +20,13 @@
  */
 enum block_cipher {
 	BLOCK_CIPHER_DES, ///< Data Encryption Standard
-	BLOCK_CIPHER_TDES,///< Triple DES (Not implemented yet)
-	BLOCK_CIPHER_AES, ///< Advanced Encryption Standard (Not implemented yet)
+
+	BLOCK_CIPHER_3DES_EDE2,///< Triple DES with 2 keys (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE3,///< Triple DES with 3 keys (Not implemented yet)
+
+	BLOCK_CIPHER_AES128, ///< Advanced Encryption Standard with a 128 bits key
+	BLOCK_CIPHER_AES192, ///< Advanced Encryption Standard with a 192 bits key
+	BLOCK_CIPHER_AES256, ///< Advanced Encryption Standard with a 256 bits key
 };
 
 struct block_cipher_ctx {
@@ -136,5 +141,92 @@ uint64_t                des_encrypt(uint64_t block, uint64_t key);
  * is done by the function.
  */
 uint64_t                des_decrypt(uint64_t block, uint64_t key);
+
+/* ************************** AES related functions ************************* */
+
+/**
+ * @brief Encrypt a single block of 128 bits using the AES algorithm with a key size of 128.
+ *
+ * @param blk The block to encrypt.
+ * @param key The key to use for encryption, it must be 128 bits (16 bytes) long.
+ *
+ * @return The encrypted block.
+ *
+ * @note This functions should be used with one of the cipher block modes.
+ *
+ * @warning The value returned by this function must be freed.
+ */
+uint32_t *aes128_encrypt(uint32_t *blk, const uint32_t *key);
+
+/**
+ * @brief Encrypt a single block of 192 bits using the AES algorithm with a key size of 192.
+ *
+ * @param blk The block to encrypt.
+ * @param key The key to use for encryption, it must be 192 bits (24 bytes) long.
+ *
+ * @return The encrypted block.
+ *
+ * @note This functions should be used with one of the cipher block modes.
+ *
+ * @warning The value returned by this function must be freed.
+ */
+uint32_t *aes192_encrypt(uint32_t *blk, const uint32_t *key);
+
+/**
+ * @brief Encrypt a single block of 256 bits using the AES algorithm with a key size of 256.
+ *
+ * @param blk The block to encrypt.
+ * @param key The key to use for encryption, it must be 256 bits (32 bytes) long.
+ *
+ * @return The encrypted block.
+ *
+ * @note This functions should be used with one of the cipher block modes.
+ *
+ * @warning The value returned by this function must be freed.
+ */
+uint32_t *aes256_encrypt(uint32_t *blk, const uint32_t *key);
+
+
+/**
+ * @brief Decrypt a single block of 128 bits with the AES algorithm with a key size of 128.
+ *
+ * @param blk The block to decrypt.
+ * @param key The key to use for the decryption, it must be 128 bits (16 bytes) long.
+ *
+ * @return The decrypted block.
+ *
+ * @note This function should only be used with one of the cipher block modes.
+ *
+ * @warning The value returned by this function must be freed.
+ */
+uint32_t *aes128_decrypt(uint32_t *blk, const uint32_t *key);
+
+/**
+ * @brief Decrypt a single block of 192 bits with the AES algorithm with a key size of 192.
+ *
+ * @param blk The block to decrypt.
+ * @param key The key to use for the decryption, it must be 192 bits (24 bytes) long.
+ *
+ * @return The decrypted block.
+ *
+ * @note This function should only be used with one of the cipher block modes.
+ *
+ * @warning The value returned by this function must be freed.
+ */
+uint32_t *aes192_decrypt(uint32_t *blk, const uint32_t *key);
+
+/**
+ * @brief Decrypt a single block of 256 bits with the AES algorithm with a key size of 256.
+ *
+ * @param blk The block to decrypt.
+ * @param key The key to use for the decryption, it must be 256 bits (32 bytes) long.
+ *
+ * @return The decrypted block.
+ *
+ * @note This function should only be used with one of the cipher block modes.
+ *
+ * @warning The value returned by this function must be freed.
+ */
+uint32_t *aes256_decrypt(uint32_t *blk, const uint32_t *key);
 
 #endif /* CIPHER_H */

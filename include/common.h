@@ -100,6 +100,8 @@ extern enum crypto_error crypto42_errno;
 #define __pure __attribute__((pure))
 #endif
 
+#define __fallthrough __attribute__((fallthrough))
+
 /**
  * @brief A structure to represent the message split into blocks.
  *
@@ -158,7 +160,8 @@ static inline char *stringify_hash(const uint8_t *buf, size_t len) {
 
 	if (!str)
 		return NULL;
-	for (size_t i = 0; i < len; i++) snprintf(str + i * 2, 3, "%02x", buf[i]);
+	for (size_t i = 0; i < len; i++)
+		snprintf(str + i * 2, 3, "%02x", buf[i]);
 	return str;
 }
 
