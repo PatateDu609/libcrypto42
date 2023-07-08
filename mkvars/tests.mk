@@ -26,10 +26,32 @@ $(TEST_NAME):		$(NAME) $(TEST_OBJ)
 	$(CC) $(TEST_OBJ) -o $(TEST_NAME) $(TEST_LDFLAGS)
 
 check:				$(TEST_NAME)
+ifeq ($(FILTER),)
 	@./$(TEST_NAME) --full-stats --verbose
+else
+	@./$(TEST_NAME) --full-stats --verbose --filter=$(FILTER)
+endif
 
-check_gdb:			$(TEST_NAME)
-	@./$(TEST_NAME) --full-stats --verbose --debug=gdb
+check_gdb: DEBUGGER		:=	gdb
+check_gdb: check_debug
 
-check_lldb:			$(TEST_NAME)
-	@./$(TEST_NAME)	--full-stats --verbose --debug=lldb
+check_lldb: DEBUGGER	:=	lldb
+check_lldb: check_debug
+
+check_debug_auto: $(TEST_NAME)
+ifeq ($(FILTER),)
+	@./$(TEST_NAME) --full-stats --verbose --debug
+else
+	@./$(TEST_NAME) --full-stats --verbose --filter=$(FILTER) --debug
+endif
+
+check_debug:			$(TEST_NAME)
+	@if [ "$(DEBUGGER)" = "" ]; then \
+		echo "DEBUGGER is unset for debugging rule"; \
+  		exit 1; \
+  	fi
+ifeq ($(FILTER),)
+	@./$(TEST_NAME) --full-stats --verbose --debug=$(DEBUGGER)
+else
+	@./$(TEST_NAME) --full-stats --verbose --filter=$(FILTER) --debug=$(DEBUGGER)
+endif

@@ -3,31 +3,33 @@
 #include "internal.h"
 #include <string.h>
 
-typedef uint32_t *(aes_op) (struct aes_ctx *, union aes_data *, const union aes_key *);
+typedef uint8_t *(aes_op) (struct aes_ctx *, union aes_data *, const union aes_key *);
 static aes_op cipher, inv_cipher;
 
-uint32_t	 *cipher(struct aes_ctx *ctx, union aes_data *data, const union aes_key *key) {
-	key_expansion(ctx, key->w);
+uint8_t		 *cipher(struct aes_ctx *ctx, union aes_data *data, const union aes_key *key) {
+	 key_expansion(ctx, key->w);
 
-	add_round_key(ctx, data, 0);
+	 add_round_key(ctx, data, 0);
 
-	for (size_t i = 1; i < ctx->Nr; i++) {
-		sub_bytes(data);
-		shift_rows(data);
-		mix_columns(data);
-		add_round_key(ctx, data, i);
-	}
-	sub_bytes(data);
-	shift_rows(data);
-	add_round_key(ctx, data, ctx->Nr);
-	return data->w;
+	 for (size_t i = 1; i < ctx->Nr; i++) {
+		 sub_bytes(data);
+		 shift_rows(data);
+		 mix_columns(data);
+		 add_round_key(ctx, data, i);
+	 }
+	 sub_bytes(data);
+	 shift_rows(data);
+	 add_round_key(ctx, data, ctx->Nr);
+	 return data->b;
 }
 
-uint32_t *inv_cipher(struct aes_ctx *ctx, union aes_data *data, const union aes_key *key) {
+uint8_t *inv_cipher(struct aes_ctx *ctx, union aes_data *data, const union aes_key *key) {
 	key_expansion(ctx, key->w);
 
-	add_round_key(ctx, data, ctx->Nr);
-	for (size_t i = ctx->Nr; i >= 1; i--) {
+	size_t i = ctx->Nr;
+
+	add_round_key(ctx, data, i--);
+	for (; i >= 1; i--) {
 		inv_shift_rows(data);
 		inv_sub_bytes(data);
 		add_round_key(ctx, data, i);
@@ -38,42 +40,48 @@ uint32_t *inv_cipher(struct aes_ctx *ctx, union aes_data *data, const union aes_
 	inv_sub_bytes(data);
 	add_round_key(ctx, data, 0);
 
-	return data->w;
+	return data->b;
 }
 
-static uint32_t *do_aes(struct aes_ctx *ctx, uint32_t *blk, const uint32_t *k, aes_op *aes) {
-	union aes_data data;
-	memset(data.b, 0, sizeof data.b);
-	uint8_t *raw = (uint8_t *) blk;
+static uint8_t *do_aes(struct aes_ctx *ctx, const uint8_t *blk, const uint8_t *k, aes_op *aes) {
+	union aes_data data, blk_swp;
+	memcpy(blk_swp.w, blk, sizeof blk_swp.w);
+	blk_swp.w[0] = bswap_32(blk_swp.w[0]);
+	blk_swp.w[1] = bswap_32(blk_swp.w[1]);
+	blk_swp.w[2] = bswap_32(blk_swp.w[2]);
+	blk_swp.w[3] = bswap_32(blk_swp.w[3]);
 
-	for (size_t c = 0; c < 4; c++)
-		for (size_t r = 0; r < 4; r++)
-			data.b[(3 - r) * 4 + c] = raw[(3 - c) * 4 + r];
+	for (size_t col = 0; col < 4; col++)
+		for (size_t row = 0; row < 4; row++)
+			data.b[(3 - row) * 4 + col] = blk_swp.b[(3 - col) * 4 + row];
 
 	union aes_key key;
 	memset(key.b, 0, sizeof key.b);
 	memcpy(key.w, k, sizeof key.w);
+	for (size_t i = 0; i < ctx->Nk; i++)
+		key.w[i] = bswap_32(key.w[i]);
 
-	raw					 = (uint8_t *) aes(ctx, &data, &key);
-	uint32_t *ciphertext = calloc(ctx->Nb, sizeof *ciphertext);
-	if (!ciphertext) {
+	uint8_t *raw		= aes(ctx, &data, &key);
+	uint8_t *output = calloc(ctx->Nb * 4, sizeof *output);
+	if (!output) {
 		perror("error: couldn't allocate memory");
 		exit(EXIT_FAILURE);
 	}
 
-	for (size_t i = 0; i < ctx->Nb; i++) {
-		uint8_t *b = (uint8_t *) (ciphertext + i);
+	for (size_t col = 0; col < 4; col++)
+		for (size_t row = 0; row < 4; row++)
+			blk_swp.b[(3 - row) * 4 + col] = raw[(3 - col) * 4 + row];
 
-		b[3] = raw[3 - i];
-		b[2] = raw[4 + 3 - i];
-		b[1] = raw[8 + 3 - i];
-		b[0] = raw[12 + 3 - i];
-	}
+	blk_swp.w[0] = bswap_32(blk_swp.w[0]);
+	blk_swp.w[1] = bswap_32(blk_swp.w[1]);
+	blk_swp.w[2] = bswap_32(blk_swp.w[2]);
+	blk_swp.w[3] = bswap_32(blk_swp.w[3]);
+	memcpy(output, blk_swp.b, sizeof blk_swp.b);
 
-	return ciphertext;
+	return output;
 }
 
-uint32_t *aes128_encrypt(uint32_t *blk, const uint32_t *k) {
+uint8_t *aes128_encrypt(uint8_t *blk, const uint8_t *k) {
 	struct aes_ctx ctx;
 
 	ctx.type = AES128;
@@ -84,7 +92,7 @@ uint32_t *aes128_encrypt(uint32_t *blk, const uint32_t *k) {
 	return do_aes(&ctx, blk, k, cipher);
 }
 
-uint32_t *aes192_encrypt(uint32_t *blk, const uint32_t *k) {
+uint8_t *aes192_encrypt(uint8_t *blk, const uint8_t *k) {
 	struct aes_ctx ctx;
 
 	ctx.type = AES192;
@@ -95,7 +103,7 @@ uint32_t *aes192_encrypt(uint32_t *blk, const uint32_t *k) {
 	return do_aes(&ctx, blk, k, cipher);
 }
 
-uint32_t *aes256_encrypt(uint32_t *blk, const uint32_t *k) {
+uint8_t *aes256_encrypt(uint8_t *blk, const uint8_t *k) {
 	struct aes_ctx ctx;
 
 	ctx.type = AES256;
@@ -106,7 +114,7 @@ uint32_t *aes256_encrypt(uint32_t *blk, const uint32_t *k) {
 	return do_aes(&ctx, blk, k, cipher);
 }
 
-uint32_t *aes128_decrypt(uint32_t *blk, const uint32_t *k) {
+uint8_t *aes128_decrypt(uint8_t *blk, const uint8_t *k) {
 	struct aes_ctx ctx;
 
 	ctx.type = AES128;
@@ -117,7 +125,7 @@ uint32_t *aes128_decrypt(uint32_t *blk, const uint32_t *k) {
 	return do_aes(&ctx, blk, k, inv_cipher);
 }
 
-uint32_t *aes192_decrypt(uint32_t *blk, const uint32_t *k) {
+uint8_t *aes192_decrypt(uint8_t *blk, const uint8_t *k) {
 	struct aes_ctx ctx;
 
 	ctx.type = AES192;
@@ -128,7 +136,7 @@ uint32_t *aes192_decrypt(uint32_t *blk, const uint32_t *k) {
 	return do_aes(&ctx, blk, k, inv_cipher);
 }
 
-uint32_t *aes256_decrypt(uint32_t *blk, const uint32_t *k) {
+uint8_t *aes256_decrypt(uint8_t *blk, const uint8_t *k) {
 	struct aes_ctx ctx;
 
 	ctx.type = AES256;

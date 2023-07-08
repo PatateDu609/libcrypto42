@@ -1,4 +1,5 @@
 #include "internal.h"
+#include "test.h"
 #include <criterion/criterion.h>
 #include <criterion/new/assert.h>
 #include <criterion/parameterized.h>
@@ -50,16 +51,6 @@ static void setup_padding_suite(void) {
 
 TestSuite(padding, .init = setup_padding_suite);
 
-static uint8_t *gen_i8_arr(size_t len) {
-	uint8_t *arr = calloc(len, sizeof *arr);
-
-	for (size_t i = 0; i < len; i++) {
-		arr[i] = rand() % 256;// NOLINT(cert-msc50-cpp)
-	}
-
-	return arr;
-}
-
 ParameterizedTestParameters(padding, pad) {
 	return cr_make_param_array(struct padding_param, params, PADDING_PARAMS);
 }
@@ -67,7 +58,7 @@ ParameterizedTestParameters(padding, pad) {
 ParameterizedTest(struct padding_param *param, padding, pad) {
 	size_t	 len = param->len;
 
-	uint8_t *plaintext = gen_i8_arr(len);
+	uint8_t *plaintext = gen_u8_arr(len, false);
 	uint8_t *ret	   = pad(plaintext, &len, param->blk_size);
 	cr_assert(ne(ptr, ret, NULL));
 
@@ -84,7 +75,7 @@ ParameterizedTestParameters(padding, unpad) {
 ParameterizedTest(struct padding_param *param, padding, unpad) {
 	size_t	 len = param->len;
 
-	uint8_t *plaintext = gen_i8_arr(len), *copy_plaintext = calloc(len, sizeof *copy_plaintext);
+	uint8_t *plaintext = gen_u8_arr(len, false), *copy_plaintext = calloc(len, sizeof *copy_plaintext);
 	memcpy(copy_plaintext, plaintext, len * sizeof *copy_plaintext);
 
 	uint8_t *ret = pad(plaintext, &len, param->blk_size);

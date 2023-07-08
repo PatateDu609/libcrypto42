@@ -156,7 +156,7 @@ uint64_t                des_decrypt(uint64_t block, uint64_t key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint32_t *aes128_encrypt(uint32_t *blk, const uint32_t *key);
+uint8_t *aes128_encrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Encrypt a single block of 192 bits using the AES algorithm with a key size of 192.
@@ -170,7 +170,7 @@ uint32_t *aes128_encrypt(uint32_t *blk, const uint32_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint32_t *aes192_encrypt(uint32_t *blk, const uint32_t *key);
+uint8_t *aes192_encrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Encrypt a single block of 256 bits using the AES algorithm with a key size of 256.
@@ -184,7 +184,7 @@ uint32_t *aes192_encrypt(uint32_t *blk, const uint32_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint32_t *aes256_encrypt(uint32_t *blk, const uint32_t *key);
+uint8_t *aes256_encrypt(uint8_t *blk, const uint8_t *key);
 
 
 /**
@@ -199,7 +199,7 @@ uint32_t *aes256_encrypt(uint32_t *blk, const uint32_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint32_t *aes128_decrypt(uint32_t *blk, const uint32_t *key);
+uint8_t *aes128_decrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 192 bits with the AES algorithm with a key size of 192.
@@ -213,7 +213,7 @@ uint32_t *aes128_decrypt(uint32_t *blk, const uint32_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint32_t *aes192_decrypt(uint32_t *blk, const uint32_t *key);
+uint8_t *aes192_decrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 256 bits with the AES algorithm with a key size of 256.
@@ -227,6 +227,6 @@ uint32_t *aes192_decrypt(uint32_t *blk, const uint32_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint32_t *aes256_decrypt(uint32_t *blk, const uint32_t *key);
+uint8_t *aes256_decrypt(uint8_t *blk, const uint8_t *key);
 
 #endif /* CIPHER_H */

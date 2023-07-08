@@ -16,3 +16,23 @@ void free_str_array(struct criterion_test_params *ctp) {
 	for (size_t i = 0; i < ctp->length; i++)
 		cr_free(arr[i]);
 }
+
+uint8_t *gen_u8_arr(size_t len, bool param_mode) {
+	uint8_t *arr = (param_mode ? cr_calloc : calloc)(len, sizeof *arr);
+
+	for (size_t i = 0; i < len; i++) {
+		arr[i] = rand() % UINT8_MAX;// NOLINT(cert-msc50-cpp)
+	}
+
+	return arr;
+}
+
+uint32_t *gen_u32_arr(size_t len, bool param_mode) {
+	uint32_t *arr = (param_mode ? cr_calloc : calloc)(len, sizeof *arr);
+
+	for (size_t i = 0; i < len; i++) {
+		arr[i] = rand() % UINT32_MAX;// NOLINT(cert-msc50-cpp)
+	}
+
+	return arr;
+}

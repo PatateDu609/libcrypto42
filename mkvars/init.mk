@@ -61,12 +61,16 @@ CFLAGS				?=	-Wall -Wextra -Werror $(addprefix -I,$(PATH_INC)) $(STD) $(OPT_CFLA
 ARFLAGS				?=	rcs
 ASFLAGS				?=
 
+COMPILER			:=	unknown
 ifeq ($(shell $(NCC) --version | grep -o 'clang' | head -1 | tr -d '\n'),clang)
 	CFLAGS			+=	-DHAVE_CLANG_COMPILER
+	COMPILER		=	clang
 else ifeq ($(shell $(NCC) --version | grep -oahr -m 1 'gcc' | head -1),gcc)
 	CFLAGS			+=	-DHAVE_GCC_COMPILER
+	COMPILER		=	gcc
 else ifeq ($(shell readlink -f $(NCC) | grep -o gcc),gcc)
 	CFLAGS			+=	-DHAVE_GCC_COMPILER
+	COMPILER		=	gcc
 else
 	TARGET			!= $(error "unknown compiler, only clang and gcc are managed")
 endif
@@ -86,7 +90,12 @@ ifeq ($(VERBOSE),0)
 endif
 
 ifeq ($(DEBUG),1)
-	CFLAGS			+=	-g3 -O0 -DDEBUG -ggdb -fno-omit-frame-pointer -fdiagnostics-color=always
+	CFLAGS			+=	-O0 -DDEBUG
+	ifeq ($(COMPILER),gcc)
+		CFLAGS			+=	-g3 -ggdb -fno-omit-frame-pointer -fdiagnostics-color=always
+	else ifeq ($(COMPILER),clang)
+		CFLAGS			+=	-g -glldb -fdebug-macro -fno-eliminate-unused-debug-types -fstandalone-debug
+	endif
 	ASFLAGS			+=	-g
 endif
 
