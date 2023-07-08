@@ -40,10 +40,10 @@ To compile an executable using this library, you need to add the following libra
 + [x] PBKDF
 + [x] HMAC
 + [x] DES
-+ [ ] AES
-    + [ ] AES128
-    + [ ] AES192
-    + [ ] AES256
++ [x] AES
+    + [x] AES128
+    + [x] AES192
+    + [x] AES256
 + [ ] 3DES (EDE only)
     + [ ] 2 Keys option
     + [ ] 3 Keys option
