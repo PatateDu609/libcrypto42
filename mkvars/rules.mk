@@ -12,13 +12,21 @@ endif
 
 all:							$(NAME) $(TEST_NAME)
 
-$(PATH_OBJ)/%.o:			$(PATH_SRC)/%$(LANGEXTENSION)
+$(PATH_OBJ)/%.o:			$(PATH_SRC)/%.c
 	$(MKDIR) $(dir $@)
 
 	$(PRINTF) " $(BOLD)$(if $(filter $(shell echo $< | grep 'tests/' ; echo $$?),1),$(if $(filter $(shell echo $< | grep -E '\.test\.c' ; echo $$?),0),$(MAGENTA),$(BLUE)),$(CYAN))"
 	$(PRINTF) "$(GREATER)$(NORMAL)   Compiling $(ITALIC)$(subst $(PATH_SRC)/,,$<)$(TRESET)\n"
 
 	$(CC) $(CFLAGS) -c -MMD $< -o $@
+
+$(PATH_OBJ)/%.o:			$(PATH_SRC)/%.cc
+	$(MKDIR) $(dir $@)
+
+	$(PRINTF) " $(BOLD)$(if $(filter $(shell echo $< | grep 'tests/' ; echo $$?),1),$(if $(filter $(shell echo $< | grep -E '\.test\.c' ; echo $$?),0),$(MAGENTA),$(BLUE)),$(CYAN))"
+	$(PRINTF) "$(GREATER)$(NORMAL)   Compiling $(ITALIC)$(subst $(PATH_SRC)/,,$<)$(TRESET)\n"
+
+	$(CXX) $(CXXFLAGS) -c -MMD $< -o $@
 
 
 -include $(DEPS)
