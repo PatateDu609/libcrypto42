@@ -51,6 +51,7 @@ STRIP				?=	strip
 NCC					:= $(CC)
 NAS					:= $(AS)
 NPRINTF				:= $(PRINTF)
+NMAKE				:= $(MAKE)
 NAR					:= $(AR)
 NRM					:= $(RM)
 NMKDIR				:= $(MKDIR)
