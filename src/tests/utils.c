@@ -36,3 +36,10 @@ uint32_t *gen_u32_arr(size_t len, bool param_mode) {
 
 	return arr;
 }
+
+void *memdup(const void *src, size_t size, bool param_mode) {
+	void *dst = (param_mode ? cr_calloc : calloc)(size, 1);
+
+	memcpy(dst, src, size);
+	return dst;
+}

@@ -31,5 +31,6 @@ void	  free_str_array(struct criterion_test_params *ctp);
 
 uint8_t	 *gen_u8_arr(size_t len, bool param_mode);
 uint32_t *gen_u32_arr(size_t len, bool param_mode);
+void	 *memdup(const void *src, size_t size, bool param_mode);
 
 #endif// LIBCRYPTO42_TEST_H

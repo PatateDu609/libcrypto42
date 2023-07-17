@@ -2,13 +2,7 @@
 #define LIBCRYPTO42_INTERNAL_H
 
 #include "common.h"
-
-#define AES_BLK_SIZE 4// size in words (== 128 bits)
-
-// This is counted in words (ie. 4 bytes groups for AES128)
-#define AES128_KEY_SIZE 4
-#define AES192_KEY_SIZE 6// == 192 bits
-#define AES256_KEY_SIZE 8// == 256 bits
+#include "cipher.h"
 
 #define AES128_NB_ROUNDS 10
 #define AES192_NB_ROUNDS 12

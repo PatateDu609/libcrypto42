@@ -24,7 +24,7 @@ static void do_encrypt_test(const char *alg, do_aes aes, struct aes_test_params 
 	EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
 	cr_assert(ne(ptr, ctx, NULL));
 	int blk_len = EVP_CIPHER_get_block_size(cp), expected_len = blk_len;
-	cr_assert(gt(i32, expected_len, 0));
+	cr_assert(eq(i32, expected_len, AES_BLK_SIZE_BYTES));
 	uint8_t *expected_data = OPENSSL_malloc(expected_len);
 	cr_assert(ne(ptr, expected_data, NULL));
 
@@ -38,7 +38,7 @@ static void do_encrypt_test(const char *alg, do_aes aes, struct aes_test_params 
 
 	struct cr_mem actual = {
 		.data = mine,
-		.size = AES_BLK_SIZE * 4,
+		.size = AES_BLK_SIZE_BYTES,
 	};
 	struct cr_mem expected = {
 		.data = expected_data,
@@ -59,7 +59,7 @@ static void do_decrypt_test(const char *alg, do_aes aes, struct aes_test_params 
 	EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
 	cr_assert(ne(ptr, ctx, NULL));
 	int blk_len = EVP_CIPHER_get_block_size(cp), expected_len = blk_len;
-	cr_assert(gt(i32, expected_len, 0));
+	cr_assert(eq(i32, expected_len, AES_BLK_SIZE_BYTES));
 	uint8_t *expected_data = OPENSSL_malloc(expected_len);
 	cr_assert(ne(ptr, expected_data, NULL));
 
@@ -73,7 +73,7 @@ static void do_decrypt_test(const char *alg, do_aes aes, struct aes_test_params 
 
 	struct cr_mem actual = {
 		.data = mine,
-		.size = AES_BLK_SIZE * 4,
+		.size = AES_BLK_SIZE_BYTES,
 	};
 	struct cr_mem expected = {
 		.data = expected_data,

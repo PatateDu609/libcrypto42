@@ -20,6 +20,11 @@ enum cipher_mode
 	CIPHER_MODE_CBC,
 };
 
+struct block {
+	uint8_t *data;
+	size_t size;
+};
+
 /**
  * @brief Check if the context is valid.
  *
@@ -58,5 +63,11 @@ uint8_t *pad(uint8_t *plaintext, size_t *len, size_t blk_size) __internal;
  * @see https://tools.ietf.org/html/rfc5652#section-6.3
  */
 uint8_t *unpad(uint8_t *plaintext, size_t *len) __internal;
+
+void block_xor(struct block *res, const struct block *a, const struct block *b) __internal;
+
+void block_encrypt(const struct cipher_ctx *ctx, struct block *res, const struct block *a) __internal;
+
+void block_decrypt(const struct cipher_ctx *ctx, struct block *res, const struct block *a) __internal;
 
 #endif

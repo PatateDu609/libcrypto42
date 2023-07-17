@@ -62,7 +62,7 @@ static uint8_t *do_aes(struct aes_ctx *ctx, const uint8_t *blk, const uint8_t *k
 		key.w[i] = bswap_32(key.w[i]);
 
 	uint8_t *raw		= aes(ctx, &data, &key);
-	uint8_t *output = calloc(ctx->Nb * 4, sizeof *output);
+	uint8_t *output = calloc(AES_BLK_SIZE_BYTES, sizeof *output);
 	if (!output) {
 		perror("error: couldn't allocate memory");
 		exit(EXIT_FAILURE);

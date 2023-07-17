@@ -9,9 +9,21 @@
 #ifndef CIPHER_H
 #define CIPHER_H
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define AES_BLK_SIZE 4		 // size in words (== 128 bits)
+#define AES_BLK_SIZE_BYTES 16// size in bytes (== 128 bits)
+
+// This is counted in words (i.e. 4 bytes groups for AES128)
+#define AES128_KEY_SIZE 4		// == 128 bits
+#define AES128_KEY_SIZE_BYTES 16// == 128 bits
+#define AES192_KEY_SIZE 6		// == 192 bits
+#define AES192_KEY_SIZE_BYTES 24// == 192 bits
+#define AES256_KEY_SIZE 8		// == 256 bits
+#define AES256_KEY_SIZE_BYTES 32// == 256 bits
 
 /* ********************** Cipher modes related functions ******************** */
 
@@ -19,31 +31,20 @@
  * @brief Enumerate all available block cipher algorithms.
  */
 enum block_cipher {
-	BLOCK_CIPHER_DES, ///< Data Encryption Standard
+	BLOCK_CIPHER_DES,	   ///< Data Encryption Standard
 
 	BLOCK_CIPHER_3DES_EDE2,///< Triple DES with 2 keys (Not implemented yet)
 	BLOCK_CIPHER_3DES_EDE3,///< Triple DES with 3 keys (Not implemented yet)
 
-	BLOCK_CIPHER_AES128, ///< Advanced Encryption Standard with a 128 bits key
-	BLOCK_CIPHER_AES192, ///< Advanced Encryption Standard with a 192 bits key
-	BLOCK_CIPHER_AES256, ///< Advanced Encryption Standard with a 256 bits key
+	BLOCK_CIPHER_AES128,   ///< Advanced Encryption Standard with a 128 bits key
+	BLOCK_CIPHER_AES192,   ///< Advanced Encryption Standard with a 192 bits key
+	BLOCK_CIPHER_AES256,   ///< Advanced Encryption Standard with a 256 bits key
 };
 
 struct block_cipher_ctx {
-	enum block_cipher algo;    ///< The algorithm to use.
-	uint8_t           blk_size;///< The block size of the algorithm.
-
-	union {
-		struct {
-			uint64_t (*enc)(uint64_t, uint64_t);///< The function to use to encrypt a block of 8 bytes.
-			uint64_t (*dec)(uint64_t, uint64_t);///< The function to use to decrypt a block of 8 bytes.
-		} blk8;
-
-		struct {
-			__uint128_t (*enc)(__uint128_t, __uint128_t);///< The function to use to encrypt a block of 16 bytes.
-			__uint128_t (*dec)(__uint128_t, __uint128_t);///< The function to use to decrypt a block of 16 bytes.
-		} blk16;
-	};
+	enum block_cipher type;
+	size_t			  blk_size;
+	size_t			  key_size;
 };
 
 /**
@@ -52,27 +53,27 @@ struct block_cipher_ctx {
  * @note Depending on the cipher mode, some fields may be useless or at contrary they may be mandatory.
  */
 struct cipher_ctx {
-	struct block_cipher_ctx algo;          ///< The algorithm to use.
+	struct block_cipher_ctx algo;		   ///< The algorithm to use.
 
-	uint8_t                *key;           ///< Key used for the cipher mode
-	size_t                  key_len;       ///< Key length in bytes
+	uint8_t				   *key;		   ///< Key used for the cipher mode
+	size_t					key_len;	   ///< Key length in bytes
 
-	uint8_t                *iv;            ///< Initialization vector used for the cipher mode
-	size_t                  iv_len;        ///< Initialization vector length in bytes
+	uint8_t				   *iv;			   ///< Initialization vector used for the cipher mode
+	size_t					iv_len;		   ///< Initialization vector length in bytes
 
-	uint8_t                *plaintext;     ///< Plaintext to be encrypted
-	size_t                  plaintext_len; ///< Plaintext length in bytes
+	uint8_t				   *plaintext;	   ///< Plaintext to be encrypted
+	size_t					plaintext_len; ///< Plaintext length in bytes
 
-	uint8_t                *ciphertext;    ///< Ciphertext to be decrypted
-	size_t                  ciphertext_len;///< Ciphertext length in bytes
+	uint8_t				   *ciphertext;	   ///< Ciphertext to be decrypted
+	size_t					ciphertext_len;///< Ciphertext length in bytes
 };
 
 /**
- * @brief Setup the algorithm functor to use for the cipher mode.
+ * @brief Setup the algorithm description to use in this library..
  *
  * @param algo The algorithm to setup.
  *
- * @return Returns a pointer to the algorithm functor.
+ * @return Returns a struct containing information about the current algorithm..
  */
 struct block_cipher_ctx setup_algo(enum block_cipher algo);
 
@@ -83,7 +84,7 @@ struct block_cipher_ctx setup_algo(enum block_cipher algo);
  *
  * @return Returns a copy of the pointer given in the context for the ciphertext.
  */
-uint8_t                *ECB_encrypt(struct cipher_ctx *ctx);
+uint8_t				   *ECB_encrypt(struct cipher_ctx *ctx);
 
 /**
  * @brief Performs an ECB decryption on the given context.
@@ -92,7 +93,7 @@ uint8_t                *ECB_encrypt(struct cipher_ctx *ctx);
  *
  * @return Returns a copy of the pointer given in the context for the plaintext.
  */
-uint8_t                *ECB_decrypt(struct cipher_ctx *ctx);
+uint8_t				   *ECB_decrypt(struct cipher_ctx *ctx);
 
 /**
  * @brief Performs an CBC encryption on the given context.
@@ -101,7 +102,7 @@ uint8_t                *ECB_decrypt(struct cipher_ctx *ctx);
  *
  * @return Returns a copy of the pointer given in the context for the plaintext.
  */
-uint8_t                *CBC_encrypt(struct cipher_ctx *ctx);
+uint8_t				   *CBC_encrypt(struct cipher_ctx *ctx);
 
 /**
  * @brief Performs an CBC decryption on the given context.
@@ -110,7 +111,7 @@ uint8_t                *CBC_encrypt(struct cipher_ctx *ctx);
  *
  * @return Returns a copy of the pointer given in the context for the plaintext.
  */
-uint8_t                *CBC_decrypt(struct cipher_ctx *ctx);
+uint8_t				   *CBC_decrypt(struct cipher_ctx *ctx);
 
 /* ************************** DES related functions ************************* */
 
@@ -126,7 +127,7 @@ uint8_t                *CBC_decrypt(struct cipher_ctx *ctx);
  * @note The key must be given in its raw form (i.e. 64 bits), all the processing
  * is done by the function.
  */
-uint64_t                des_encrypt(uint64_t block, uint64_t key);
+uint64_t				des_encrypt(uint64_t block, uint64_t key);
 
 /**
  * @brief Decrypt a single block of 64 bits with the DES algorithm.
@@ -140,7 +141,7 @@ uint64_t                des_encrypt(uint64_t block, uint64_t key);
  * @note The key must be given in its raw form (i.e. 64 bits), all the processing
  * is done by the function.
  */
-uint64_t                des_decrypt(uint64_t block, uint64_t key);
+uint64_t				des_decrypt(uint64_t block, uint64_t key);
 
 /* ************************** AES related functions ************************* */
 
@@ -156,7 +157,7 @@ uint64_t                des_decrypt(uint64_t block, uint64_t key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes128_encrypt(uint8_t *blk, const uint8_t *key);
+uint8_t				   *aes128_encrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Encrypt a single block of 192 bits using the AES algorithm with a key size of 192.
@@ -170,7 +171,7 @@ uint8_t *aes128_encrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes192_encrypt(uint8_t *blk, const uint8_t *key);
+uint8_t				   *aes192_encrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Encrypt a single block of 256 bits using the AES algorithm with a key size of 256.
@@ -184,7 +185,7 @@ uint8_t *aes192_encrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes256_encrypt(uint8_t *blk, const uint8_t *key);
+uint8_t				   *aes256_encrypt(uint8_t *blk, const uint8_t *key);
 
 
 /**
@@ -199,7 +200,7 @@ uint8_t *aes256_encrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes128_decrypt(uint8_t *blk, const uint8_t *key);
+uint8_t				   *aes128_decrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 192 bits with the AES algorithm with a key size of 192.
@@ -213,7 +214,7 @@ uint8_t *aes128_decrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes192_decrypt(uint8_t *blk, const uint8_t *key);
+uint8_t				   *aes192_decrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 256 bits with the AES algorithm with a key size of 256.
@@ -227,6 +228,6 @@ uint8_t *aes192_decrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes256_decrypt(uint8_t *blk, const uint8_t *key);
+uint8_t				   *aes256_decrypt(uint8_t *blk, const uint8_t *key);
 
 #endif /* CIPHER_H */
