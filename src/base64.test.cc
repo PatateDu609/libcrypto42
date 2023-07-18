@@ -25,7 +25,7 @@ const Base64TestParam array[] = {
 	Base64TestParam("Zm9vYmFy", "foobar"),
 };
 
-INSTANTIATE_TEST_SUITE_P(TestParams, Base64Tests, testing::ValuesIn(array));
+INSTANTIATE_TEST_SUITE_P(Base64, Base64Tests, testing::ValuesIn(array));
 
 TEST_P(Base64Tests, encode) {
 	Base64TestParam param = GetParam();

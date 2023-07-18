@@ -40,9 +40,9 @@ struct hmac_func hmac_setup(enum hmac_algorithm alg) {
 		case HMAC_SHA2_512:
 			return (struct hmac_func){ .H = (hash_function *) &sha2_512_bytes_raw, .b = 128, .L = 64 };
 		case HMAC_SHA2_512_224:
-			return (struct hmac_func){ .H = (hash_function *) &sha2_512_224_bytes_raw, .b = 64, .L = 28 };
+			return (struct hmac_func){ .H = (hash_function *) &sha2_512_224_bytes_raw, .b = 128, .L = 28 };
 		case HMAC_SHA2_512_256:
-			return (struct hmac_func){ .H = (hash_function *) &sha2_512_256_bytes_raw, .b = 64, .L = 32 };
+			return (struct hmac_func){ .H = (hash_function *) &sha2_512_256_bytes_raw, .b = 128, .L = 32 };
 		case HMAC_MD5:
 			return (struct hmac_func){ .H = (hash_function *) &md5_bytes_raw, .b = 64, .L = 16 };
 		default:

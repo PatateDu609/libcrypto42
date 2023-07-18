@@ -5,10 +5,22 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-static inline void get_output(const unsigned char *result, int digest_len, char *hash) {
+#include <string>
+#include <sstream>
+#include <iomanip>
+
+static inline void get_output(const unsigned char *result, int digest_len, std::string &str) {
+	std::ostringstream oss;
+
+	oss << std::hex
+		<< std::setw(2)
+		<< std::setfill('0');
+
 	for (int i = 0; i < digest_len; i++) {
-		snprintf(&hash[i * 2], 3, "%02x", result[i]);
+		oss << (int)result[0];
 	}
+
+	str = oss.str();
 }
 
 #define NB_DIGEST_TEST_STRINGS 10

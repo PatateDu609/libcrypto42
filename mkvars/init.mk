@@ -89,6 +89,7 @@ endif
 
 ifeq ($(VERBOSE),0)
 	CC				:=	@$(CC)
+	CXX				:=	@$(CXX)
 	AS				:=	@$(AS)
 	AR				:=	@$(AR)
 	PRINTF			:=	@$(PRINTF)
