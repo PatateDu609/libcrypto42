@@ -51,7 +51,6 @@ BreakInheritanceList: BeforeColon
 ColumnLimit: 120
 CompactNamespaces: false
 ContinuationIndentWidth: 8
-Language: Cpp
 IndentCaseLabels: false
 IndentPPDirectives: AfterHash
 IndentWidth: 4

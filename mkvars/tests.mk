@@ -17,7 +17,7 @@ GTEST_OUT_FOLDER			:=	$(GTEST_BUILD_FOLDER)/out
 GTEST_LIB_FOLDER			:=	$(GTEST_OUT_FOLDER)/lib
 GTEST_LIB					:=	$(GTEST_OUT_FOLDER)/lib/libgtest.a
 
-TEST_LDFLAGS				:=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lm -L$(GTEST_LIB_FOLDER) -lgtest -lgtest_main
+TEST_LDFLAGS				:=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lm -L$(GTEST_LIB_FOLDER) -lgtest -lpthread
 
 ifeq ($(shell uname),Darwin)
 	TEST_LDFLAGS			+=	-L/opt/homebrew/lib
@@ -51,12 +51,6 @@ ifeq ($(FILTER),)
 else
 	@./$(TEST_NAME) --full-stats --verbose --filter=$(FILTER)
 endif
-
-check_gdb: DEBUGGER		:=	gdb
-check_gdb: check_debug
-
-check_lldb: DEBUGGER	:=	lldb
-check_lldb: check_debug
 
 check_debug_auto: $(TEST_NAME)
 ifeq ($(FILTER),)

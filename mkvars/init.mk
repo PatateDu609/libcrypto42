@@ -47,11 +47,16 @@ NRM					:= $(RM)
 NMKDIR				:= $(MKDIR)
 
 STD					?=	-std=c11
+CXX_STD				?=	-std=c++17
 OPT_CFLAGS			?=
-CFLAGS				?=	-Wall -Wextra -Werror $(addprefix -I,$(PATH_INC)) $(STD) $(OPT_CFLAGS)
-CXXFLAGS			?=	$(CFLAGS) --std=c++17
+CFLAGS				?=	-Wall -Wextra -Werror $(addprefix -I,$(PATH_INC)) $(OPT_CFLAGS)
+CXXFLAGS			?=	$(CFLAGS) $(CXX_STD)
 ARFLAGS				?=	rcs
 ASFLAGS				?=
+
+ifneq ($(findstring std,$(CFLAGS)),std)
+	CFLAGS			+=	$(STD)
+endif
 
 C_COMPILER			:=	unknown
 ifeq ($(shell $(NCC) --version | grep -o 'clang' | head -1 | tr -d '\n'),clang)

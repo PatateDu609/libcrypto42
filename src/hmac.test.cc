@@ -13,14 +13,12 @@ struct HMACTestParams {
 	HMACTestParams(std::string k, std::string m) : key(std::move(k)), msg(std::move(m)) {}
 };
 
-const static std::vector<HMACTestParams> tests{
-	HMACTestParams("", ""),
-	HMACTestParams("", "a"),
-	HMACTestParams("a", ""),
-	HMACTestParams("a", "a"),
-	HMACTestParams("key", "The quick brown fox jumps over the lazy dog"),
-	HMACTestParams("The quick brown fox jumps over the lazy dogThe quick brown fox jumps over the lazy dog", "message"),
-};
+std::ostream &operator<<(std::ostream &os, const HMACTestParams &params) {
+	os << "key = " << (params.key.empty() ? "(empty)" : params.key) << ", ";
+	os << "msg = " << (params.msg.empty() ? "(empty)" : params.msg);
+
+	return os;
+}
 
 static void get_hmac(EVP_hash func, const std::string &key, const std::string &msg, std::string &hash, size_t output) {
 	unsigned char result[output];
@@ -173,13 +171,26 @@ protected:
 	}
 };
 
-INSTANTIATE_TEST_SUITE_P(HMAC_MD5, HMAC_MD5_Tests, testing::ValuesIn(tests));
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_224, HMAC_SHA2_224_Tests, testing::ValuesIn(tests));
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_256, HMAC_SHA2_256_Tests, testing::ValuesIn(tests));
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_384, HMAC_SHA2_384_Tests, testing::ValuesIn(tests));
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512, HMAC_SHA2_512_Tests, testing::ValuesIn(tests));
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512_224, HMAC_SHA2_512_224_Tests, testing::ValuesIn(tests));
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512_256, HMAC_SHA2_512_256_Tests, testing::ValuesIn(tests));
+const static std::vector<HMACTestParams> tests{
+	HMACTestParams("", ""),
+	HMACTestParams("", "a"),
+	HMACTestParams("a", ""),
+	HMACTestParams("a", "a"),
+	HMACTestParams("key", "The quick brown fox jumps over the lazy dog"),
+	HMACTestParams("The quick brown fox jumps over the lazy dogThe quick brown fox jumps over the lazy dog", "message"),
+};
+
+const auto name_generator = [](const testing::TestParamInfo<HMACTests::ParamType>& info) {
+	return "bonjour" + std::to_string(info.index);
+};
+
+INSTANTIATE_TEST_SUITE_P(HMAC_MD5, HMAC_MD5_Tests, testing::ValuesIn(tests), name_generator);
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_224, HMAC_SHA2_224_Tests, testing::ValuesIn(tests), name_generator);
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_256, HMAC_SHA2_256_Tests, testing::ValuesIn(tests), name_generator);
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_384, HMAC_SHA2_384_Tests, testing::ValuesIn(tests), name_generator);
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512, HMAC_SHA2_512_Tests, testing::ValuesIn(tests), name_generator);
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512_224, HMAC_SHA2_512_224_Tests, testing::ValuesIn(tests), name_generator);
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512_256, HMAC_SHA2_512_256_Tests, testing::ValuesIn(tests), name_generator);
 
 TEST_P(HMAC_MD5_Tests, tests) {
 	do_test();
