@@ -43,6 +43,8 @@ struct pbkdf2_hmac_req {
  *
  * @param req PBKDF2 request.
  * @return The derived key.
+ *
+ * @warning The returned key must be freed.
  */
 uint8_t *pbkdf2(struct pbkdf2_hmac_req req);
 
