@@ -4,9 +4,9 @@
 TEST(AES128, key_expansion) {
 	struct aes_ctx ctx = {
 		.type = AES128,
-		.Nr   = AES128_NB_ROUNDS,
 		.Nk   = AES128_KEY_SIZE,
 		.Nb   = AES_BLK_SIZE,
+		.Nr   = AES128_NB_ROUNDS,
 	};
 
 	std::array<uint32_t, 4> key{ 0x2b7e1516, 0x28aed2a6, 0xabf71588, 0x09cf4f3c };
