@@ -23,7 +23,7 @@ static uint64_t setup_key(uint64_t key) {
 	return permute(key, 64, pc_1, 56);
 }
 
-void key_schedule(uint64_t key, uint64_t subkeys[NB_ROUNDS]) {
+void key_schedule(uint64_t key, uint64_t *subkeys) {
 	key                    = setup_key(key);
 
 	const uint8_t pc_2[48] = {

@@ -4,6 +4,10 @@
 #include "common.h"
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define NB_ROUNDS 16
 #define OVERFLOW_MASK_28 0b0001111111111111111111111111111// Force exactly 28 bits
 
@@ -55,7 +59,14 @@ uint64_t permute(uint64_t block, size_t size_input, const uint8_t *table, size_t
  * @param key The key to use
  * @param subkeys The subkey array to setup (must be at least NB_ROUNDS long)
  */
-void key_schedule(uint64_t key, uint64_t subkeys[static NB_ROUNDS]) __internal;
+
+#ifdef HAVE_CLANG_COMPILER
+void key_schedule(uint64_t key, uint64_t *__nonnull subkeys) __internal;
+#elif HAVE_GCC_COMPILER
+void key_schedule(uint64_t key, uint64_t * subkeys) __internal; __nonnull((3));
+#else
+void key_schedule(uint64_t key, uint64_t *subkeys) __internal;
+#endif
 
 /**
  * @brief The Feistel function.
@@ -70,6 +81,10 @@ void feistel(uint64_t subkey, uint32_t * __nonnull l32, uint32_t * __nonnull r32
 void feistel(uint64_t subkey, uint32_t *l32, uint32_t *r32) __internal __nonnull((2)) __nonnull((3));
 #else
 void feistel(uint64_t subkey, uint32_t *l32, uint32_t * __nonnull r32);
+#endif
+
+#ifdef __cplusplus
+};
 #endif
 
 #endif
