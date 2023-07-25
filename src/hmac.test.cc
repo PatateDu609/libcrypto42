@@ -1,5 +1,5 @@
 #include "hmac.h"
-#include "test.h"
+#include "test.hh"
 #include <gtest/gtest.h>
 #include <openssl/hmac.h>
 #include <string>
@@ -180,17 +180,13 @@ const static std::vector<HMACTestParams> tests{
 	HMACTestParams("The quick brown fox jumps over the lazy dogThe quick brown fox jumps over the lazy dog", "message"),
 };
 
-const auto name_generator = [](const testing::TestParamInfo<HMACTests::ParamType>& info) {
-	return "bonjour" + std::to_string(info.index);
-};
-
-INSTANTIATE_TEST_SUITE_P(HMAC_MD5, HMAC_MD5_Tests, testing::ValuesIn(tests), name_generator);
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_224, HMAC_SHA2_224_Tests, testing::ValuesIn(tests), name_generator);
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_256, HMAC_SHA2_256_Tests, testing::ValuesIn(tests), name_generator);
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_384, HMAC_SHA2_384_Tests, testing::ValuesIn(tests), name_generator);
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512, HMAC_SHA2_512_Tests, testing::ValuesIn(tests), name_generator);
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512_224, HMAC_SHA2_512_224_Tests, testing::ValuesIn(tests), name_generator);
-INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512_256, HMAC_SHA2_512_256_Tests, testing::ValuesIn(tests), name_generator);
+INSTANTIATE_TEST_SUITE_P(HMAC_MD5, HMAC_MD5_Tests, testing::ValuesIn(tests));
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_224, HMAC_SHA2_224_Tests, testing::ValuesIn(tests));
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_256, HMAC_SHA2_256_Tests, testing::ValuesIn(tests));
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_384, HMAC_SHA2_384_Tests, testing::ValuesIn(tests));
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512, HMAC_SHA2_512_Tests, testing::ValuesIn(tests));
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512_224, HMAC_SHA2_512_224_Tests, testing::ValuesIn(tests));
+INSTANTIATE_TEST_SUITE_P(HMAC_SHA2_512_256, HMAC_SHA2_512_256_Tests, testing::ValuesIn(tests));
 
 TEST_P(HMAC_MD5_Tests, tests) {
 	do_test();

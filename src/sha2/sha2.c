@@ -17,20 +17,20 @@
 
 static size_t get_size(enum SHA2_ALG alg) {
 	switch (alg) {
-		case SHA2_ALG_224:
-			return SHA2_224_DIGEST_SIZE;
-		case SHA2_ALG_256:
-			return SHA2_256_DIGEST_SIZE;
-		case SHA2_ALG_384:
-			return SHA2_384_DIGEST_SIZE;
-		case SHA2_ALG_512:
-			return SHA2_512_DIGEST_SIZE;
-		case SHA2_ALG_512_224:
-			return SHA2_512_224_DIGEST_SIZE;
-		case SHA2_ALG_512_256:
-			return SHA2_512_256_DIGEST_SIZE;
-		default:
-			return 0;
+	case SHA2_ALG_224:
+		return SHA2_224_DIGEST_SIZE;
+	case SHA2_ALG_256:
+		return SHA2_256_DIGEST_SIZE;
+	case SHA2_ALG_384:
+		return SHA2_384_DIGEST_SIZE;
+	case SHA2_ALG_512:
+		return SHA2_512_DIGEST_SIZE;
+	case SHA2_ALG_512_224:
+		return SHA2_512_224_DIGEST_SIZE;
+	case SHA2_ALG_512_256:
+		return SHA2_512_256_DIGEST_SIZE;
+	default:
+		return 0;
 	}
 }
 
@@ -40,7 +40,8 @@ static bool __intermediate_sha2_bytes(const struct msg *msg, struct sha2 *ctx) {
 		return false;
 
 	size_t nb = blks->len / ctx->alg.block_size;
-	for (size_t i = 0; i < nb; i++) sha2_update(ctx, blks->data + i * ctx->alg.block_size);
+	for (size_t i = 0; i < nb; i++)
+		sha2_update(ctx, blks->data + i * ctx->alg.block_size);
 
 	free(blks->data);
 	free(blks);
@@ -97,8 +98,8 @@ uint8_t *sha2_descriptor_raw(enum SHA2_ALG alg, int fd, uint8_t *buf) {
 	ssize_t     ret;
 	__uint128_t filesize = 0;
 	for (ret = 0; (ret = read(fd, buffer, sizeof buffer)) > 0;) {
-		msg.data = buffer;
-		msg.len  = ret;
+		msg.data  = buffer;
+		msg.len   = ret;
 		filesize += ret;
 
 		if (ret < (ssize_t) sizeof buffer) {
@@ -116,8 +117,8 @@ uint8_t *sha2_descriptor_raw(enum SHA2_ALG alg, int fd, uint8_t *buf) {
 		msg.filesize     = filesize;
 		msg.is_last_part = true;
 
-		msg.data         = (uint8_t *) "";
-		msg.len          = 0;
+		msg.data = (uint8_t *) "";
+		msg.len  = 0;
 		if (!__intermediate_sha2_bytes(&msg, &ctx)) {
 			ft_memset(&ctx, 0, sizeof(ctx));
 			return NULL;

@@ -1,5 +1,5 @@
 #include "crypto.h"
-#include "test.h"
+#include "test.hh"
 #include <criterion/criterion.h>
 #include <criterion/new/assert.h>
 #include <openssl/evp.h>

@@ -25,7 +25,7 @@ AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Empty
 AllowShortIfStatementsOnASingleLine: Never
-AllowShortLambdasOnASingleLine: All
+AllowShortLambdasOnASingleLine: Empty
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterReturnType: None
 AlwaysBreakAfterDefinitionReturnType: None
@@ -92,4 +92,4 @@ SpacesInSquareBrackets: false
 #  - restrict
 #  - type
 TabWidth: 4
-UseTab: Always
+UseTab: AlignWithSpaces

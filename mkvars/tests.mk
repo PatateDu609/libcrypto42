@@ -10,6 +10,7 @@ TEST_DEBUG					=	1
 TEST_SRC					:=	$(shell find src -type f -name "*.test.cc") $(shell find src/tests -type f -name "*.cc")
 
 TEST_OBJ					:=	$(addprefix $(PATH_OBJ)/, $(subst $(PATH_SRC)/,,$(TEST_SRC:.cc=.o)))
+DEPS						+=	$(addprefix $(PATH_OBJ)/, $(subst $(PATH_SRC)/,,$(TEST_SRC:.cc=.d)))
 
 GTEST_FOLDER				:=	gtest
 GTEST_BUILD_FOLDER			:=	$(GTEST_FOLDER)/build
@@ -22,6 +23,16 @@ TEST_LDFLAGS				:=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lm -L$(GTEST_LIB_
 ifeq ($(shell uname),Darwin)
 	TEST_LDFLAGS			+=	-L/opt/homebrew/lib
 endif
+
+$(TEST_NAME):		 CFLAGS	+= -Isrc/tests -I$(GTEST_OUT_FOLDER)/include
+$(TEST_NAME):		 CFLAGS	:= $(filter-out -Werror,$(CFLAGS))
+$(TEST_NAME):		$(GTEST_LIB) $(NAME) $(TEST_OBJ)
+	$(MAKE) -C libft/
+	$(PRINTF) " $(BOLD)$(YELLOW)$(BIGGREATER)$(NORMAL)   Linking $(ITALIC)$(subst $(PATH_OBJ)/,,$@)$(TRESET)\n"
+	$(CXX) $(TEST_OBJ) -o $(TEST_NAME) $(TEST_LDFLAGS)
+
+check:				$(TEST_NAME)
+	@./$(TEST_NAME) --full-stats --verbose
 
 $(GTEST_FOLDER):
 	$(PRINTF) " $(MAGENTA_129)≫ Getting $(UNDERLINE)Google Test$(TRESET)\n"
@@ -37,35 +48,3 @@ $(GTEST_LIB):				$(GTEST_FOLDER)
 	$(NMAKE) ; \
 	$(NPRINTF) " $(GREEN_42)$(DOUBLEGREATER) Installing $(UNDERLINE)Google Test$(TRESET)\n" ; \
 	$(NMAKE) install
-
-$(TEST_NAME):		 CFLAGS	+= -Isrc/tests -I$(GTEST_OUT_FOLDER)/include
-$(TEST_NAME):		 CFLAGS	:= $(filter-out -Werror,$(CFLAGS))
-$(TEST_NAME):		$(GTEST_LIB) $(NAME) $(TEST_OBJ)
-	$(MAKE) -C libft/
-	$(PRINTF) " $(BOLD)$(YELLOW)$(BIGGREATER)$(NORMAL)   Linking $(ITALIC)$(subst $(PATH_OBJ)/,,$@)$(TRESET)\n"
-	$(CXX) $(TEST_OBJ) -o $(TEST_NAME) $(TEST_LDFLAGS)
-
-check:				$(TEST_NAME)
-ifeq ($(FILTER),)
-	@./$(TEST_NAME) --full-stats --verbose
-else
-	@./$(TEST_NAME) --full-stats --verbose --filter=$(FILTER)
-endif
-
-check_debug_auto: $(TEST_NAME)
-ifeq ($(FILTER),)
-	@./$(TEST_NAME) --full-stats --verbose --debug
-else
-	@./$(TEST_NAME) --full-stats --verbose --filter=$(FILTER) --debug
-endif
-
-check_debug:			$(TEST_NAME)
-	@if [ "$(DEBUGGER)" = "" ]; then \
-		echo "DEBUGGER is unset for debugging rule"; \
-  		exit 1; \
-  	fi
-ifeq ($(FILTER),)
-	@./$(TEST_NAME) --full-stats --verbose --debug=$(DEBUGGER)
-else
-	@./$(TEST_NAME) --full-stats --verbose --filter=$(FILTER) --debug=$(DEBUGGER)
-endif

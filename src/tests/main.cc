@@ -1,69 +1,110 @@
-#include "test.h"
+#include "random.hh"
+#include "test.hh"
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
 #include <iostream>
+#include <set>
 
-#ifdef __APPLE__
-#	include <sys/random.h>
-#else
-#	include <unistd.h>
-#endif
+std::vector<std::filesystem::path> test_filenames;
+std::vector<std::vector<uint8_t> > test_strings;
+std::vector<TestParams>            test_params;
 
-std::random_device						 prng;
-std::mt19937_64							 prng_engine(prng());
+using rng::get_random_data;
 
-std::vector<std::filesystem::path>		 test_filenames;
-std::vector<std::basic_string<uint8_t> > test_strings;
+
+const std::multiset<size_t> &get_scales(size_t max_idx) {
+	static std::multiset<size_t> scales;
+	if (scales.size() == max_idx)
+		return scales;
+
+	max_idx--;
+
+	std::map<size_t, std::pair<size_t, double> > references{
+		{1,      std::make_pair(1, 0)},
+        { 5,     std::make_pair(3, 0)},
+        { 10,    std::make_pair(3, 0)},
+		{ 16,    std::make_pair(3, 0)},
+        { 32,    std::make_pair(3, 0)},
+        { 50,    std::make_pair(5, 0)},
+		{ 50,    std::make_pair(5, 0)},
+        { 100,   std::make_pair(4, 0)},
+        { 128,   std::make_pair(3, 0)},
+		{ 512,   std::make_pair(3, 0)},
+        { 400,   std::make_pair(5, 0)},
+        { 1000,  std::make_pair(4, 0)},
+		{ 4000,  std::make_pair(4, 0)},
+        { 4096,  std::make_pair(3, 0)},
+        { 10000, std::make_pair(3, 0)},
+		{ 20000, std::make_pair(1, 0)},
+	};
+	auto accumulate = [](size_t acc, decltype(references)::value_type a) {
+		return acc + a.second.first;
+	};
+
+	size_t ref_count = std::accumulate(references.begin(), references.end(), 0, accumulate);
+
+	auto   set_percentage = [ref_count](decltype(references)::reference a) {
+        a.second.second = static_cast<double>(a.second.first) / static_cast<double>(ref_count);
+	};
+	auto set_references = [max_idx](decltype(references)::reference a) {
+		a.second.first = static_cast<size_t>(std::ceil(a.second.second * static_cast<double>(max_idx)));
+	};
+
+	std::for_each(references.begin(), references.end(), set_percentage);
+
+	std::for_each(references.begin(), references.end(), set_references);
+	ref_count = std::accumulate(references.begin(), references.end(), 0, accumulate);
+
+	double limit = 0.1;
+	while (ref_count > max_idx) {
+		size_t to_remove = ref_count - max_idx;
+
+		auto   even_out = [&to_remove, &ref_count, limit](decltype(references)::reference a) {
+            if (to_remove && a.second.second >= limit) {
+                to_remove--;
+                a.second.first--;
+                ref_count--;
+            }
+		};
+		std::for_each(references.begin(), references.end(), even_out);
+		std::for_each(references.begin(), references.end(), set_percentage);
+
+		if (!to_remove)
+			break;
+		limit -= -.01;
+	}
+
+	ref_count = std::accumulate(references.begin(), references.end(), 0, accumulate);
+
+	for (const auto &item: references) {
+		for (size_t i = 0; i < item.second.first; i++)
+			scales.emplace(item.first);
+	}
+
+	scales.emplace(0);
+	return scales;
+}
 
 namespace fs = std::filesystem;
-
-static std::vector<uint8_t> get_random_data(size_t length) {
-	const size_t		 MAX_LENGTH = 256;
-	std::vector<uint8_t> res;
-	res.reserve(length);
-
-	if (res.size() <= MAX_LENGTH) {
-		if (getentropy(res.data(), res.size()))
-			throw std::runtime_error(strerror(errno));
-		return res;
-	}
-
-	std::vector<uint8_t> buffer(MAX_LENGTH, 0);
-	size_t				 i = 0;
-	for (; i < length; i += MAX_LENGTH) {
-		if (getentropy(buffer.data(), buffer.size()))
-			throw std::runtime_error(strerror(errno));
-
-		res.insert(res.end(), buffer.begin(), buffer.end());
-		buffer.assign(MAX_LENGTH, 0);
-	}
-
-	if (i < length) {
-		res.assign(length - i, 0);
-		if (getentropy(res.data(), res.size()))
-			throw std::runtime_error(strerror(errno));
-		return res;
-	}
-
-	return res;
-}
 
 class FileEnvironment : public testing::Environment {
 private:
 	std::string generate_name() {
-		uint8_t		dir_name_length = length_distrib(prng_engine);
+		uint8_t     dir_name_length = length_distrib(rng::engine);
 
 		std::string str;
 		str.resize(dir_name_length);
-		std::generate_n(str.begin(), dir_name_length, [this] { return filename_charset[fs_distrib(prng_engine)]; });
+		std::generate_n(str.begin(), dir_name_length, [this] {
+			return filename_charset[fs_distrib(rng::engine)];
+		});
 
 		return str;
 	}
 
 	void create_file(size_t length) {
 		fs::path filename = length ? generate_name() : "empty";
-		filename		  = dir_name / filename;
+		filename          = dir_name / filename;
 
 		std::ofstream ofs(filename, std::fstream::trunc | std::ios::binary);
 		if (!ofs.is_open())
@@ -80,7 +121,7 @@ private:
 
 public:
 	FileEnvironment()
-		: fs_distrib(0, filename_charset.length()), length_distrib(3, 16), dir_name(fs::temp_directory_path()) {}
+		: fs_distrib(0, filename_charset.length() - 1), length_distrib(3, 16), dir_name(fs::temp_directory_path()) {}
 
 	~FileEnvironment() override = default;
 
@@ -89,14 +130,23 @@ public:
 		dir_name = fs::temp_directory_path() / ("ft_ssl." + generate_name());
 		ASSERT_TRUE(fs::create_directories(dir_name));
 
-		ASSERT_NO_THROW(create_file(0));
-		ASSERT_NO_THROW(create_file(10));
-		ASSERT_NO_THROW(create_file(48));
-		ASSERT_NO_THROW(create_file(100));
-		ASSERT_NO_THROW(create_file(480));
-		ASSERT_NO_THROW(create_file(4096));
-		ASSERT_NO_THROW(create_file(8192));
-		ASSERT_NO_THROW(create_file(10000));
+		std::multiset<size_t>                        scales = get_scales(NB_FILE_TESTS);
+		std::multiset<size_t>                        tests;
+
+		rng::CauchyDistribution<long double>::Params cauchy_params(0.0, 1.0, 0.03, 0.05);
+		rng::CauchyDistribution<long double>         cauchy(cauchy_params);
+
+		//		cauchy.debug();
+
+		for (const auto &scale: scales)
+			tests.emplace(cauchy(scale));
+
+		cauchy.dump_history(std::cerr);
+
+		std::for_each(tests.begin(), tests.end(), [this](decltype(tests)::value_type length) {
+			ASSERT_NO_THROW(this->create_file(length));
+		});
+		std::cout << "have " << test_filenames.size() << " file tests" << std::endl;
 	}
 
 	// Override this to define how to tear down the environment.
@@ -109,47 +159,41 @@ public:
 
 private:
 	std::uniform_int_distribution<uint16_t> fs_distrib;
-	std::uniform_int_distribution<uint8_t>	length_distrib;
-	fs::path								dir_name;
+	std::uniform_int_distribution<uint8_t>  length_distrib;
+	fs::path                                dir_name;
 
-	const static std::string				filename_charset;
+	const static std::string                filename_charset;
 };
 const std::string FileEnvironment::filename_charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 class StringEnvironment : public testing::Environment {
-	static std::basic_string<uint8_t> get_random_data_as_string(size_t length) {
-		if (!length)
-			return {};
-
-		std::vector<uint8_t> data = get_random_data(length);
-		return { data.begin(), data.end() };
-	}
-
 public:
 	~StringEnvironment() override = default;
 
 	void SetUp() override {
-		test_strings.emplace_back();
+		std::multiset<size_t>                                             scales = get_scales(NB_STRING_TESTS);
+		std::multiset<std::vector<uint8_t>, utils::compare::vector_uint8> tests;
 
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(10)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(29)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(59)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(80)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(104)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(120)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(134)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(203)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(1202)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(2048)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(4000)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(10000)));
-		ASSERT_NO_THROW(test_strings.push_back(get_random_data_as_string(16384)));
+		rng::CauchyDistribution<long double>::Params                      cauchy_params(0.0, 1.0, 0.02, 0.001);
+		rng::CauchyDistribution<long double>                              cauchy(cauchy_params);
+
+		//		cauchy.debug();
+
+		for (const auto &item: scales)
+			ASSERT_NO_THROW(tests.insert(get_random_data(cauchy(item))));
+
+		cauchy.dump_history(std::cerr);
+
+		test_strings.assign(tests.begin(), tests.end());
+		std::cout << "have " << test_strings.size() << " string tests" << std::endl;
 	}
 
 	void TearDown() override {}
 };
 
 int main(int argc, char **argv) {
+	set_params_range();
+
 	testing::InitGoogleTest(&argc, argv);
 
 	testing::AddGlobalTestEnvironment(new FileEnvironment());

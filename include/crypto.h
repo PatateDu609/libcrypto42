@@ -13,17 +13,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* ************************* SHA2 related functions ************************* */
 
-enum SHA2_ALG {
-	SHA2_ALG_224,
-	SHA2_ALG_256,
-	SHA2_ALG_384,
-	SHA2_ALG_512,
-	SHA2_ALG_512_224,
-	SHA2_ALG_512_256
-};
+enum SHA2_ALG { SHA2_ALG_224, SHA2_ALG_256, SHA2_ALG_384, SHA2_ALG_512, SHA2_ALG_512_224, SHA2_ALG_512_256 };
 
 /**
  * @brief Computes the SHA2 digest of the given string.
@@ -32,7 +28,7 @@ enum SHA2_ALG {
  * @param str The string to hash.
  * @return The SHA2 digest of the given string.
  */
-char *sha2(enum SHA2_ALG alg, const char *input);
+char			   *sha2(enum SHA2_ALG alg, const char *input);
 
 /**
  * @brief Computes the SHA2 digest of the given string and stores the result in the given buffer.
@@ -44,7 +40,7 @@ char *sha2(enum SHA2_ALG alg, const char *input);
  * @return The given buffer.
  * @warning The given buffer must be at least `alg.digest_size` bytes long.
  */
-uint8_t *sha2_raw(enum SHA2_ALG alg, const char *input, uint8_t *buf);
+uint8_t			   *sha2_raw(enum SHA2_ALG alg, const char *input, uint8_t *buf);
 
 /**
  * @brief Computes the SHA2 digest of the given file.
@@ -53,7 +49,7 @@ uint8_t *sha2_raw(enum SHA2_ALG alg, const char *input, uint8_t *buf);
  * @param path The path to the file to hash.
  * @return The SHA2 digest of the given file.
  */
-char *sha2_bytes(enum SHA2_ALG alg, const uint8_t *input, size_t input_size);
+char			   *sha2_bytes(enum SHA2_ALG alg, const uint8_t *input, size_t input_size);
 
 /**
  * @brief Computes the SHA2 digest of the given array and stores the result in the given buffer.
@@ -66,7 +62,7 @@ char *sha2_bytes(enum SHA2_ALG alg, const uint8_t *input, size_t input_size);
  * @return The given buffer.
  * @see sha2_raw
  */
-uint8_t *sha2_bytes_raw(enum SHA2_ALG alg, const uint8_t *input, size_t input_size, uint8_t *buf);
+uint8_t			   *sha2_bytes_raw(enum SHA2_ALG alg, const uint8_t *input, size_t input_size, uint8_t *buf);
 
 /**
  * @brief Computes the SHA2 digest of the given file.
@@ -75,7 +71,7 @@ uint8_t *sha2_bytes_raw(enum SHA2_ALG alg, const uint8_t *input, size_t input_si
  * @param path The path to the file to hash.
  * @return The SHA2 digest of the given file.
  */
-char *sha2_file(enum SHA2_ALG alg, const char *filepath);
+char			   *sha2_file(enum SHA2_ALG alg, const char *filepath);
 
 /**
  * @brief Computes the SHA2 digest of the given file and stores the result in the given buffer.
@@ -87,7 +83,7 @@ char *sha2_file(enum SHA2_ALG alg, const char *filepath);
  * @return The given buffer.
  * @see sha2_raw
  */
-uint8_t *sha2_file_raw(enum SHA2_ALG alg, const char *filepath, uint8_t *buf);
+uint8_t			   *sha2_file_raw(enum SHA2_ALG alg, const char *filepath, uint8_t *buf);
 
 /**
  * @brief Computes the SHA2 digest of a file pointed by the given file descriptor.
@@ -96,7 +92,7 @@ uint8_t *sha2_file_raw(enum SHA2_ALG alg, const char *filepath, uint8_t *buf);
  * @param fd The file descriptor of the file to hash.
  * @return The SHA2 digest of the given string.
  */
-char *sha2_descriptor(enum SHA2_ALG alg, int fd);
+char			   *sha2_descriptor(enum SHA2_ALG alg, int fd);
 
 /**
  * @brief Computes the SHA2 digest of a file pointed by the given file descriptor
@@ -109,7 +105,7 @@ char *sha2_descriptor(enum SHA2_ALG alg, int fd);
  * @return The given buffer.
  * @see sha2_raw
  */
-uint8_t *sha2_descriptor_raw(enum SHA2_ALG alg, int fd, uint8_t *buf);
+uint8_t			   *sha2_descriptor_raw(enum SHA2_ALG alg, int fd, uint8_t *buf);
 
 /// Helper defines for the SHA2 functions above.
 static inline char *sha2_224(const char *input) {
@@ -312,7 +308,7 @@ static inline uint8_t *sha2_512_256_descriptor_raw(int fd, uint8_t *buf) {
  * @param str The string to compute the md5 of.
  * @return The md5 of the string.
  */
-char *md5(const char *str);
+char	*md5(const char *str);
 
 /**
  * @brief Compute the md5 of a string given as parameter, but put the raw bytes in a given buffer.
@@ -335,7 +331,7 @@ uint8_t *md5_raw(const char *str, uint8_t *output);
  * @param len The length of the array.
  * @return The md5 of the array.
  */
-char *md5_bytes(const uint8_t *bytes, size_t len);
+char	*md5_bytes(const uint8_t *bytes, size_t len);
 
 /**
  * @brief Compute the md5 of a fixed length array of bytes given as parameter,
@@ -357,7 +353,7 @@ uint8_t *md5_bytes_raw(const uint8_t *bytes, size_t len, uint8_t *output);
  * @param filename The file to compute the md5 of.
  * @return The md5 of the file.
  */
-char *md5_file(const char *filename);
+char	*md5_file(const char *filename);
 
 /**
  * @brief Compute the md5 of a file given as parameter, but put the raw bytes in a given buffer.
@@ -377,7 +373,7 @@ uint8_t *md5_file_raw(const char *filename, uint8_t *output);
  * @param fd The file descriptor of the file to compute the md5 of.
  * @return The md5 of the pointed file.
  */
-char *md5_descriptor(int fd);
+char	*md5_descriptor(int fd);
 
 /**
  * @brief Compute the md5 of a file pointed by the file descriptor given as parameter
@@ -391,5 +387,9 @@ char *md5_descriptor(int fd);
  * @see md5_raw
  */
 uint8_t *md5_descriptor_raw(int fd, uint8_t *output);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif /* CRYPTO_H */
