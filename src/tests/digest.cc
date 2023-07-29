@@ -101,6 +101,6 @@ void DigestTests::get_hash_file(const EVP_MD *md, std::string &expected, const f
 	EVP_MD_CTX_free(ctx);
 }
 
-void DigestTests::SetUp() {}
+void CryptoTests::SetUp() {}
 
-void DigestTests::TearDown() {}
+void CryptoTests::TearDown() {}
