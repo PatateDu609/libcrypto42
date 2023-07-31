@@ -1,8 +1,10 @@
 undefine CFLAGS
+undefine CXXFLAGS
 undefine ARFLAGS
 undefine ASFLAGS
 undefine LDFLAGS
 undefine CC
+undefine CXX
 undefine AS
 undefine AR
 undefine MAKE

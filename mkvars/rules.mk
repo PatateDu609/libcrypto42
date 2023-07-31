@@ -81,6 +81,7 @@ test_colors:
 info_vars:
 	$(PRINTF) "Displaying variables...\n"
 	@($(NPRINTF) "CC:$(CC)\n";																\
+	$(NPRINTF) "CXX:$(CXX)\n";																\
 	$(NPRINTF) "AS:$(AS)\n";																\
 	$(NPRINTF) "AR:$(AR)\n";																\
 	$(NPRINTF) "RM:$(RM)\n";																\
@@ -88,6 +89,7 @@ info_vars:
 	$(NPRINTF) "PRINTF:$(PRINTF)\n\n";															\
 	\
 	$(NPRINTF) "NCC:$(NCC)\n";																\
+	$(NPRINTF) "NCXX:$(NCXX)\n";																\
 	$(NPRINTF) "NAS:$(NAS)\n";																\
 	$(NPRINTF) "NAR:$(NAR)\n";																\
 	$(NPRINTF) "NRM:$(NRM)\n";																\
@@ -100,6 +102,7 @@ info_vars:
 	$(NPRINTF) "PATH_INC:$(PATH_INC)\n\n";													\
 	\
 	$(NPRINTF) "CFLAGS:$(CFLAGS)\n";														\
+	$(NPRINTF) "CXXFLAGS:$(CXXFLAGS)\n";														\
 	$(NPRINTF) "ARFLAGS:$(ARFLAGS)\n";														\
 	$(NPRINTF) "ASFLAGS:$(ASFLAGS)\n\n";														\
 	\
@@ -121,5 +124,6 @@ info_vars:
 			split(input, x, ":");														\
 			printf "$(BOLD)$(RED)""%-15s""$(CRESET)""%s""$(CRESET)\n", x[1], x[2]		\
 		}'
+	$(PRINTF) "$(TRESET)"
 
 .PHONY: all info info_vars test_colors clean fclean re

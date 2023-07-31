@@ -6,31 +6,31 @@ struct block_cipher_ctx setup_algo(enum block_cipher algo) {
 	switch (algo) {
 	case BLOCK_CIPHER_DES:
 		return (struct block_cipher_ctx){
-			.type	  = algo,
+			.type     = algo,
 			.blk_size = 8,
 			.key_size = 8,
 		};
 	case BLOCK_CIPHER_AES128:
 		return (struct block_cipher_ctx){
-			.type	  = algo,
+			.type     = algo,
 			.blk_size = AES_BLK_SIZE_BYTES,
 			.key_size = AES128_KEY_SIZE_BYTES,
 		};
 	case BLOCK_CIPHER_AES192:
 		return (struct block_cipher_ctx){
-			.type	  = algo,
+			.type     = algo,
 			.blk_size = AES_BLK_SIZE_BYTES,
 			.key_size = AES192_KEY_SIZE_BYTES,
 		};
 	case BLOCK_CIPHER_AES256:
 		return (struct block_cipher_ctx){
-			.type	  = algo,
+			.type     = algo,
 			.blk_size = AES_BLK_SIZE_BYTES,
 			.key_size = AES256_KEY_SIZE_BYTES,
 		};
 	default:// Unmanaged algorithm
 		return (struct block_cipher_ctx){
-			.type	  = algo,
+			.type     = algo,
 			.blk_size = 0,
 		};
 	}
@@ -49,14 +49,14 @@ bool __cipher_ctx_valid(struct cipher_ctx *ctx, enum cipher_mode cipher_mode, bo
 	if (ctx->key_len == 0)
 		crypto42_errno = CRYPTO_KEY_LEN_ZERO;
 	if (enc) {
-		if (ctx->plaintext == NULL)
+		if (ctx->plaintext == NULL && ctx->plaintext_len != 0)
 			crypto42_errno = CRYPTO_PLAINTEXT_NULL;
-		if (ctx->plaintext_len == 0)
+		if (ctx->plaintext_len == 0 && ctx->plaintext != NULL)
 			crypto42_errno = CRYPTO_PLAINTEXT_LEN_ZERO;
 	} else {
-		if (ctx->ciphertext == NULL)
+		if (ctx->ciphertext == NULL && ctx->ciphertext_len != 0)
 			crypto42_errno = CRYPTO_CIPHERTEXT_NULL;
-		if (ctx->ciphertext_len == 0)
+		if (ctx->ciphertext_len == 0 && ctx->ciphertext != NULL)
 			crypto42_errno = CRYPTO_CIPHERTEXT_LEN_ZERO;
 		if (ctx->ciphertext_len % ctx->algo.blk_size != 0)
 			crypto42_errno = CRYPTO_CIPHERTEXT_BLKSIZE_UNMATCH;
@@ -96,15 +96,17 @@ uint8_t *unpad(uint8_t *plaintext, size_t *len) {
 	if (!(0 < padding && padding <= 16))
 		return NULL;
 
-	size_t	 new_size = *len - padding;
-
-	uint8_t *p = malloc(new_size);
-	if (p == NULL)
+	size_t new_size = *len - padding;
+	*len            = new_size;
+	if (!new_size)
 		return NULL;
 
-	*len = new_size;
-	memcpy(p, plaintext, new_size);
-	return p;
+	uint8_t *ptr = malloc(new_size);
+	if (ptr == NULL)
+		return NULL;
+
+	memcpy(ptr, plaintext, new_size);
+	return ptr;
 }
 
 void block_xor(struct block *res, const struct block *a, const struct block *b) {
@@ -148,7 +150,7 @@ void block_encrypt(const struct cipher_ctx *ctx, struct block *res, const struct
 }
 
 void block_decrypt(const struct cipher_ctx *ctx, struct block *res, const struct block *a) {
-	res->size												= a->size;
+	res->size                                               = a->size;
 	static uint8_t *(*alg_op[])(uint8_t *, const uint8_t *) = {
 		[BLOCK_CIPHER_AES128] = aes128_decrypt,
 		[BLOCK_CIPHER_AES192] = aes192_decrypt,
@@ -170,6 +172,7 @@ void block_decrypt(const struct cipher_ctx *ctx, struct block *res, const struct
 		uint8_t *fn_res = alg_op[ctx->algo.type](a->data, ctx->key);
 		memcpy(res->data, fn_res, res->size);
 		free(fn_res);
+		break;
 	}
 	default:
 		fprintf(stderr, "error: algorithm is not handled\n");

@@ -33,7 +33,7 @@ namespace utils {
 
 	namespace compare {
 		struct vector_uint8 {
-			constexpr bool operator()(const std::vector<uint8_t> &lhs, const std::vector<uint8_t> &rhs) const {
+			bool operator()(const std::vector<uint8_t> &lhs, const std::vector<uint8_t> &rhs) const {
 				return lhs.size() < rhs.size();
 			}
 		};

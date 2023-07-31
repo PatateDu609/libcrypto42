@@ -28,7 +28,7 @@ struct block {
  *
  * @return Returns true if the context is valid, false otherwise.
  */
-bool     __cipher_ctx_valid(struct cipher_ctx *ctx, enum cipher_mode cipher_mode, bool enc) __internal;
+bool     __cipher_ctx_valid(struct cipher_ctx *ctx, enum cipher_mode cipher_mode, bool enc) __visibility_internal;
 
 /**
  * @brief Pad the plaintext with the given padding.
@@ -42,7 +42,7 @@ bool     __cipher_ctx_valid(struct cipher_ctx *ctx, enum cipher_mode cipher_mode
  * @note The padding algorithm follows PKCS#5 and PKCS#7, and is described by the RFC5652.
  * @see https://tools.ietf.org/html/rfc5652#section-6.3
  */
-uint8_t *pad(uint8_t *plaintext, size_t *len, size_t blk_size) __internal;
+uint8_t *pad(uint8_t *plaintext, size_t *len, size_t blk_size) __visibility_internal;
 
 /**
  * @brief Unpad the plaintext, it is assumed that the plaintext is padded with
@@ -56,13 +56,13 @@ uint8_t *pad(uint8_t *plaintext, size_t *len, size_t blk_size) __internal;
  *
  * @see https://tools.ietf.org/html/rfc5652#section-6.3
  */
-uint8_t *unpad(uint8_t *plaintext, size_t *len) __internal;
+uint8_t *unpad(uint8_t *plaintext, size_t *len) __visibility_internal;
 
-void     block_xor(struct block *res, const struct block *a, const struct block *b) __internal;
+void     block_xor(struct block *res, const struct block *a, const struct block *b) __visibility_internal;
 
-void     block_encrypt(const struct cipher_ctx *ctx, struct block *res, const struct block *a) __internal;
+void     block_encrypt(const struct cipher_ctx *ctx, struct block *res, const struct block *a) __visibility_internal;
 
-void     block_decrypt(const struct cipher_ctx *ctx, struct block *res, const struct block *a) __internal;
+void     block_decrypt(const struct cipher_ctx *ctx, struct block *res, const struct block *a) __visibility_internal;
 
 #ifdef __cplusplus
 };

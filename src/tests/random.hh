@@ -201,7 +201,6 @@ namespace rng {
 #endif
 
 					std::wstring w            = converter.from_bytes(col.name.data());
-					__unused bool         has_sub_next = (i + 1 < columns.size() && columns[i + 1].sub);
 					bool         has_sub_prev = (i >= 1 && columns[i - 1].sub);
 					os << " " << std::setw(col.size + (col.name.length() - w.length()) - 1)
 					   << (col.align_left ? std::left : std::right) << col.name << (!has_sub_prev ? " " : "");

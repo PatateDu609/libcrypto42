@@ -1,5 +1,4 @@
 #include "internal.h"
-#include <array>
 #include <gtest/gtest.h>
 
 TEST(DES, key_schedule) {

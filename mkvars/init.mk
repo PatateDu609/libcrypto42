@@ -50,7 +50,7 @@ STD					?=	-std=c11
 CXX_STD				?=	-std=c++17
 OPT_CFLAGS			?=
 CFLAGS				?=	-Wall -Wextra -Werror $(addprefix -I,$(PATH_INC)) $(OPT_CFLAGS)
-CXXFLAGS			?=	$(CFLAGS) $(CXX_STD)
+CXXFLAGS			?=	$(filter-out $(STD),$(CFLAGS)) $(CXX_STD)
 ARFLAGS				?=	rcs
 ASFLAGS				?=
 
