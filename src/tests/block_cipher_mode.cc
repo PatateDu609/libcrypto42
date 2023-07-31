@@ -19,7 +19,7 @@ __unused static OSSL_PROVIDER *OSSL_legacy  = OSSL_PROVIDER_load(nullptr, "legac
 __unused static OSSL_PROVIDER *OSSL_default = OSSL_PROVIDER_load(nullptr, "default");
 
 BlockCipherTestParams::BlockCipherTestParams(enum cipher_mode mode, enum block_cipher type, size_t plaintext_size)
-	: block_ctx(setup_algo(type)), evp_alg(get_alg(mode, type)), plaintext(), key() {
+	: block_ctx(setup_algo(type)), evp_alg(get_alg(mode, type)), plaintext(), key(), iv() {
 	using rng::get_random_data;
 
 	plaintext = get_random_data(plaintext_size);
@@ -119,6 +119,15 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_cipher() {
 	ctx.plaintext_len = param.plaintext.size();
 	ctx.plaintext     = plaintext;
 
+	if (!param.iv.empty()) {
+		ctx.iv_len = param.iv.size();
+		ctx.iv     = static_cast<uint8_t *>(calloc(param.iv.size(), sizeof param.iv[0]));
+
+		if (ctx.iv == nullptr)
+			throw std::runtime_error("couldn't allocate memory: " + std::string(strerror(errno)));
+		memcpy(ctx.iv, param.iv.data(), param.iv.size() * sizeof param.iv[0]);
+	}
+
 	auto func = get_block_cipher_func_cipher();
 	if (func(&ctx) == nullptr)
 		throw std::runtime_error("got NULL from encrypt function");
@@ -127,6 +136,7 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_cipher() {
 
 	std::vector<uint8_t> ciphertext(ctx.ciphertext, ctx.ciphertext + ctx.ciphertext_len);
 	free(ctx.ciphertext);
+	free(ctx.iv);
 	free(plaintext);
 	return ciphertext;
 }
@@ -149,6 +159,15 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_decipher(const std:
 	ctx.key            = param.key.data();
 	ctx.ciphertext_len = ciphertext.size();
 	ctx.ciphertext     = ciphertext_copy;
+
+	if (!param.iv.empty()) {
+		ctx.iv_len = param.iv.size();
+		ctx.iv     = static_cast<uint8_t *>(calloc(param.iv.size(), sizeof param.iv[0]));
+
+		if (ctx.iv == nullptr)
+			throw std::runtime_error("couldn't allocate memory: " + std::string(strerror(errno)));
+		memcpy(ctx.iv, param.iv.data(), param.iv.size() * sizeof param.iv[0]);
+	}
 
 	auto     func = get_block_cipher_func_decipher();
 	uint8_t *ret  = func(&ctx);
@@ -177,7 +196,16 @@ std::vector<uint8_t> BlockCipherModeTests::get_expected_result_cipher() {
 	if (expected_data == nullptr)
 		throw std::runtime_error("couldn't allocate memory");
 
-	EVP_EncryptInit_ex2(evp_ctx, evp, param.key.data(), nullptr, nullptr);
+	uint8_t *iv = nullptr;
+	if (!param.iv.empty()) {
+		iv = static_cast<uint8_t *>(calloc(param.iv.size(), sizeof param.iv[0]));
+
+		if (iv == nullptr)
+			throw std::runtime_error("couldn't allocate memory: " + std::string(strerror(errno)));
+		memcpy(iv, param.iv.data(), param.iv.size() * sizeof param.iv[0]);
+	}
+
+	EVP_EncryptInit_ex2(evp_ctx, evp, param.key.data(), iv, nullptr);
 
 	EVP_EncryptUpdate(evp_ctx, expected_data, &expected_len, param.plaintext.data(), expected_len);
 	size = expected_len;
@@ -187,6 +215,7 @@ std::vector<uint8_t> BlockCipherModeTests::get_expected_result_cipher() {
 
 	std::vector<uint8_t> expected(expected_data, expected_data + size);
 	free(expected_data);
+	free(iv);
 	return expected;
 }
 
@@ -199,7 +228,16 @@ std::vector<uint8_t> BlockCipherModeTests::get_expected_result_decipher(const st
 	if (expected_data == nullptr)
 		throw std::runtime_error("couldn't allocate memory");
 
-	EVP_DecryptInit_ex2(evp_ctx, evp, param.key.data(), nullptr, nullptr);
+	uint8_t *iv = nullptr;
+	if (!param.iv.empty()) {
+		iv = static_cast<uint8_t *>(calloc(param.iv.size(), sizeof param.iv[0]));
+
+		if (iv == nullptr)
+			throw std::runtime_error("couldn't allocate memory: " + std::string(strerror(errno)));
+		memcpy(iv, param.iv.data(), param.iv.size() * sizeof param.iv[0]);
+	}
+
+	EVP_DecryptInit_ex2(evp_ctx, evp, param.key.data(), iv, nullptr);
 
 	EVP_DecryptUpdate(evp_ctx, expected_data, &expected_len, ciphertext.data(), expected_len);
 	size = expected_len;
@@ -209,6 +247,7 @@ std::vector<uint8_t> BlockCipherModeTests::get_expected_result_decipher(const st
 
 	std::vector<uint8_t> expected(expected_data, expected_data + size);
 	OPENSSL_free(expected_data);
+	free(iv);
 	return expected;
 }
 
