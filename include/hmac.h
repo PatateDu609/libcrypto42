@@ -17,6 +17,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Represents a hash function
  *
@@ -85,5 +89,8 @@ struct hmac_req {
  */
 uint8_t *hmac(struct hmac_req req);
 
+#ifdef __cplusplus
+};
+#endif
 
 #endif

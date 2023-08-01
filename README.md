@@ -15,7 +15,7 @@ This is a small library designed to work with the 42 projects that would need to
 
 And the following libraries (to build and run tests):
 
-+ Criterion (only tested with Criterion 2.4.2)
++ Google test which is declared as a submodule of this repos (it will be pulled and built by the Makefile)
 + openssl itself to use its library
 
 ## How to use it

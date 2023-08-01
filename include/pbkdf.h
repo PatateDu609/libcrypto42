@@ -8,31 +8,34 @@
 #ifndef PBKDF_H
 #define PBKDF_H
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "hmac.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @brief Represents a PBKDF2 instance.
  */
-struct pbkdf2_hmac_req
-{
-	enum hmac_algorithm algo;	///< HMAC algorithm to use.
+struct pbkdf2_hmac_req {
+	enum hmac_algorithm algo;		 ///< HMAC algorithm to use.
 
-	uint8_t *password;			///< Password to use.
-	size_t password_len;		///< Password length.
+	uint8_t			   *password;	 ///< Password to use.
+	size_t				password_len;///< Password length.
 
-	uint8_t *salt;				///< Salt to use.
-	size_t salt_len;			///< Salt length.
+	uint8_t			   *salt;		 ///< Salt to use.
+	size_t				salt_len;	 ///< Salt length.
 
-	uint32_t iterations;		///< Number of iterations.
+	uint32_t			iterations;	 ///< Number of iterations.
 
 	/**
 	 * Length of the derived key in bytes, at most (2^32 - 1) * hLen,
 	 * where hLen is the length in bytes of the hash function output.
-	*/
-	uint64_t dklen;
+	 */
+	uint64_t			dklen;
 };
 
 /**
@@ -40,7 +43,13 @@ struct pbkdf2_hmac_req
  *
  * @param req PBKDF2 request.
  * @return The derived key.
+ *
+ * @warning The returned key must be freed.
  */
 uint8_t *pbkdf2(struct pbkdf2_hmac_req req);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif

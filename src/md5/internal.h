@@ -55,7 +55,7 @@ struct md5_ctx {
  * @warning This function is internal and should not be called by the user.
  * @warning This function must be called before any operation related to md5.
  */
-void     md5_init(struct md5_ctx *ctx) __internal;
+void     md5_init(struct md5_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Updates the md5 context with the given data.
@@ -68,7 +68,7 @@ void     md5_init(struct md5_ctx *ctx) __internal;
  *
  * @see md5_init
  */
-void     md5_update(struct md5_ctx *ctx, const uint8_t *input) __internal;
+void     md5_update(struct md5_ctx *ctx, const uint8_t *input) __visibility_internal;
 
 /**
  * @brief Generates the final hash from the md5 context.
@@ -77,7 +77,7 @@ void     md5_update(struct md5_ctx *ctx, const uint8_t *input) __internal;
  * @warning This function is internal and should not be called by the user.
  * @note This function will flush the context after generating the hash.
  */
-char    *md5_final(struct md5_ctx *ctx) __internal;
+char    *md5_final(struct md5_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Generates the final hash from the md5 context and uses the given buffer to store the hash.
@@ -86,6 +86,6 @@ char    *md5_final(struct md5_ctx *ctx) __internal;
  * @param output The buffer to store the hash in.
  * @return The buffer containing the hash.
  */
-uint8_t *md5_final_raw(struct md5_ctx *ctx, uint8_t *output) __internal;
+uint8_t *md5_final_raw(struct md5_ctx *ctx, uint8_t *output) __visibility_internal;
 
 #endif

@@ -8,20 +8,21 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if __has_include(<byteswap.h>)
-#include <byteswap.h>
+#	include <byteswap.h>
 #else
-#define bswap_16(value) \
-((((value) & 0xff) << 8) | ((value) >> 8))
+#	define bswap_16(value) ((((value) &0xff) << 8) | ((value) >> 8))
 
-#define bswap_32(value) \
-(((uint32_t)bswap_16((uint16_t)((value) & 0xffff)) << 16) | \
-(uint32_t)bswap_16((uint16_t)((value) >> 16)))
+#	define bswap_32(value)                                                                                            \
+		(((uint32_t) bswap_16((uint16_t) ((value) &0xffff)) << 16) | (uint32_t) bswap_16((uint16_t) ((value) >> 16)))
 
-#define bswap_64(value) \
-(((uint64_t)bswap_32((uint32_t)((value) & 0xffffffff)) \
-<< 32) | \
-(uint64_t)bswap_32((uint32_t)((value) >> 32)))
+#	define bswap_64(value)                                                                                            \
+		(((uint64_t) bswap_32((uint32_t) ((value) &0xffffffff)) << 32) |                                               \
+		 (uint64_t) bswap_32((uint32_t) ((value) >> 32)))
 #endif
 
 #include <inttypes.h>
@@ -72,32 +73,32 @@ extern enum crypto_error crypto42_errno;
 
 #define bswap_128(x) ((((__uint128_t) bswap_64(x)) << 64) | bswap_64(x >> 64))
 
-#ifndef __internal
-#define __internal __attribute__((visibility("internal")))
+#ifndef __visibility_internal
+#	define __visibility_internal __attribute__((visibility("internal")))
 #endif
 
 #ifndef __hidden
-#define __hidden __attribute__((visibility("hidden")))
+#	define __hidden __attribute__((visibility("hidden")))
 #endif
 
 #ifndef __unused
-#define __unused __attribute__((unused))
+#	define __unused __attribute__((unused))
 #endif
 
 #ifndef __packed
-#define __packed __attribute__((packed))
+#	define __packed __attribute__((packed))
 #endif
 
 #ifndef __aligned
-#define __aligned(x) __attribute__((aligned(x)))
+#	define __aligned(x) __attribute__((aligned(x)))
 #endif
 
 #ifndef __noreturn
-#define __noreturn __attribute__((noreturn))
+#	define __noreturn __attribute__((noreturn))
 #endif
 
 #ifndef __pure
-#define __pure __attribute__((pure))
+#	define __pure __attribute__((pure))
 #endif
 
 #define __fallthrough __attribute__((fallthrough))
@@ -156,7 +157,7 @@ char               *askpass(const char *prompt);
  * @warning The returned string must be freed.
  */
 static inline char *stringify_hash(const uint8_t *buf, size_t len) {
-	char *str = malloc(len * 2 + 1);
+	char *str = (char *) malloc(len * 2 + 1);
 
 	if (!str)
 		return NULL;
@@ -327,5 +328,9 @@ const char *crypto42_strerror(enum crypto_error err);
  * @warning The returned array must be freed.
  */
 uint8_t    *gensalt(size_t len);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

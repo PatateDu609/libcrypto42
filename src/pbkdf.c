@@ -34,7 +34,7 @@ uint8_t *pbkdf2(struct pbkdf2_hmac_req req)
 	if (dk == NULL)
 		return NULL;
 
-	size_t l = ceilf((float)req.dklen / (float)hmac_req.ctx.L);
+	size_t l = (size_t)ceilf((float)req.dklen / (float)hmac_req.ctx.L);
 	size_t r = req.dklen - (l - 1) * hmac_req.ctx.L;
 
 	// Compute the current block of the derived key.

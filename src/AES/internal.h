@@ -4,6 +4,10 @@
 #include "common.h"
 #include "cipher.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define AES128_NB_ROUNDS 10
 #define AES192_NB_ROUNDS 12
 #define AES256_NB_ROUNDS 14
@@ -124,5 +128,9 @@ void	 inv_mix_columns(union aes_data *data);
  * @note This function is described by the FIPS 197, section 5.1.4
  */
 void	 add_round_key(struct aes_ctx *ctx, union aes_data *data, uint8_t rnd);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif// LIBCRYPTO42_INTERNAL_H

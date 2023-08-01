@@ -12,13 +12,21 @@ endif
 
 all:							$(NAME) $(TEST_NAME)
 
-$(PATH_OBJ)/%.o:			$(PATH_SRC)/%$(LANGEXTENSION)
+$(PATH_OBJ)/%.o:			$(PATH_SRC)/%.c
 	$(MKDIR) $(dir $@)
 
 	$(PRINTF) " $(BOLD)$(if $(filter $(shell echo $< | grep 'tests/' ; echo $$?),1),$(if $(filter $(shell echo $< | grep -E '\.test\.c' ; echo $$?),0),$(MAGENTA),$(BLUE)),$(CYAN))"
 	$(PRINTF) "$(GREATER)$(NORMAL)   Compiling $(ITALIC)$(subst $(PATH_SRC)/,,$<)$(TRESET)\n"
 
 	$(CC) $(CFLAGS) -c -MMD $< -o $@
+
+$(PATH_OBJ)/%.o:			$(PATH_SRC)/%.cc
+	$(MKDIR) $(dir $@)
+
+	$(PRINTF) " $(BOLD)$(if $(filter $(shell echo $< | grep 'tests/' ; echo $$?),1),$(if $(filter $(shell echo $< | grep -E '\.test\.c' ; echo $$?),0),$(MAGENTA),$(BLUE)),$(CYAN))"
+	$(PRINTF) "$(GREATER)$(NORMAL)   Compiling $(ITALIC)$(subst $(PATH_SRC)/,,$<)$(TRESET)\n"
+
+	$(CXX) $(CXXFLAGS) -c -MMD $< -o $@
 
 
 -include $(DEPS)
@@ -57,9 +65,13 @@ test_colors:
 	$(PRINTF) "Testing colors...\n"
 	$(PRINTF) "$(RED)RED$(TRESET)\n"
 	$(PRINTF) "$(GREEN)GREEN$(TRESET)\n"
+	$(PRINTF) "$(GREEN_42)GREEN_42$(TRESET)\n"
+	$(PRINTF) "$(GREEN_79)GREEN_79$(TRESET)\n"
 	$(PRINTF) "$(YELLOW)YELLOW$(TRESET)\n"
+	$(PRINTF) "$(ORANGE)ORANGE$(TRESET)\n"
 	$(PRINTF) "$(BLUE)BLUE$(TRESET)\n"
 	$(PRINTF) "$(MAGENTA)MAGENTA$(TRESET)\n"
+	$(PRINTF) "$(MAGENTA_129)MAGENTA_129$(TRESET)\n"
 	$(PRINTF) "$(CYAN)CYAN$(TRESET)\n"
 
 	$(PRINTF) "$(UNDERLINE)UNDERLINE$(TRESET)\n"
@@ -69,6 +81,7 @@ test_colors:
 info_vars:
 	$(PRINTF) "Displaying variables...\n"
 	@($(NPRINTF) "CC:$(CC)\n";																\
+	$(NPRINTF) "CXX:$(CXX)\n";																\
 	$(NPRINTF) "AS:$(AS)\n";																\
 	$(NPRINTF) "AR:$(AR)\n";																\
 	$(NPRINTF) "RM:$(RM)\n";																\
@@ -76,6 +89,7 @@ info_vars:
 	$(NPRINTF) "PRINTF:$(PRINTF)\n\n";															\
 	\
 	$(NPRINTF) "NCC:$(NCC)\n";																\
+	$(NPRINTF) "NCXX:$(NCXX)\n";																\
 	$(NPRINTF) "NAS:$(NAS)\n";																\
 	$(NPRINTF) "NAR:$(NAR)\n";																\
 	$(NPRINTF) "NRM:$(NRM)\n";																\
@@ -88,6 +102,7 @@ info_vars:
 	$(NPRINTF) "PATH_INC:$(PATH_INC)\n\n";													\
 	\
 	$(NPRINTF) "CFLAGS:$(CFLAGS)\n";														\
+	$(NPRINTF) "CXXFLAGS:$(CXXFLAGS)\n";														\
 	$(NPRINTF) "ARFLAGS:$(ARFLAGS)\n";														\
 	$(NPRINTF) "ASFLAGS:$(ASFLAGS)\n\n";														\
 	\
@@ -109,5 +124,6 @@ info_vars:
 			split(input, x, ":");														\
 			printf "$(BOLD)$(RED)""%-15s""$(CRESET)""%s""$(CRESET)\n", x[1], x[2]		\
 		}'
+	$(PRINTF) "$(TRESET)"
 
 .PHONY: all info info_vars test_colors clean fclean re

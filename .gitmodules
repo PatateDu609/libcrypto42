@@ -1,3 +1,8 @@
 [submodule "libft"]
 	path = libft
 	url = https://github.com/PatateDu609/libft
+	branch = master
+[submodule "gtest"]
+	path = gtest
+	url = https://github.com/google/googletest
+	branch = v1.13.x

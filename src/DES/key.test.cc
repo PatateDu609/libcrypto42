@@ -1,14 +1,13 @@
 #include "internal.h"
-#include <criterion/criterion.h>
-#include <criterion/new/assert.h>
+#include <gtest/gtest.h>
 
-Test(DES, key_schedule) {
-	uint64_t key = 0b0001001100110100010101110111100110011011101111001101111111110001;
-	uint64_t subkeys[NB_ROUNDS];
+TEST(DES, key_schedule) {
+	uint64_t                        key = 0b0001001100110100010101110111100110011011101111001101111111110001;
+	std::array<uint64_t, NB_ROUNDS> subkeys{};
 
-	key_schedule(key, subkeys);
+	key_schedule(key, subkeys.data());
 
-	uint64_t expected_subkeys[NB_ROUNDS] = {
+	std::array<uint64_t, NB_ROUNDS> expected_subkeys{
 		0b000110110000001011101111111111000111000001110010, 0b011110011010111011011001110110111100100111100101,
 		0b010101011111110010001010010000101100111110011001, 0b011100101010110111010110110110110011010100011101,
 		0b011111001110110000000111111010110101001110101000, 0b011000111010010100111110010100000111101100101111,
@@ -19,8 +18,5 @@ Test(DES, key_schedule) {
 		0b101111111001000110001101001111010011111100001010, 0b110010110011110110001011000011100001011111110101,
 	};
 
-	for (size_t i = 0; i < NB_ROUNDS; i++) {
-		cr_expect(eq(i64, subkeys[i], expected_subkeys[i], "bad subkey[%zu], got %#08x, expected %#08x", i, subkeys[i],
-					 expected_subkeys[i]));
-	}
+	EXPECT_EQ(subkeys, expected_subkeys);
 }
