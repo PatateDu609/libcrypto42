@@ -128,7 +128,7 @@ void block_encrypt(const struct cipher_ctx *ctx, struct block *res, const struct
 	switch (ctx->algo.type) {
 	case BLOCK_CIPHER_DES: {
 		uint64_t *blk = (uint64_t *) a->data, *key = (uint64_t *) ctx->key;
-		uint64_t  raw_res = des_encrypt(*blk, *key);
+		uint64_t  raw_res = des_encrypt(bswap_64(*blk), bswap_64(*key));
 
 		raw_res = bswap_64(raw_res);
 		memcpy(res->data, &raw_res, sizeof raw_res);
@@ -160,7 +160,7 @@ void block_decrypt(const struct cipher_ctx *ctx, struct block *res, const struct
 	switch (ctx->algo.type) {
 	case BLOCK_CIPHER_DES: {
 		uint64_t *blk = (uint64_t *) a->data, *key = (uint64_t *) ctx->key;
-		uint64_t  raw_res = des_decrypt(*blk, *key);
+		uint64_t  raw_res = des_decrypt(bswap_64(*blk), bswap_64(*key));
 
 		raw_res = bswap_64(raw_res);
 		memcpy(res->data, &raw_res, sizeof raw_res);

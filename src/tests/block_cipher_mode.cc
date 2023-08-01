@@ -41,6 +41,9 @@ std::string BlockCipherTestParams::get_alg(enum cipher_mode mode, enum block_cip
 	case BLOCK_CIPHER_AES256:
 		oss << "AES-256";
 		break;
+	case BLOCK_CIPHER_DES:
+		oss << "DES";
+		break;
 	default:
 		throw std::invalid_argument("unexpected block_cipher type: " + block_cipher_translator[type]);
 	}
@@ -264,7 +267,7 @@ void BlockCipherModeTests::SetUp() {
 	ASSERT_NE(evp_ctx, nullptr);
 
 	evp_blk_len = EVP_CIPHER_get_block_size(evp);
-	ASSERT_EQ(evp_blk_len, AES_BLK_SIZE_BYTES);
+	ASSERT_EQ(evp_blk_len, static_cast<int>(GetParam().block_ctx.blk_size));
 }
 
 void BlockCipherModeTests::TearDown() {

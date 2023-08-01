@@ -47,9 +47,19 @@ static const std::vector<BlockCipherTestParams> ecb_aes256_params{
 	CREATE_ECB_TEST(BLOCK_CIPHER_AES256, 512),
 };
 
+static const std::vector<BlockCipherTestParams> ecb_des_params{
+	CREATE_ECB_TEST(BLOCK_CIPHER_DES, 0),   CREATE_ECB_TEST(BLOCK_CIPHER_DES, 1),
+	CREATE_ECB_TEST(BLOCK_CIPHER_DES, 8),   CREATE_ECB_TEST(BLOCK_CIPHER_DES, 16),
+	CREATE_ECB_TEST(BLOCK_CIPHER_DES, 26),  CREATE_ECB_TEST(BLOCK_CIPHER_DES, 31),
+	CREATE_ECB_TEST(BLOCK_CIPHER_DES, 32),  CREATE_ECB_TEST(BLOCK_CIPHER_DES, 73),
+	CREATE_ECB_TEST(BLOCK_CIPHER_DES, 79),  CREATE_ECB_TEST(BLOCK_CIPHER_DES, 128),
+	CREATE_ECB_TEST(BLOCK_CIPHER_DES, 512),
+};
+
 INSTANTIATE_TEST_SUITE_P(aes128, ECBTests, testing::ValuesIn(ecb_aes128_params));
 INSTANTIATE_TEST_SUITE_P(aes192, ECBTests, testing::ValuesIn(ecb_aes192_params));
 INSTANTIATE_TEST_SUITE_P(aes256, ECBTests, testing::ValuesIn(ecb_aes256_params));
+INSTANTIATE_TEST_SUITE_P(des, ECBTests, testing::ValuesIn(ecb_des_params));
 
 TEST_P(ECBTests, cipher) {
 	run_cipher_test();

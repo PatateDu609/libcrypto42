@@ -22,9 +22,9 @@ private:
 	struct block_cipher_ctx block_ctx;
 	const std::string       evp_alg;
 
-	std::vector<uint8_t>    plaintext;
-	std::vector<uint8_t>    key;
-	std::vector<uint8_t>    iv;
+	std::vector<uint8_t>    plaintext{};
+	std::vector<uint8_t>    key{};
+	std::vector<uint8_t>    iv{};
 
 	friend class BlockCipherModeTests;
 

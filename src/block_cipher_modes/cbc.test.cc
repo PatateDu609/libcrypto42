@@ -47,9 +47,19 @@ static const std::vector<BlockCipherTestParams> cbc_aes256_params{
 	CREATE_CBC_TEST(BLOCK_CIPHER_AES256, 512),
 };
 
+static const std::vector<BlockCipherTestParams> cbc_des_params{
+	CREATE_CBC_TEST(BLOCK_CIPHER_DES, 0),   CREATE_CBC_TEST(BLOCK_CIPHER_DES, 1),
+	CREATE_CBC_TEST(BLOCK_CIPHER_DES, 8),   CREATE_CBC_TEST(BLOCK_CIPHER_DES, 16),
+	CREATE_CBC_TEST(BLOCK_CIPHER_DES, 26),  CREATE_CBC_TEST(BLOCK_CIPHER_DES, 31),
+	CREATE_CBC_TEST(BLOCK_CIPHER_DES, 32),  CREATE_CBC_TEST(BLOCK_CIPHER_DES, 73),
+	CREATE_CBC_TEST(BLOCK_CIPHER_DES, 79),  CREATE_CBC_TEST(BLOCK_CIPHER_DES, 128),
+	CREATE_CBC_TEST(BLOCK_CIPHER_DES, 512),
+};
+
 INSTANTIATE_TEST_SUITE_P(aes128, CBCTests, testing::ValuesIn(cbc_aes128_params));
 INSTANTIATE_TEST_SUITE_P(aes192, CBCTests, testing::ValuesIn(cbc_aes192_params));
 INSTANTIATE_TEST_SUITE_P(aes256, CBCTests, testing::ValuesIn(cbc_aes256_params));
+INSTANTIATE_TEST_SUITE_P(des, CBCTests, testing::ValuesIn(cbc_des_params));
 
 TEST_P(CBCTests, cipher) {
 	run_cipher_test();
