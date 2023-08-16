@@ -30,9 +30,8 @@ CIPHER_MODE_SRC_BASENAME	=	block_cipher_modes/block_cipher_mode		\
 								block_cipher_modes/cbc						\
 								block_cipher_modes/ecb						\
 								block_cipher_modes/cfb						\
-#								block_cipher_modes/ctr						\
-								block_cipher_modes/ecb						\
 								block_cipher_modes/ofb						\
+#								block_cipher_modes/ctr						\
 
 BASENAME					:=	$(MD5_SRC_BASENAME)				\
 								$(SHA2_SRC_BASENAME)			\

@@ -15,6 +15,7 @@ enum cipher_mode {
 	CIPHER_MODE_CFB,
 	CIPHER_MODE_CFB1,
 	CIPHER_MODE_CFB8,
+	CIPHER_MODE_OFB,
 };
 
 struct block {
@@ -179,6 +180,15 @@ uint8_t                *CFB1_encrypt(struct cipher_ctx *ctx) __visibility_intern
 uint8_t                *CFB8_encrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
+ * @brief Performs a OFB encryption on the given context.
+ *
+ * @param ctx The context to use for the encryption.
+ *
+ * @return Returns a copy of the pointer given in the context for the ciphertext.
+ */
+uint8_t                *OFB_encrypt(struct cipher_ctx *ctx) __visibility_internal;
+
+/**
  * @brief Performs a CFB decryption on the given context.
  *
  * @param ctx The context to use for the decryption.
@@ -204,6 +214,15 @@ uint8_t                *CFB1_decrypt(struct cipher_ctx *ctx) __visibility_intern
  * @return Returns a copy of the pointer given in the context for the plaintext.
  */
 uint8_t                *CFB8_decrypt(struct cipher_ctx *ctx) __visibility_internal;
+
+/**
+ * @brief Performs a OFB decryption on the given context.
+ *
+ * @param ctx The context to use for the decryption.
+ *
+ * @return Returns a copy of the pointer given in the context for the plaintext.
+ */
+uint8_t                *OFB_decrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 uint8_t                 gen_left_mask(size_t r) __visibility_internal;
 enum cipher_mode        block_cipher_get_mode(enum block_cipher type) __visibility_internal;

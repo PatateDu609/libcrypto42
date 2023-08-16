@@ -28,6 +28,14 @@ enum cipher_mode block_cipher_get_mode(enum block_cipher type) {
 	case BLOCK_CIPHER_3DES_EDE3_CFB8:
 		return CIPHER_MODE_CFB8;
 
+	case BLOCK_CIPHER_AES128_OFB:
+	case BLOCK_CIPHER_AES192_OFB:
+	case BLOCK_CIPHER_AES256_OFB:
+	case BLOCK_CIPHER_DES_OFB:
+	case BLOCK_CIPHER_3DES_EDE2_OFB:
+	case BLOCK_CIPHER_3DES_EDE3_OFB:
+		return CIPHER_MODE_OFB;
+
 	case BLOCK_CIPHER_AES128_ECB:
 	case BLOCK_CIPHER_AES192_ECB:
 	case BLOCK_CIPHER_AES256_ECB:
@@ -53,6 +61,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_DES_CFB:
 	case BLOCK_CIPHER_DES_CFB1:
 	case BLOCK_CIPHER_DES_CFB8:
+	case BLOCK_CIPHER_DES_OFB:
 		return BLOCK_CIPHER_DES;
 
 	case BLOCK_CIPHER_3DES_EDE2_ECB:
@@ -60,6 +69,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_3DES_EDE2_CFB:
 	case BLOCK_CIPHER_3DES_EDE2_CFB1:
 	case BLOCK_CIPHER_3DES_EDE2_CFB8:
+	case BLOCK_CIPHER_3DES_EDE2_OFB:
 		return BLOCK_CIPHER_3DES_EDE2;
 
 	case BLOCK_CIPHER_3DES_EDE3_ECB:
@@ -67,6 +77,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_3DES_EDE3_CFB:
 	case BLOCK_CIPHER_3DES_EDE3_CFB1:
 	case BLOCK_CIPHER_3DES_EDE3_CFB8:
+	case BLOCK_CIPHER_3DES_EDE3_OFB:
 		return BLOCK_CIPHER_3DES_EDE3;
 
 	case BLOCK_CIPHER_AES128_ECB:
@@ -74,6 +85,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_AES128_CFB:
 	case BLOCK_CIPHER_AES128_CFB1:
 	case BLOCK_CIPHER_AES128_CFB8:
+	case BLOCK_CIPHER_AES128_OFB:
 		return BLOCK_CIPHER_AES128;
 
 	case BLOCK_CIPHER_AES192_ECB:
@@ -81,6 +93,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_AES192_CFB:
 	case BLOCK_CIPHER_AES192_CFB1:
 	case BLOCK_CIPHER_AES192_CFB8:
+	case BLOCK_CIPHER_AES192_OFB:
 		return BLOCK_CIPHER_AES192;
 
 	case BLOCK_CIPHER_AES256_ECB:
@@ -88,6 +101,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_AES256_CFB:
 	case BLOCK_CIPHER_AES256_CFB1:
 	case BLOCK_CIPHER_AES256_CFB8:
+	case BLOCK_CIPHER_AES256_OFB:
 		return BLOCK_CIPHER_AES256;
 	}
 }
@@ -130,6 +144,7 @@ struct block_cipher_ctx setup_algo(enum block_cipher algo) {
 	case CIPHER_MODE_ECB:
 		mode_blk_size_bits = 0;
 		break;
+	case CIPHER_MODE_OFB:
 	case CIPHER_MODE_CFB:
 		mode_blk_size_bits = 8 * blk_size;
 		break;
@@ -195,7 +210,8 @@ bool __cipher_ctx_valid(struct cipher_ctx *ctx, enum cipher_mode cipher_mode, bo
 			crypto42_errno = CRYPTO_CIPHERTEXT_NULL;
 		if (ctx->ciphertext_len == 0 && ctx->ciphertext != NULL)
 			crypto42_errno = CRYPTO_CIPHERTEXT_LEN_ZERO;
-		if (ctx->ciphertext_len % ctx->algo.blk_size != 0)
+		if ((cipher_mode == CIPHER_MODE_ECB || cipher_mode == CIPHER_MODE_CBC) &&
+		    ctx->ciphertext_len % ctx->algo.blk_size != 0)
 			crypto42_errno = CRYPTO_CIPHERTEXT_BLKSIZE_UNMATCH;
 	}
 	if (cipher_mode != CIPHER_MODE_ECB) {

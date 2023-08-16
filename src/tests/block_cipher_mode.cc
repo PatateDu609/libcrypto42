@@ -13,6 +13,7 @@ static std::map<enum block_cipher, std::string> block_cipher_translator{
 	{ BLOCK_CIPHER_AES128_CFB,     "AES128-CFB"    },
 	{ BLOCK_CIPHER_AES128_CFB1,    "AES128-CFB1"   },
 	{ BLOCK_CIPHER_AES128_CFB8,    "AES128-CFB8"   },
+	{ BLOCK_CIPHER_AES128_OFB,     "AES128-OFB"    },
 
 	{ BLOCK_CIPHER_AES192,         "AES192"        },
 	{ BLOCK_CIPHER_AES192_ECB,     "AES192-ECB"    },
@@ -20,6 +21,7 @@ static std::map<enum block_cipher, std::string> block_cipher_translator{
 	{ BLOCK_CIPHER_AES192_CFB,     "AES192-CFB"    },
 	{ BLOCK_CIPHER_AES192_CFB1,    "AES192-CFB1"   },
 	{ BLOCK_CIPHER_AES192_CFB8,    "AES192-CFB8"   },
+	{ BLOCK_CIPHER_AES192_OFB,     "AES192-OFB"    },
 
 	{ BLOCK_CIPHER_AES256,         "AES256"        },
 	{ BLOCK_CIPHER_AES256_ECB,     "AES256-ECB"    },
@@ -27,6 +29,7 @@ static std::map<enum block_cipher, std::string> block_cipher_translator{
 	{ BLOCK_CIPHER_AES256_CFB,     "AES256-CFB"    },
 	{ BLOCK_CIPHER_AES256_CFB1,    "AES256-CFB1"   },
 	{ BLOCK_CIPHER_AES256_CFB8,    "AES256-CFB8"   },
+	{ BLOCK_CIPHER_AES256_OFB,     "AES256-OFB"    },
 
 	{ BLOCK_CIPHER_DES,            "DES"           },
 	{ BLOCK_CIPHER_DES_ECB,        "DES-ECB"       },
@@ -34,6 +37,7 @@ static std::map<enum block_cipher, std::string> block_cipher_translator{
 	{ BLOCK_CIPHER_DES_CFB,        "DES-CFB"       },
 	{ BLOCK_CIPHER_DES_CFB1,       "DES-CFB1"      },
 	{ BLOCK_CIPHER_DES_CFB8,       "DES-CFB8"      },
+	{ BLOCK_CIPHER_DES_OFB,        "DES-OFB"       },
 
 	{ BLOCK_CIPHER_3DES_EDE2,      "3DES_EDE2"     },
 	{ BLOCK_CIPHER_3DES_EDE2_ECB,  "3DES_EDE2-ECB" },
@@ -41,6 +45,7 @@ static std::map<enum block_cipher, std::string> block_cipher_translator{
 	{ BLOCK_CIPHER_3DES_EDE2_CFB,  "3DES_EDE2-CFB" },
 	{ BLOCK_CIPHER_3DES_EDE2_CFB1, "3DES_EDE2-CFB1"},
 	{ BLOCK_CIPHER_3DES_EDE2_CFB8, "3DES_EDE2-CFB8"},
+	{ BLOCK_CIPHER_3DES_EDE2_OFB,  "3DES_EDE2-OFB" },
 
 	{ BLOCK_CIPHER_3DES_EDE3,      "3DES_EDE3"     },
 	{ BLOCK_CIPHER_3DES_EDE3_ECB,  "3DES_EDE3-ECB" },
@@ -48,6 +53,7 @@ static std::map<enum block_cipher, std::string> block_cipher_translator{
 	{ BLOCK_CIPHER_3DES_EDE3_CFB,  "3DES_EDE3-CFB" },
 	{ BLOCK_CIPHER_3DES_EDE3_CFB1, "3DES_EDE3-CFB1"},
 	{ BLOCK_CIPHER_3DES_EDE3_CFB8, "3DES_EDE3-CFB8"},
+	{ BLOCK_CIPHER_3DES_EDE3_OFB,  "3DES_EDE3-OFB" },
 };
 
 __unused static OSSL_PROVIDER *OSSL_legacy  = OSSL_PROVIDER_load(nullptr, "legacy");
@@ -99,6 +105,15 @@ static enum block_cipher       mix_cipher_mode_and_operation_mode(enum cipher_mo
 			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CFB8   },
     };
 
+    static std::map<enum block_cipher, enum block_cipher> translator_ofb {
+			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_OFB      },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_OFB},
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_OFB},
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_OFB   },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_OFB   },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_OFB   },
+    };
+
     switch (mode) {
     case CIPHER_MODE_ECB:
         return translator_ecb[type];
@@ -110,6 +125,8 @@ static enum block_cipher       mix_cipher_mode_and_operation_mode(enum cipher_mo
         return translator_cfb1[type];
     case CIPHER_MODE_CFB8:
         return translator_cfb8[type];
+    case CIPHER_MODE_OFB:
+        return translator_ofb[type];
     }
 }
 
@@ -161,6 +178,9 @@ std::string BlockCipherTestParams::get_alg(enum cipher_mode mode, enum block_cip
 		break;
 	case CIPHER_MODE_ECB:
 		oss << "-ECB";
+		break;
+	case CIPHER_MODE_OFB:
+		oss << "-OFB";
 		break;
 	case CIPHER_MODE_CFB:
 		oss << "-CFB";
@@ -252,7 +272,7 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_cipher() {
 	uint8_t *ret  = func(&ctx);
 	EXPECT_EQ(ret, ctx.ciphertext);
 	if (ret == nullptr &&
-	    !(ctx.plaintext_len == 0 && (mode == CIPHER_MODE_CFB || mode == CIPHER_MODE_CFB1 || mode == CIPHER_MODE_CFB8)))
+	    !(ctx.plaintext_len == 0 && (mode == CIPHER_MODE_CFB || mode == CIPHER_MODE_CFB1 || mode == CIPHER_MODE_CFB8 || mode == CIPHER_MODE_OFB)))
 		throw std::runtime_error("got NULL from encrypt function");
 	if (ctx.plaintext != plaintext)
 		plaintext = ctx.plaintext;

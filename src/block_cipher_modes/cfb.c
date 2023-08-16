@@ -5,6 +5,9 @@ static uint8_t *CFB_encrypt(struct cipher_ctx *ctx) {
 	if (!ctx->plaintext_len)
 		return NULL;
 
+	if (!__cipher_ctx_valid(ctx, block_cipher_get_mode(ctx->algo.type), true))
+		return NULL;
+
 	ctx->ciphertext_len = ctx->plaintext_len;
 	ctx->ciphertext     = calloc(ctx->ciphertext_len, sizeof *ctx->ciphertext);
 	if (!ctx->ciphertext) {
@@ -127,6 +130,9 @@ static uint8_t *CFB_decrypt(struct cipher_ctx *ctx) {
 	if (!ctx->ciphertext_len)
 		return NULL;
 
+	if (!__cipher_ctx_valid(ctx, block_cipher_get_mode(ctx->algo.type), false))
+		return NULL;
+
 	ctx->plaintext_len = ctx->ciphertext_len;
 	ctx->plaintext     = calloc(ctx->plaintext_len, sizeof *ctx->plaintext);
 	if (!ctx->plaintext) {
@@ -191,8 +197,8 @@ static uint8_t *CFB_decrypt(struct cipher_ctx *ctx) {
 		}
 
 		if (input_ciphered_s_bits->size < plain.size || input_ciphered_s_bits->size < ctx->algo.blk_size) {
-			size_t size = plain.size < ctx->algo.blk_size ? ctx->algo.blk_size : plain.size;
-			uint8_t *tmp = realloc(input_ciphered_s_bits->data, size * sizeof *tmp);
+			size_t   size = plain.size < ctx->algo.blk_size ? ctx->algo.blk_size : plain.size;
+			uint8_t *tmp  = realloc(input_ciphered_s_bits->data, size * sizeof *tmp);
 
 			if (!tmp) {
 				perror("error: realloc");
