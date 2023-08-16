@@ -53,5 +53,8 @@ dkms.conf
 
 test_crypto42
 main.c
+main
+main.cc
+main.cpp
 
 .idea

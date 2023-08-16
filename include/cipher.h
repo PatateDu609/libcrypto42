@@ -35,20 +35,59 @@ extern "C" {
  * @brief Enumerate all available block cipher algorithms.
  */
 enum block_cipher {
-	BLOCK_CIPHER_DES,      ///< Data Encryption Standard
+	BLOCK_CIPHER_DES_ECB = 0x0,             ///< Data Encryption Standard using ECB cipher mode
+	BLOCK_CIPHER_DES_CBC,                   ///< Data Encryption Standard using CBC cipher mode
+	BLOCK_CIPHER_DES_CFB,                   ///< Data Encryption Standard using CFB cipher mode
+	BLOCK_CIPHER_DES_CFB1,                  ///< Data Encryption Standard using CFB1 cipher mode
+	BLOCK_CIPHER_DES_CFB8,                  ///< Data Encryption Standard using CFB8 cipher mode
+	BLOCK_CIPHER_DES = BLOCK_CIPHER_DES_CBC,///< Data Encryption Standard (defaults to CBC mode)
 
-	BLOCK_CIPHER_3DES_EDE2,///< Triple DES with 2 keys (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE3,///< Triple DES with 3 keys (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE2_ECB = 0x10,///< Triple DES with 2 keys using ECB cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE2_CBC,       ///< Triple DES with 2 keys using CBC cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE2_CFB,       ///< Triple DES with 2 keys using CFB cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE2_CFB1,      ///< Triple DES with 2 keys using CFB1 cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE2_CFB8,      ///< Triple DES with 2 keys using CFB8 cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE2 =
+			BLOCK_CIPHER_3DES_EDE2_CBC,///< Triple DES with 2 keys (defaults to CBC mode) (Not implemented yet)
 
-	BLOCK_CIPHER_AES128,   ///< Advanced Encryption Standard with a 128 bits key
-	BLOCK_CIPHER_AES192,   ///< Advanced Encryption Standard with a 192 bits key
-	BLOCK_CIPHER_AES256,   ///< Advanced Encryption Standard with a 256 bits key
+	BLOCK_CIPHER_3DES_EDE3_ECB = 0x20,///< Triple DES with 3 keys using ECB cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE3_CBC,       ///< Triple DES with 3 keys using CBC cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE3_CFB,       ///< Triple DES with 3 keys using CFB cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE3_CFB1,      ///< Triple DES with 3 keys using CFB1 cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE3_CFB8,      ///< Triple DES with 3 keys using CFB8 cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE3 =
+			BLOCK_CIPHER_3DES_EDE3_CBC,///< Triple DES with 3 keys (defaults to CBC mode) (Not implemented yet)
+
+	BLOCK_CIPHER_AES128_ECB = 0x30,///< Advanced Encryption Standard with a 128 bits key using ECB cipher mode
+	BLOCK_CIPHER_AES128_CBC,       ///< Advanced Encryption Standard with a 128 bits key using CBC cipher mode
+	BLOCK_CIPHER_AES128_CFB,       ///< Advanced Encryption Standard with a 128 bits key using CFB cipher mode
+	BLOCK_CIPHER_AES128_CFB1,      ///< Advanced Encryption Standard with a 128 bits key using CFB1 cipher mode
+	BLOCK_CIPHER_AES128_CFB8,      ///< Advanced Encryption Standard with a 128 bits key using CFB8 cipher mode
+	BLOCK_CIPHER_AES128 =
+			BLOCK_CIPHER_AES128_CBC,///< Advanced Encryption Standard with a 128 bits key (defaults to CBC mode)
+
+	BLOCK_CIPHER_AES192_ECB = 0x40,///< Advanced Encryption Standard with a 192 bits key using ECB cipher mode
+	BLOCK_CIPHER_AES192_CBC,       ///< Advanced Encryption Standard with a 192 bits key using CBC cipher mode
+	BLOCK_CIPHER_AES192_CFB,       ///< Advanced Encryption Standard with a 192 bits key using CFB cipher mode
+	BLOCK_CIPHER_AES192_CFB1,      ///< Advanced Encryption Standard with a 192 bits key using CFB1 cipher mode
+	BLOCK_CIPHER_AES192_CFB8,      ///< Advanced Encryption Standard with a 192 bits key using CFB8 cipher mode
+	BLOCK_CIPHER_AES192 =
+			BLOCK_CIPHER_AES192_CBC,///< Advanced Encryption Standard with a 192 bits key (defaults to CBC mode)
+
+	BLOCK_CIPHER_AES256_ECB = 0x50,///< Advanced Encryption Standard with a 256 bits key using ECB cipher mode
+	BLOCK_CIPHER_AES256_CBC,       ///< Advanced Encryption Standard with a 256 bits key using CBC cipher mode
+	BLOCK_CIPHER_AES256_CFB,       ///< Advanced Encryption Standard with a 256 bits key using CFB cipher mode
+	BLOCK_CIPHER_AES256_CFB1,      ///< Advanced Encryption Standard with a 256 bits key using CFB1 cipher mode
+	BLOCK_CIPHER_AES256_CFB8,      ///< Advanced Encryption Standard with a 256 bits key using CFB8 cipher mode
+	BLOCK_CIPHER_AES256 =
+			BLOCK_CIPHER_AES256_CBC,///< Advanced Encryption Standard with a 256 bits key (defaults to CBC mode)
 };
 
 struct block_cipher_ctx {
 	enum block_cipher type;
 	size_t            blk_size;
 	size_t            key_size;
+	size_t            mode_blk_size_bits;
 };
 
 /**
@@ -57,65 +96,23 @@ struct block_cipher_ctx {
  * @note Depending on the cipher mode, some fields may be useless or at contrary they may be mandatory.
  */
 struct cipher_ctx {
-	struct block_cipher_ctx algo;          ///< The algorithm to use.
+	struct block_cipher_ctx algo;///< The algorithm to use.
 
-	uint8_t                *key;           ///< Key used for the cipher mode
-	size_t                  key_len;       ///< Key length in bytes
+	uint8_t                *key;    ///< Key used for the cipher mode
+	size_t                  key_len;///< Key length in bytes
 
-	uint8_t                *iv;            ///< Initialization vector used for the cipher mode
-	size_t                  iv_len;        ///< Initialization vector length in bytes
+	uint8_t                *iv;    ///< Initialization vector used for the cipher mode
+	size_t                  iv_len;///< Initialization vector length in bytes
 
-	uint8_t                *plaintext;     ///< Plaintext to be encrypted
-	size_t                  plaintext_len; ///< Plaintext length in bytes
+	uint8_t                *plaintext;    ///< Plaintext to be encrypted
+	size_t                  plaintext_len;///< Plaintext length in bytes
 
 	uint8_t                *ciphertext;    ///< Ciphertext to be decrypted
 	size_t                  ciphertext_len;///< Ciphertext length in bytes
 };
 
-/**
- * @brief Setup the algorithm description to use in this library..
- *
- * @param algo The algorithm to setup.
- *
- * @return Returns a struct containing information about the current algorithm..
- */
-struct block_cipher_ctx setup_algo(enum block_cipher algo);
-
-/**
- * @brief Performs an ECB encryption on the given context.
- *
- * @param ctx The context to use for the encryption.
- *
- * @return Returns a copy of the pointer given in the context for the ciphertext.
- */
-uint8_t                *ECB_encrypt(struct cipher_ctx *ctx);
-
-/**
- * @brief Performs an ECB decryption on the given context.
- *
- * @param ctx The context to use for the decryption.
- *
- * @return Returns a copy of the pointer given in the context for the plaintext.
- */
-uint8_t                *ECB_decrypt(struct cipher_ctx *ctx);
-
-/**
- * @brief Performs an CBC encryption on the given context.
- *
- * @param ctx The context to use for the decryption.
- *
- * @return Returns a copy of the pointer given in the context for the plaintext.
- */
-uint8_t                *CBC_encrypt(struct cipher_ctx *ctx);
-
-/**
- * @brief Performs an CBC decryption on the given context.
- *
- * @param ctx The context to use for the decryption.
- *
- * @return Returns a copy of the pointer given in the context for the plaintext.
- */
-uint8_t                *CBC_decrypt(struct cipher_ctx *ctx);
+uint8_t *block_cipher(struct cipher_ctx *ctx);
+uint8_t *block_decipher(struct cipher_ctx *ctx);
 
 /* ************************** DES related functions ************************* */
 
@@ -131,7 +128,7 @@ uint8_t                *CBC_decrypt(struct cipher_ctx *ctx);
  * @note The key must be given in its raw form (i.e. 64 bits), all the processing
  * is done by the function.
  */
-uint64_t                des_encrypt(uint64_t block, uint64_t key);
+uint64_t des_encrypt(uint64_t block, uint64_t key);
 
 /**
  * @brief Decrypt a single block of 64 bits with the DES algorithm.
@@ -145,7 +142,7 @@ uint64_t                des_encrypt(uint64_t block, uint64_t key);
  * @note The key must be given in its raw form (i.e. 64 bits), all the processing
  * is done by the function.
  */
-uint64_t                des_decrypt(uint64_t block, uint64_t key);
+uint64_t des_decrypt(uint64_t block, uint64_t key);
 
 /* ************************** AES related functions ************************* */
 
@@ -161,7 +158,7 @@ uint64_t                des_decrypt(uint64_t block, uint64_t key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t                *aes128_encrypt(uint8_t *blk, const uint8_t *key);
+uint8_t *aes128_encrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Encrypt a single block of 192 bits using the AES algorithm with a key size of 192.
@@ -175,7 +172,7 @@ uint8_t                *aes128_encrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t                *aes192_encrypt(uint8_t *blk, const uint8_t *key);
+uint8_t *aes192_encrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Encrypt a single block of 256 bits using the AES algorithm with a key size of 256.
@@ -189,7 +186,7 @@ uint8_t                *aes192_encrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t                *aes256_encrypt(uint8_t *blk, const uint8_t *key);
+uint8_t *aes256_encrypt(uint8_t *blk, const uint8_t *key);
 
 
 /**
@@ -204,7 +201,7 @@ uint8_t                *aes256_encrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t                *aes128_decrypt(uint8_t *blk, const uint8_t *key);
+uint8_t *aes128_decrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 192 bits with the AES algorithm with a key size of 192.
@@ -218,7 +215,7 @@ uint8_t                *aes128_decrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t                *aes192_decrypt(uint8_t *blk, const uint8_t *key);
+uint8_t *aes192_decrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 256 bits with the AES algorithm with a key size of 256.
@@ -232,7 +229,7 @@ uint8_t                *aes192_decrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t                *aes256_decrypt(uint8_t *blk, const uint8_t *key);
+uint8_t *aes256_decrypt(uint8_t *blk, const uint8_t *key);
 
 #ifdef __cplusplus
 };

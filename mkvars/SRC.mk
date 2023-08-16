@@ -25,11 +25,12 @@ COMMON_SRC_BASENAME			=	common/blocks					\
 								common/gensalt					\
 								common/strerror					\
 
-CIPHER_MODE_SRC_BASENAME	=	block_cipher_modes/common					\
+CIPHER_MODE_SRC_BASENAME	=	block_cipher_modes/block_cipher_mode		\
+								block_cipher_modes/common					\
 								block_cipher_modes/cbc						\
 								block_cipher_modes/ecb						\
-								# block_cipher_modes/cfb					\
-								block_cipher_modes/ctr						\
+								block_cipher_modes/cfb						\
+#								block_cipher_modes/ctr						\
 								block_cipher_modes/ecb						\
 								block_cipher_modes/ofb						\
 

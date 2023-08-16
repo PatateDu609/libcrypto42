@@ -11,6 +11,8 @@
 class BlockCipherTestParams {
 public:
 	BlockCipherTestParams(enum cipher_mode mode, enum block_cipher type, size_t plaintext_size);
+	BlockCipherTestParams(enum cipher_mode mode, enum block_cipher type, std::vector<uint8_t> key,
+	                      std::vector<uint8_t> plaintext, std::vector<uint8_t> iv, std::vector<uint8_t> true_expected);
 
 private:
 	static std::string      get_alg(enum cipher_mode mode, enum block_cipher type);
@@ -20,11 +22,13 @@ private:
 	EVP_CIPHER             *load_evp() const;
 
 	struct block_cipher_ctx block_ctx;
+	enum cipher_mode        mode;
 	const std::string       evp_alg;
 
 	std::vector<uint8_t>    plaintext{};
 	std::vector<uint8_t>    key{};
 	std::vector<uint8_t>    iv{};
+	std::vector<uint8_t>    true_expected{};
 
 	friend class BlockCipherModeTests;
 

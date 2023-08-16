@@ -7,26 +7,133 @@
 #include <sstream>
 
 static std::map<enum block_cipher, std::string> block_cipher_translator{
-	{BLOCK_CIPHER_AES128,     "AES128"   },
-    { BLOCK_CIPHER_AES192,    "AES192"   },
-    { BLOCK_CIPHER_AES256,    "AES256"   },
-	{ BLOCK_CIPHER_DES,       "DES"      },
-    { BLOCK_CIPHER_3DES_EDE2, "3DES_EDE2"},
-    { BLOCK_CIPHER_3DES_EDE3, "3DES_EDE3"},
+	{BLOCK_CIPHER_AES128,          "AES128"        },
+	{ BLOCK_CIPHER_AES128_ECB,     "AES128-ECB"    },
+	{ BLOCK_CIPHER_AES128_CBC,     "AES128-CBC"    },
+	{ BLOCK_CIPHER_AES128_CFB,     "AES128-CFB"    },
+	{ BLOCK_CIPHER_AES128_CFB1,    "AES128-CFB1"   },
+	{ BLOCK_CIPHER_AES128_CFB8,    "AES128-CFB8"   },
+
+	{ BLOCK_CIPHER_AES192,         "AES192"        },
+	{ BLOCK_CIPHER_AES192_ECB,     "AES192-ECB"    },
+	{ BLOCK_CIPHER_AES192_CBC,     "AES192-CBC"    },
+	{ BLOCK_CIPHER_AES192_CFB,     "AES192-CFB"    },
+	{ BLOCK_CIPHER_AES192_CFB1,    "AES192-CFB1"   },
+	{ BLOCK_CIPHER_AES192_CFB8,    "AES192-CFB8"   },
+
+	{ BLOCK_CIPHER_AES256,         "AES256"        },
+	{ BLOCK_CIPHER_AES256_ECB,     "AES256-ECB"    },
+	{ BLOCK_CIPHER_AES256_CBC,     "AES256-CBC"    },
+	{ BLOCK_CIPHER_AES256_CFB,     "AES256-CFB"    },
+	{ BLOCK_CIPHER_AES256_CFB1,    "AES256-CFB1"   },
+	{ BLOCK_CIPHER_AES256_CFB8,    "AES256-CFB8"   },
+
+	{ BLOCK_CIPHER_DES,            "DES"           },
+	{ BLOCK_CIPHER_DES_ECB,        "DES-ECB"       },
+	{ BLOCK_CIPHER_DES_CBC,        "DES-CBC"       },
+	{ BLOCK_CIPHER_DES_CFB,        "DES-CFB"       },
+	{ BLOCK_CIPHER_DES_CFB1,       "DES-CFB1"      },
+	{ BLOCK_CIPHER_DES_CFB8,       "DES-CFB8"      },
+
+	{ BLOCK_CIPHER_3DES_EDE2,      "3DES_EDE2"     },
+	{ BLOCK_CIPHER_3DES_EDE2_ECB,  "3DES_EDE2-ECB" },
+	{ BLOCK_CIPHER_3DES_EDE2_CBC,  "3DES_EDE2-CBC" },
+	{ BLOCK_CIPHER_3DES_EDE2_CFB,  "3DES_EDE2-CFB" },
+	{ BLOCK_CIPHER_3DES_EDE2_CFB1, "3DES_EDE2-CFB1"},
+	{ BLOCK_CIPHER_3DES_EDE2_CFB8, "3DES_EDE2-CFB8"},
+
+	{ BLOCK_CIPHER_3DES_EDE3,      "3DES_EDE3"     },
+	{ BLOCK_CIPHER_3DES_EDE3_ECB,  "3DES_EDE3-ECB" },
+	{ BLOCK_CIPHER_3DES_EDE3_CBC,  "3DES_EDE3-CBC" },
+	{ BLOCK_CIPHER_3DES_EDE3_CFB,  "3DES_EDE3-CFB" },
+	{ BLOCK_CIPHER_3DES_EDE3_CFB1, "3DES_EDE3-CFB1"},
+	{ BLOCK_CIPHER_3DES_EDE3_CFB8, "3DES_EDE3-CFB8"},
 };
 
 __unused static OSSL_PROVIDER *OSSL_legacy  = OSSL_PROVIDER_load(nullptr, "legacy");
 __unused static OSSL_PROVIDER *OSSL_default = OSSL_PROVIDER_load(nullptr, "default");
 
+static enum block_cipher       mix_cipher_mode_and_operation_mode(enum cipher_mode mode, enum block_cipher type) {
+    static std::map<enum block_cipher, enum block_cipher> translator_ecb {
+			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_ECB      },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_ECB},
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_ECB},
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_ECB   },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_ECB   },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_ECB   },
+    };
+
+    static std::map<enum block_cipher, enum block_cipher> translator_cbc {
+			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_CBC      },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CBC},
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CBC},
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CBC   },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CBC   },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CBC   },
+    };
+
+    static std::map<enum block_cipher, enum block_cipher> translator_cfb {
+			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_CFB      },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CFB},
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CFB},
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CFB   },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CFB   },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CFB   },
+    };
+
+    static std::map<enum block_cipher, enum block_cipher> translator_cfb1 {
+			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_CFB1      },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CFB1},
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CFB1},
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CFB1   },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CFB1   },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CFB1   },
+    };
+
+    static std::map<enum block_cipher, enum block_cipher> translator_cfb8 {
+			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_CFB8      },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CFB8},
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CFB8},
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CFB8   },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CFB8   },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CFB8   },
+    };
+
+    switch (mode) {
+    case CIPHER_MODE_ECB:
+        return translator_ecb[type];
+    case CIPHER_MODE_CBC:
+        return translator_cbc[type];
+    case CIPHER_MODE_CFB:
+        return translator_cfb[type];
+    case CIPHER_MODE_CFB1:
+        return translator_cfb1[type];
+    case CIPHER_MODE_CFB8:
+        return translator_cfb8[type];
+    }
+}
+
 BlockCipherTestParams::BlockCipherTestParams(enum cipher_mode mode, enum block_cipher type, size_t plaintext_size)
-	: block_ctx(setup_algo(type)), evp_alg(get_alg(mode, type)), plaintext(), key(), iv() {
+	: block_ctx(setup_algo(mix_cipher_mode_and_operation_mode(mode, type))), evp_alg(get_alg(mode, type)), plaintext(),
+	  key(), iv(), true_expected() {
 	using rng::get_random_data;
 
-	plaintext = get_random_data(plaintext_size);
-	key       = get_random_data(block_ctx.key_size);
+	plaintext  = get_random_data(plaintext_size);
+	key        = get_random_data(block_ctx.key_size);
+	this->mode = mode;
 
 	if (mode != CIPHER_MODE_ECB)
 		iv = get_random_data(block_ctx.blk_size);
+}
+
+BlockCipherTestParams::BlockCipherTestParams(enum cipher_mode mode, enum block_cipher type, std::vector<uint8_t> key,
+                                             std::vector<uint8_t> plaintext, std::vector<uint8_t> iv,
+                                             std::vector<uint8_t> true_expected)
+	: BlockCipherTestParams(mode, type, 0) {
+	this->plaintext     = plaintext;
+	this->key           = key;
+	this->iv            = iv;
+	this->true_expected = true_expected;
 }
 
 std::string BlockCipherTestParams::get_alg(enum cipher_mode mode, enum block_cipher type) {
@@ -55,6 +162,15 @@ std::string BlockCipherTestParams::get_alg(enum cipher_mode mode, enum block_cip
 	case CIPHER_MODE_ECB:
 		oss << "-ECB";
 		break;
+	case CIPHER_MODE_CFB:
+		oss << "-CFB";
+		break;
+	case CIPHER_MODE_CFB1:
+		oss << "-CFB1";
+		break;
+	case CIPHER_MODE_CFB8:
+		oss << "-CFB8";
+		break;
 	}
 	return oss.str();
 }
@@ -73,7 +189,7 @@ EVP_CIPHER *BlockCipherTestParams::load_evp() const {
 	if (!evp) {
 		uint64_t err = ERR_get_error();
 		std::cerr << "error: couldn't fetch algorithm \"" << evp_alg << "\": " << ERR_lib_error_string(err) << ": "
-				  << ERR_reason_error_string(err) << std::endl;
+				  << ERR_reason_error_string(err) << '\n';
 		exit(EXIT_FAILURE);
 	}
 
@@ -132,7 +248,10 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_cipher() {
 	}
 
 	auto func = get_block_cipher_func_cipher();
-	if (func(&ctx) == nullptr)
+	auto mode = block_cipher_get_mode(ctx.algo.type);
+	uint8_t  *ret = func(&ctx);
+	EXPECT_EQ(ret, ctx.ciphertext);
+	if (ret == nullptr && !(ctx.plaintext_len == 0 && (mode == CIPHER_MODE_CFB || mode == CIPHER_MODE_CFB1 || mode == CIPHER_MODE_CFB8)))
 		throw std::runtime_error("got NULL from encrypt function");
 	if (ctx.plaintext != plaintext)
 		plaintext = ctx.plaintext;
@@ -174,6 +293,7 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_decipher(const std:
 
 	auto     func = get_block_cipher_func_decipher();
 	uint8_t *ret  = func(&ctx);
+	EXPECT_EQ(ret, ctx.plaintext);
 	if (ret == nullptr && ctx.ciphertext && ctx.ciphertext_len && ctx.ciphertext_len != param.block_ctx.blk_size)
 		throw std::runtime_error("got NULL from decrypt function");
 	if (ctx.ciphertext != ciphertext_copy)
@@ -194,7 +314,8 @@ std::vector<uint8_t> BlockCipherModeTests::get_expected_result_cipher() {
 	int    expected_len = (int) param.plaintext.size();
 	size_t size;
 
-	size_t rem           = expected_len % evp_blk_len;
+	size_t blk_len       = evp_blk_len == 1 ? 16 * evp_blk_len : evp_blk_len;
+	size_t rem           = expected_len % blk_len;
 	auto   expected_data = static_cast<uint8_t *>(malloc(expected_len + (evp_blk_len - rem)));
 	if (expected_data == nullptr)
 		throw std::runtime_error("couldn't allocate memory");
@@ -210,7 +331,8 @@ std::vector<uint8_t> BlockCipherModeTests::get_expected_result_cipher() {
 
 	EVP_EncryptInit_ex2(evp_ctx, evp, param.key.data(), iv, nullptr);
 
-	EVP_EncryptUpdate(evp_ctx, expected_data, &expected_len, param.plaintext.data(), expected_len);
+	EVP_EncryptUpdate(evp_ctx, expected_data, &expected_len, param.plaintext.data(),
+	                  static_cast<int>(param.plaintext.size()));
 	size = expected_len;
 
 	EVP_EncryptFinal_ex(evp_ctx, expected_data + expected_len, &expected_len);
@@ -260,14 +382,17 @@ void BlockCipherModeTests::SetUp() {
 	destroy_ctx();
 	destroy_evp();
 
-	evp = GetParam().load_evp();
+	auto param = GetParam();
+
+	evp = param.load_evp();
 	ASSERT_NE(evp, nullptr);
 
 	evp_ctx = EVP_CIPHER_CTX_new();
 	ASSERT_NE(evp_ctx, nullptr);
 
 	evp_blk_len = EVP_CIPHER_get_block_size(evp);
-	ASSERT_EQ(evp_blk_len, static_cast<int>(GetParam().block_ctx.blk_size));
+	if (param.mode == CIPHER_MODE_ECB || param.mode == CIPHER_MODE_CBC)
+		ASSERT_EQ(evp_blk_len, static_cast<int>(ceilf(GetParam().block_ctx.mode_blk_size_bits / 8.f)));
 }
 
 void BlockCipherModeTests::TearDown() {
@@ -276,19 +401,31 @@ void BlockCipherModeTests::TearDown() {
 }
 
 void BlockCipherModeTests::run_cipher_test() {
-	std::vector<uint8_t> actual, expected;
+	std::vector<uint8_t> actual, expected, true_expected;
 	ASSERT_NO_THROW(actual = get_actual_result_cipher());
-	ASSERT_NO_THROW(expected = get_expected_result_cipher());
 
-	EXPECT_EQ(actual, expected);
+	true_expected = GetParam().true_expected;
+
+	if (!true_expected.empty())
+		EXPECT_EQ(actual, true_expected);
+	else {
+		ASSERT_NO_THROW(expected = get_expected_result_cipher());
+		EXPECT_EQ(actual, expected);
+	}
 }
 
 void BlockCipherModeTests::run_decipher_test() {
 	std::vector<uint8_t> ciphertext = get_expected_result_cipher();
 
-	std::vector<uint8_t> actual, expected;
+	std::vector<uint8_t> actual, expected, true_expected;
 	ASSERT_NO_THROW(actual = get_actual_result_decipher(ciphertext));
-	ASSERT_NO_THROW(expected = get_expected_result_decipher(ciphertext));
 
-	EXPECT_EQ(actual, expected);
+	true_expected = GetParam().true_expected;
+
+	if (!true_expected.empty())
+		EXPECT_EQ(actual, true_expected);
+	else {
+		ASSERT_NO_THROW(expected = get_expected_result_decipher(ciphertext));
+		EXPECT_EQ(actual, expected);
+	}
 }

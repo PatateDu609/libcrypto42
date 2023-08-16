@@ -2,23 +2,8 @@
 #include "internal.h"
 
 uint8_t *CBC_encrypt(struct cipher_ctx *ctx) {
-	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_CBC, true))
+	if (!__init_cipher_mode_enc(ctx, CIPHER_MODE_CBC))
 		return NULL;
-
-	uint8_t *p = pad(ctx->plaintext, &ctx->plaintext_len, ctx->algo.blk_size);
-	if (p == NULL) {
-		perror("error: couldn't allocate memory");
-		return NULL;
-	}
-
-	ctx->plaintext = p;
-
-	if (ctx->ciphertext_len == ctx->plaintext_len && ctx->ciphertext) {
-		memset(ctx->ciphertext, 0, ctx->ciphertext_len);
-	} else {
-		ctx->ciphertext_len = ctx->plaintext_len;
-		ctx->ciphertext     = malloc(ctx->ciphertext_len);
-	}
 
 	struct block src, last, cipher;
 	src.size = last.size = cipher.size = ctx->algo.blk_size;
