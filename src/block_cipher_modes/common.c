@@ -518,7 +518,8 @@ void block_decrypt(const struct cipher_ctx *ctx, struct block *res, const struct
 		[BLOCK_CIPHER_AES256] = aes256_decrypt,
 	};
 
-	switch (ctx->algo.type) {
+	const enum block_cipher type = get_block_cipher_algorithm(ctx->algo.type);
+	switch (type) {
 	case BLOCK_CIPHER_DES: {
 		uint64_t *blk = (uint64_t *) a->data, *key = (uint64_t *) ctx->key;
 		uint64_t  raw_res = des_decrypt(bswap_64(*blk), bswap_64(*key));
@@ -530,7 +531,7 @@ void block_decrypt(const struct cipher_ctx *ctx, struct block *res, const struct
 	case BLOCK_CIPHER_AES128:
 	case BLOCK_CIPHER_AES192:
 	case BLOCK_CIPHER_AES256: {
-		uint8_t *fn_res = alg_op[ctx->algo.type](a->data, ctx->key);
+		uint8_t *fn_res = alg_op[type](a->data, ctx->key);
 		memcpy(res->data, fn_res, res->size);
 		free(fn_res);
 		break;

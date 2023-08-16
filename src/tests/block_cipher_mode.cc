@@ -247,11 +247,12 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_cipher() {
 		memcpy(ctx.iv, param.iv.data(), param.iv.size() * sizeof param.iv[0]);
 	}
 
-	auto func = get_block_cipher_func_cipher();
-	auto mode = block_cipher_get_mode(ctx.algo.type);
-	uint8_t  *ret = func(&ctx);
+	auto     func = get_block_cipher_func_cipher();
+	auto     mode = block_cipher_get_mode(ctx.algo.type);
+	uint8_t *ret  = func(&ctx);
 	EXPECT_EQ(ret, ctx.ciphertext);
-	if (ret == nullptr && !(ctx.plaintext_len == 0 && (mode == CIPHER_MODE_CFB || mode == CIPHER_MODE_CFB1 || mode == CIPHER_MODE_CFB8)))
+	if (ret == nullptr &&
+	    !(ctx.plaintext_len == 0 && (mode == CIPHER_MODE_CFB || mode == CIPHER_MODE_CFB1 || mode == CIPHER_MODE_CFB8)))
 		throw std::runtime_error("got NULL from encrypt function");
 	if (ctx.plaintext != plaintext)
 		plaintext = ctx.plaintext;
@@ -392,7 +393,7 @@ void BlockCipherModeTests::SetUp() {
 
 	evp_blk_len = EVP_CIPHER_get_block_size(evp);
 	if (param.mode == CIPHER_MODE_ECB || param.mode == CIPHER_MODE_CBC)
-		ASSERT_EQ(evp_blk_len, static_cast<int>(ceilf(GetParam().block_ctx.mode_blk_size_bits / 8.f)));
+		ASSERT_EQ(evp_blk_len, static_cast<int>(param.block_ctx.blk_size));
 }
 
 void BlockCipherModeTests::TearDown() {
