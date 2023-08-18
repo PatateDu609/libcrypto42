@@ -34,7 +34,6 @@ To compile an executable using this library, you need to add the following libra
 ## Progress
 
 + [x] MD5
-+ [ ] SHA1
 + [x] SHA2 suite (sha224, sha256, sha384, sha512, sha512/224, sha512/256)[README.md](README.md)
 + [ ] SHA3 suite
 + [x] PBKDF
@@ -47,11 +46,11 @@ To compile an executable using this library, you need to add the following libra
 + [ ] 3DES (EDE only)
     + [ ] 2 Keys option
     + [ ] 3 Keys option
-+ [ ] Operation modes for symmetric encryption
++ [x] Operation modes for symmetric encryption
     + [x] ECB
     + [x] CBC
-    + [ ] CFB
-    + [ ] OFB
-    + [ ] CTR
+    + [x] CFB
+    + [x] OFB
+    + [x] CTR
 + [x] Base64
 + [x] Use of the Kernel CSPRNG
