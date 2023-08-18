@@ -34,7 +34,7 @@ To compile an executable using this library, you need to add the following libra
 ## Progress
 
 + [x] MD5
-+ [x] SHA2 suite (sha224, sha256, sha384, sha512, sha512/224, sha512/256)[README.md](README.md)
++ [x] SHA2 suite (sha224, sha256, sha384, sha512, sha512/224, sha512/256)
 + [ ] SHA3 suite
 + [x] PBKDF
 + [x] HMAC
