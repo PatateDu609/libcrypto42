@@ -38,27 +38,28 @@ extern "C" {
  * @brief All possible errors for the library.
  */
 enum crypto_error {
-	CRYPTO_SUCCESS = 0,               ///< Success
-	CRYPTO_CTX_NULL,                  ///< Context is NULL
+	CRYPTO_SUCCESS = 0,///< Success
+	CRYPTO_CTX_NULL,   ///< Context is NULL
 
-	CRYPTO_KEY_NULL,                  ///< Key is NULL
-	CRYPTO_KEY_LEN_ZERO,              ///< Key length is zero
-	CRYPTO_PLAINTEXT_NULL,            ///< Plaintext is NULL
-	CRYPTO_PLAINTEXT_LEN_ZERO,        ///< Plaintext length is zero
-	CRYPTO_CIPHERTEXT_NULL,           ///< Ciphertext is NULL
-	CRYPTO_CIPHERTEXT_LEN_ZERO,       ///< Ciphertext length is zero
-	CRYPTO_IV_NULL,                   ///< IV is NULL
-	CRYPTO_IV_LEN_ZERO,               ///< IV length is zero
-	CRYPTO_NONCE_NULL,                ///< Nonce is NULL
-	CRYPTO_NONCE_LEN_ZERO,            ///< Nonce length is zero
+	CRYPTO_KEY_NULL,           ///< Key is NULL
+	CRYPTO_KEY_LEN_ZERO,       ///< Key length is zero
+	CRYPTO_PLAINTEXT_NULL,     ///< Plaintext is NULL
+	CRYPTO_PLAINTEXT_LEN_ZERO, ///< Plaintext length is zero
+	CRYPTO_CIPHERTEXT_NULL,    ///< Ciphertext is NULL
+	CRYPTO_CIPHERTEXT_LEN_ZERO,///< Ciphertext length is zero
+	CRYPTO_IV_NULL,            ///< IV is NULL
+	CRYPTO_IV_LEN_ZERO,        ///< IV length is zero
+	CRYPTO_NONCE_NULL,         ///< Nonce is NULL
+	CRYPTO_NONCE_LEN_ZERO,     ///< Nonce length is zero
 
 	CRYPTO_BLKSIZE_ZERO,              ///< Block size is zero
 	CRYPTO_BLKSIZE_INVALID,           ///< Block size must be either 8 or 16
 	CRYPTO_CIPHERTEXT_BLKSIZE_UNMATCH,///< Ciphertext should be a multiple of the block size
 	CRYPTO_IV_BLKSIZE_UNMATCH,        ///< IV should be equal to the block size
+	CRYPTO_NONCE_BLKSIZE_UNMATCH,     ///< Nonce should be equal to the block size
 
-	CRYPTO_ALGO_UNKNOWN,              ///< Unknown algorithm
-	CRYPTO_ALGO_INVALID_BLKSIZE,      ///< Invalid block size for the algorithm
+	CRYPTO_ALGO_UNKNOWN,        ///< Unknown algorithm
+	CRYPTO_ALGO_INVALID_BLKSIZE,///< Invalid block size for the algorithm
 };
 
 /**

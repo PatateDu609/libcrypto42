@@ -16,6 +16,7 @@ enum cipher_mode {
 	CIPHER_MODE_CFB1,
 	CIPHER_MODE_CFB8,
 	CIPHER_MODE_OFB,
+	CIPHER_MODE_CTR,
 };
 
 struct block {
@@ -77,6 +78,8 @@ void          block_left_shift(struct block *a, size_t n) __visibility_internal;
 
 void          block_bit_assign(struct block *res, struct block *src, size_t start, size_t nb) __visibility_internal;
 
+void          block_increment(struct block *blk, size_t bit_limit) __visibility_internal;
+
 struct block *block_dup(const struct block *src) __visibility_internal;
 
 struct block *block_dup_data(uint8_t *data, size_t size) __visibility_internal;
@@ -114,7 +117,7 @@ bool __init_cipher_mode_enc(struct cipher_ctx *ctx, enum cipher_mode mode) __vis
  *
  * @return Returns a struct containing information about the current algorithm..
  */
-struct block_cipher_ctx setup_algo(enum block_cipher algo);
+struct block_cipher_ctx                     setup_algo(enum block_cipher algo);
 
 /**
  * @brief Performs an ECB encryption on the given context.
@@ -123,7 +126,7 @@ struct block_cipher_ctx setup_algo(enum block_cipher algo);
  *
  * @return Returns a copy of the pointer given in the context for the ciphertext.
  */
-uint8_t                *ECB_encrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *ECB_encrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Performs an ECB decryption on the given context.
@@ -132,7 +135,7 @@ uint8_t                *ECB_encrypt(struct cipher_ctx *ctx) __visibility_interna
  *
  * @return Returns a copy of the pointer given in the context for the plaintext.
  */
-uint8_t                *ECB_decrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *ECB_decrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Performs a CBC encryption on the given context.
@@ -141,7 +144,7 @@ uint8_t                *ECB_decrypt(struct cipher_ctx *ctx) __visibility_interna
  *
  * @return Returns a copy of the pointer given in the context for the ciphertext.
  */
-uint8_t                *CBC_encrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *CBC_encrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Performs a CBC decryption on the given context.
@@ -150,7 +153,7 @@ uint8_t                *CBC_encrypt(struct cipher_ctx *ctx) __visibility_interna
  *
  * @return Returns a copy of the pointer given in the context for the plaintext.
  */
-uint8_t                *CBC_decrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *CBC_decrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Performs a CFB encryption on the given context.
@@ -159,7 +162,7 @@ uint8_t                *CBC_decrypt(struct cipher_ctx *ctx) __visibility_interna
  *
  * @return Returns a copy of the pointer given in the context for the ciphertext.
  */
-uint8_t                *full_CFB_encrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *full_CFB_encrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Performs a CFB1 encryption on the given context.
@@ -168,7 +171,7 @@ uint8_t                *full_CFB_encrypt(struct cipher_ctx *ctx) __visibility_in
  *
  * @return Returns a copy of the pointer given in the context for the ciphertext.
  */
-uint8_t                *CFB1_encrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *CFB1_encrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Performs a CFB8 encryption on the given context.
@@ -177,7 +180,7 @@ uint8_t                *CFB1_encrypt(struct cipher_ctx *ctx) __visibility_intern
  *
  * @return Returns a copy of the pointer given in the context for the ciphertext.
  */
-uint8_t                *CFB8_encrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *CFB8_encrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Performs a OFB encryption on the given context.
@@ -186,7 +189,16 @@ uint8_t                *CFB8_encrypt(struct cipher_ctx *ctx) __visibility_intern
  *
  * @return Returns a copy of the pointer given in the context for the ciphertext.
  */
-uint8_t                *OFB_encrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *OFB_encrypt(struct cipher_ctx *ctx) __visibility_internal;
+
+/**
+ * @brief Performs a CTR encryption on the given context.
+ *
+ * @param ctx The context to use for the encryption.
+ *
+ * @return Returns a copy of the pointer given in the context for the ciphertext.
+ */
+uint8_t                                    *CTR_encrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Performs a CFB decryption on the given context.
@@ -195,7 +207,7 @@ uint8_t                *OFB_encrypt(struct cipher_ctx *ctx) __visibility_interna
  *
  * @return Returns a copy of the pointer given in the context for the plaintext.
  */
-uint8_t                *full_CFB_decrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *full_CFB_decrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Performs a CFB1 decryption on the given context.
@@ -204,7 +216,7 @@ uint8_t                *full_CFB_decrypt(struct cipher_ctx *ctx) __visibility_in
  *
  * @return Returns a copy of the pointer given in the context for the plaintext.
  */
-uint8_t                *CFB1_decrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *CFB1_decrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Performs a CFB8 decryption on the given context.
@@ -213,7 +225,7 @@ uint8_t                *CFB1_decrypt(struct cipher_ctx *ctx) __visibility_intern
  *
  * @return Returns a copy of the pointer given in the context for the plaintext.
  */
-uint8_t                *CFB8_decrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *CFB8_decrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 /**
  * @brief Performs a OFB decryption on the given context.
@@ -222,11 +234,59 @@ uint8_t                *CFB8_decrypt(struct cipher_ctx *ctx) __visibility_intern
  *
  * @return Returns a copy of the pointer given in the context for the plaintext.
  */
-uint8_t                *OFB_decrypt(struct cipher_ctx *ctx) __visibility_internal;
+uint8_t                                    *OFB_decrypt(struct cipher_ctx *ctx) __visibility_internal;
 
-uint8_t                 gen_left_mask(size_t r) __visibility_internal;
-enum cipher_mode        block_cipher_get_mode(enum block_cipher type) __visibility_internal;
-enum block_cipher       get_block_cipher_algorithm(enum block_cipher type) __visibility_internal;
+/**
+ * @brief Performs a CTR decryption on the given context.
+ *
+ * @param ctx The context to use for the decryption.
+ *
+ * @return Returns a copy of the pointer given in the context for the plaintext.
+ */
+uint8_t                                    *CTR_decrypt(struct cipher_ctx *ctx) __visibility_internal;
+
+enum cipher_mode                            block_cipher_get_mode(enum block_cipher type) __visibility_internal;
+enum block_cipher                           get_block_cipher_algorithm(enum block_cipher type) __visibility_internal;
+
+__visibility_internal static inline uint8_t gen_left_mask(size_t r) {
+	// clang-format off
+	uint8_t masks[] = {
+		0b00000000,
+		0b10000000,
+		0b11000000,
+		0b11100000,
+		0b11110000,
+		0b11111000,
+		0b11111100,
+		0b11111110,
+		0b11111111,
+	};
+	// clang-format on
+
+	if (r < 8)
+		return masks[r];
+	return masks[r % 8];
+}
+
+__visibility_internal static inline uint8_t gen_right_mask(size_t r) {
+	// clang-format off
+	uint8_t masks[] = {
+		0b00000000,
+		0b00000001,
+		0b00000011,
+		0b00000111,
+		0b00001111,
+		0b00011111,
+		0b00111111,
+		0b01111111,
+		0b11111111,
+	};
+	// clang-format on
+
+	if (r < 8)
+		return masks[r];
+	return masks[r % 8];
+}
 
 #ifdef __cplusplus
 };

@@ -36,6 +36,15 @@ enum cipher_mode block_cipher_get_mode(enum block_cipher type) {
 	case BLOCK_CIPHER_3DES_EDE3_OFB:
 		return CIPHER_MODE_OFB;
 
+
+	case BLOCK_CIPHER_DES_CTR:
+	case BLOCK_CIPHER_AES128_CTR:
+	case BLOCK_CIPHER_AES192_CTR:
+	case BLOCK_CIPHER_AES256_CTR:
+	case BLOCK_CIPHER_3DES_EDE2_CTR:
+	case BLOCK_CIPHER_3DES_EDE3_CTR:
+		return CIPHER_MODE_CTR;
+
 	case BLOCK_CIPHER_AES128_ECB:
 	case BLOCK_CIPHER_AES192_ECB:
 	case BLOCK_CIPHER_AES256_ECB:
@@ -62,6 +71,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_DES_CFB1:
 	case BLOCK_CIPHER_DES_CFB8:
 	case BLOCK_CIPHER_DES_OFB:
+	case BLOCK_CIPHER_DES_CTR:
 		return BLOCK_CIPHER_DES;
 
 	case BLOCK_CIPHER_3DES_EDE2_ECB:
@@ -70,6 +80,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_3DES_EDE2_CFB1:
 	case BLOCK_CIPHER_3DES_EDE2_CFB8:
 	case BLOCK_CIPHER_3DES_EDE2_OFB:
+	case BLOCK_CIPHER_3DES_EDE2_CTR:
 		return BLOCK_CIPHER_3DES_EDE2;
 
 	case BLOCK_CIPHER_3DES_EDE3_ECB:
@@ -78,6 +89,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_3DES_EDE3_CFB1:
 	case BLOCK_CIPHER_3DES_EDE3_CFB8:
 	case BLOCK_CIPHER_3DES_EDE3_OFB:
+	case BLOCK_CIPHER_3DES_EDE3_CTR:
 		return BLOCK_CIPHER_3DES_EDE3;
 
 	case BLOCK_CIPHER_AES128_ECB:
@@ -86,6 +98,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_AES128_CFB1:
 	case BLOCK_CIPHER_AES128_CFB8:
 	case BLOCK_CIPHER_AES128_OFB:
+	case BLOCK_CIPHER_AES128_CTR:
 		return BLOCK_CIPHER_AES128;
 
 	case BLOCK_CIPHER_AES192_ECB:
@@ -94,6 +107,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_AES192_CFB1:
 	case BLOCK_CIPHER_AES192_CFB8:
 	case BLOCK_CIPHER_AES192_OFB:
+	case BLOCK_CIPHER_AES192_CTR:
 		return BLOCK_CIPHER_AES192;
 
 	case BLOCK_CIPHER_AES256_ECB:
@@ -102,6 +116,7 @@ enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
 	case BLOCK_CIPHER_AES256_CFB1:
 	case BLOCK_CIPHER_AES256_CFB8:
 	case BLOCK_CIPHER_AES256_OFB:
+	case BLOCK_CIPHER_AES256_CTR:
 		return BLOCK_CIPHER_AES256;
 	}
 }
@@ -146,6 +161,7 @@ struct block_cipher_ctx setup_algo(enum block_cipher algo) {
 		break;
 	case CIPHER_MODE_OFB:
 	case CIPHER_MODE_CFB:
+	case CIPHER_MODE_CTR:
 		mode_blk_size_bits = 8 * blk_size;
 		break;
 	case CIPHER_MODE_CFB1:
@@ -214,7 +230,14 @@ bool __cipher_ctx_valid(struct cipher_ctx *ctx, enum cipher_mode cipher_mode, bo
 		    ctx->ciphertext_len % ctx->algo.blk_size != 0)
 			crypto42_errno = CRYPTO_CIPHERTEXT_BLKSIZE_UNMATCH;
 	}
-	if (cipher_mode != CIPHER_MODE_ECB) {
+	if (cipher_mode == CIPHER_MODE_CTR) {
+		if (ctx->nonce == NULL)
+			crypto42_errno = CRYPTO_NONCE_NULL;
+		if (ctx->nonce_len == 0)
+			crypto42_errno = CRYPTO_NONCE_LEN_ZERO;
+		if (ctx->nonce_len != ctx->algo.blk_size)
+			crypto42_errno = CRYPTO_NONCE_BLKSIZE_UNMATCH;
+	} else if (cipher_mode != CIPHER_MODE_ECB) {
 		if (ctx->iv == NULL)
 			crypto42_errno = CRYPTO_IV_NULL;
 		if (ctx->iv_len == 0)
@@ -224,8 +247,6 @@ bool __cipher_ctx_valid(struct cipher_ctx *ctx, enum cipher_mode cipher_mode, bo
 	}
 
 	return err == crypto42_errno;
-
-	// TODO: Add more checks for CTR mode (nonce check)
 }
 
 uint8_t *pad(uint8_t *plaintext, size_t *len, size_t blk_size) {
@@ -260,27 +281,6 @@ uint8_t *unpad(uint8_t *plaintext, size_t *len) {
 
 	memcpy(ptr, plaintext, new_size);
 	return ptr;
-}
-
-uint8_t gen_left_mask(size_t r) {
-	uint8_t mask = 0;
-
-	for (size_t i = r; i > 0; i--) {
-		mask >>= 1;
-		mask  |= 0b10000000;
-	}
-
-	return mask;
-}
-
-static uint8_t gen_right_mask(size_t r) {
-	uint8_t mask = 0;
-	for (size_t i = r; i > 0; i--) {
-		mask <<= 1;
-		mask  |= 1;
-	}
-
-	return mask;
 }
 
 static uint8_t gen_mask(size_t start, size_t nb) {
@@ -445,6 +445,30 @@ void block_bit_assign(struct block *res, struct block *src, size_t start, size_t
 
 	mask                  = gen_left_mask(nb);
 	res->data[byte_start] = (res->data[byte_start] & ~mask) | (src->data[byte_start] & mask);
+}
+
+void block_increment(struct block *blk, size_t bit_limit) {
+	int32_t tmp;
+	size_t  computed      = 0;
+	size_t r = bit_limit % 8;
+	r = r == 0 ? 8 : r;
+	size_t  last_blk_mask = gen_right_mask(r);
+
+	for (ssize_t i = (ssize_t) (blk->size - 1); i >= 0 && computed < bit_limit; i--, computed += 8) {
+		uint8_t current = blk->data[i];
+		tmp = current + 1;
+
+		if (computed + 8 < bit_limit) {
+			if (tmp <= UINT8_MAX) {
+				blk->data[i] = tmp;
+				break;
+			} else
+				blk->data[i] = 0;
+		} else {
+			blk->data[i] = (current & ~last_blk_mask) | (tmp & last_blk_mask);
+			break;
+		}
+	}
 }
 
 struct block *block_dup(const struct block *src) {

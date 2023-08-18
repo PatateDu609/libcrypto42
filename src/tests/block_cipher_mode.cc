@@ -114,6 +114,15 @@ static enum block_cipher       mix_cipher_mode_and_operation_mode(enum cipher_mo
 			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_OFB   },
     };
 
+    static std::map<enum block_cipher, enum block_cipher> translator_ctr {
+			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_CTR      },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CTR},
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CTR},
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CTR   },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CTR   },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CTR   },
+    };
+
     switch (mode) {
     case CIPHER_MODE_ECB:
         return translator_ecb[type];
@@ -127,6 +136,8 @@ static enum block_cipher       mix_cipher_mode_and_operation_mode(enum cipher_mo
         return translator_cfb8[type];
     case CIPHER_MODE_OFB:
         return translator_ofb[type];
+    case CIPHER_MODE_CTR:
+        return translator_ctr[type];
     }
 }
 
@@ -139,7 +150,9 @@ BlockCipherTestParams::BlockCipherTestParams(enum cipher_mode mode, enum block_c
 	key        = get_random_data(block_ctx.key_size);
 	this->mode = mode;
 
-	if (mode != CIPHER_MODE_ECB)
+	if (mode == CIPHER_MODE_CTR)
+		nonce = get_random_data(block_ctx.blk_size);
+	else if (mode != CIPHER_MODE_ECB)
 		iv = get_random_data(block_ctx.blk_size);
 }
 
@@ -190,6 +203,9 @@ std::string BlockCipherTestParams::get_alg(enum cipher_mode mode, enum block_cip
 		break;
 	case CIPHER_MODE_CFB8:
 		oss << "-CFB8";
+		break;
+	case CIPHER_MODE_CTR:
+		oss << "-CTR";
 		break;
 	}
 	return oss.str();
@@ -267,12 +283,22 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_cipher() {
 		memcpy(ctx.iv, param.iv.data(), param.iv.size() * sizeof param.iv[0]);
 	}
 
+	if (!param.nonce.empty()) {
+		ctx.nonce_len = param.nonce.size();
+		ctx.nonce     = static_cast<uint8_t *>(calloc(param.nonce.size(), sizeof param.nonce[0]));
+
+		if (ctx.nonce == nullptr)
+			throw std::runtime_error("couldn't allocate memory: " + std::string(strerror(errno)));
+		memcpy(ctx.nonce, param.nonce.data(), param.nonce.size() * sizeof param.nonce[0]);
+	}
+
 	auto     func = get_block_cipher_func_cipher();
 	auto     mode = block_cipher_get_mode(ctx.algo.type);
 	uint8_t *ret  = func(&ctx);
 	EXPECT_EQ(ret, ctx.ciphertext);
 	if (ret == nullptr &&
-	    !(ctx.plaintext_len == 0 && (mode == CIPHER_MODE_CFB || mode == CIPHER_MODE_CFB1 || mode == CIPHER_MODE_CFB8 || mode == CIPHER_MODE_OFB)))
+	    !(ctx.plaintext_len == 0 && (mode == CIPHER_MODE_CFB || mode == CIPHER_MODE_CFB1 || mode == CIPHER_MODE_CFB8 ||
+	                                 mode == CIPHER_MODE_OFB || mode == CIPHER_MODE_CTR)))
 		throw std::runtime_error("got NULL from encrypt function");
 	if (ctx.plaintext != plaintext)
 		plaintext = ctx.plaintext;
@@ -280,6 +306,7 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_cipher() {
 	std::vector<uint8_t> ciphertext(ctx.ciphertext, ctx.ciphertext + ctx.ciphertext_len);
 	free(ctx.ciphertext);
 	free(ctx.iv);
+	free(ctx.nonce);
 	free(plaintext);
 	return ciphertext;
 }
@@ -312,6 +339,15 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_decipher(const std:
 		memcpy(ctx.iv, param.iv.data(), param.iv.size() * sizeof param.iv[0]);
 	}
 
+	if (!param.nonce.empty()) {
+		ctx.nonce_len = param.nonce.size();
+		ctx.nonce     = static_cast<uint8_t *>(calloc(param.nonce.size(), sizeof param.nonce[0]));
+
+		if (ctx.nonce == nullptr)
+			throw std::runtime_error("couldn't allocate memory: " + std::string(strerror(errno)));
+		memcpy(ctx.nonce, param.nonce.data(), param.nonce.size() * sizeof param.nonce[0]);
+	}
+
 	auto     func = get_block_cipher_func_decipher();
 	uint8_t *ret  = func(&ctx);
 	EXPECT_EQ(ret, ctx.plaintext);
@@ -326,6 +362,8 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_decipher(const std:
 
 	std::vector<uint8_t> plaintext(ctx.plaintext, ctx.plaintext + ctx.plaintext_len);
 	free(ctx.plaintext);
+	free(ctx.iv);
+	free(ctx.nonce);
 	free(ciphertext_copy);
 	return plaintext;
 }
@@ -348,6 +386,12 @@ std::vector<uint8_t> BlockCipherModeTests::get_expected_result_cipher() {
 		if (iv == nullptr)
 			throw std::runtime_error("couldn't allocate memory: " + std::string(strerror(errno)));
 		memcpy(iv, param.iv.data(), param.iv.size() * sizeof param.iv[0]);
+	} else if (!param.nonce.empty()) {
+		iv = static_cast<uint8_t *>(calloc(param.nonce.size(), sizeof param.nonce[0]));
+
+		if (iv == nullptr)
+			throw std::runtime_error("couldn't allocate memory: " + std::string(strerror(errno)));
+		memcpy(iv, param.nonce.data(), param.nonce.size() * sizeof param.nonce[0]);
 	}
 
 	EVP_EncryptInit_ex2(evp_ctx, evp, param.key.data(), iv, nullptr);
@@ -381,6 +425,12 @@ std::vector<uint8_t> BlockCipherModeTests::get_expected_result_decipher(const st
 		if (iv == nullptr)
 			throw std::runtime_error("couldn't allocate memory: " + std::string(strerror(errno)));
 		memcpy(iv, param.iv.data(), param.iv.size() * sizeof param.iv[0]);
+	} else if (!param.nonce.empty()) {
+		iv = static_cast<uint8_t *>(calloc(param.nonce.size(), sizeof param.nonce[0]));
+
+		if (iv == nullptr)
+			throw std::runtime_error("couldn't allocate memory: " + std::string(strerror(errno)));
+		memcpy(iv, param.nonce.data(), param.nonce.size() * sizeof param.nonce[0]);
 	}
 
 	EVP_DecryptInit_ex2(evp_ctx, evp, param.key.data(), iv, nullptr);

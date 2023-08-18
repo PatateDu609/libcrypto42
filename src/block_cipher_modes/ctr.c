@@ -1,12 +1,12 @@
 #include "cipher.h"
 #include "internal.h"
 
-static inline uint8_t *perform_OFB(struct cipher_ctx *ctx, struct block *in, struct block *out) {
+static inline uint8_t *perform_CTR(struct cipher_ctx *ctx, struct block *in, struct block *out) {
 	const size_t  s               = ctx->algo.mode_blk_size_bits;
+	const size_t  inc_bit_limit   = (ctx->algo.mode_blk_size_bits < 64) ? ctx->algo.mode_blk_size_bits : 64;
 	const size_t  input_size_bits = ctx->plaintext_len * 8;
-	const size_t  blk_size_bits   = ctx->algo.blk_size * 8;
 
-	struct block *src = block_dup_data(ctx->iv, ctx->iv_len);
+	struct block *src = block_dup_data(ctx->nonce, ctx->nonce_len);
 	if (!src) {
 		perror("error: block_dup_data");
 		return NULL;
@@ -28,19 +28,6 @@ static inline uint8_t *perform_OFB(struct cipher_ctx *ctx, struct block *in, str
 			block_delete(output_block);
 			return NULL;
 		}
-
-		struct block *output_block_s_bits_duped = block_dup(output_block_s_bits);
-		if (!output_block_s_bits_duped) {
-			block_delete(src);
-			block_delete(output_block);
-			block_delete(output_block_s_bits);
-			return NULL;
-		}
-
-		block_left_shift(src, s);
-		block_right_shift(output_block_s_bits_duped, blk_size_bits - s);
-		block_bit_assign(src, output_block_s_bits_duped, blk_size_bits - s, s);
-		block_delete(output_block_s_bits_duped);
 
 		struct block *input_s_bits = block_bit_extract(in, s);
 		if (!input_s_bits) {
@@ -74,19 +61,21 @@ static inline uint8_t *perform_OFB(struct cipher_ctx *ctx, struct block *in, str
 
 		block_delete(output_block_s_bits);
 		block_delete(input_s_bits);
+
+		block_increment(src, inc_bit_limit);
 	}
 
-	memcpy(ctx->iv, src->data, src->size * sizeof *src->data);
-	block_delete(output_block);
+	memcpy(ctx->nonce, src->data, ctx->nonce_len * sizeof *ctx->nonce);
 	block_delete(src);
+	block_delete(output_block);
 	return out->data;
 }
 
-uint8_t *OFB_encrypt(struct cipher_ctx *ctx) {
+uint8_t *CTR_encrypt(struct cipher_ctx *ctx) {
 	if (!ctx->plaintext_len)
 		return NULL;
 
-	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_OFB, true))
+	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_CTR, true))
 		return NULL;
 
 	ctx->ciphertext_len = ctx->plaintext_len;
@@ -106,7 +95,7 @@ uint8_t *OFB_encrypt(struct cipher_ctx *ctx) {
 
 	struct block output = { .data = ctx->ciphertext, .size = ctx->ciphertext_len };
 
-	if (!perform_OFB(ctx, plain, &output)) {
+	if (!perform_CTR(ctx, plain, &output)) {
 		perror("error");
 		free(ctx->ciphertext);
 		ctx->ciphertext = NULL;
@@ -117,11 +106,11 @@ uint8_t *OFB_encrypt(struct cipher_ctx *ctx) {
 	return ctx->ciphertext;
 }
 
-uint8_t *OFB_decrypt(struct cipher_ctx *ctx) {
+uint8_t *CTR_decrypt(struct cipher_ctx *ctx) {
 	if (!ctx->ciphertext_len)
 		return NULL;
 
-	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_OFB, false))
+	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_CTR, false))
 		return NULL;
 
 	ctx->plaintext_len = ctx->ciphertext_len;
@@ -141,7 +130,7 @@ uint8_t *OFB_decrypt(struct cipher_ctx *ctx) {
 
 	struct block output = { .data = ctx->plaintext, .size = ctx->plaintext_len };
 
-	if (!perform_OFB(ctx, cipher, &output)) {
+	if (!perform_CTR(ctx, cipher, &output)) {
 		perror("error");
 		free(ctx->plaintext);
 		ctx->plaintext = NULL;

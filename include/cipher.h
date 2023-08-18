@@ -41,6 +41,7 @@ enum block_cipher {
 	BLOCK_CIPHER_DES_CFB1,                  ///< Data Encryption Standard using CFB1 cipher mode
 	BLOCK_CIPHER_DES_CFB8,                  ///< Data Encryption Standard using CFB8 cipher mode
 	BLOCK_CIPHER_DES_OFB,                   ///< Data Encryption Standard using OFB cipher mode
+	BLOCK_CIPHER_DES_CTR,                   ///< Data Encryption Standard using CTR cipher mode
 	BLOCK_CIPHER_DES = BLOCK_CIPHER_DES_CBC,///< Data Encryption Standard (defaults to CBC mode)
 
 	BLOCK_CIPHER_3DES_EDE2_ECB = 0x10,///< Triple DES with 2 keys using ECB cipher mode (Not implemented yet)
@@ -49,6 +50,7 @@ enum block_cipher {
 	BLOCK_CIPHER_3DES_EDE2_CFB1,      ///< Triple DES with 2 keys using CFB1 cipher mode (Not implemented yet)
 	BLOCK_CIPHER_3DES_EDE2_CFB8,      ///< Triple DES with 2 keys using CFB8 cipher mode (Not implemented yet)
 	BLOCK_CIPHER_3DES_EDE2_OFB,       ///< Triple DES with 2 keys using OFB cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE2_CTR,       ///< Triple DES with 2 keys using CTR cipher mode (Not implemented yet)
 	BLOCK_CIPHER_3DES_EDE2 =
 			BLOCK_CIPHER_3DES_EDE2_CBC,///< Triple DES with 2 keys (defaults to CBC mode) (Not implemented yet)
 
@@ -58,6 +60,7 @@ enum block_cipher {
 	BLOCK_CIPHER_3DES_EDE3_CFB1,      ///< Triple DES with 3 keys using CFB1 cipher mode (Not implemented yet)
 	BLOCK_CIPHER_3DES_EDE3_CFB8,      ///< Triple DES with 3 keys using CFB8 cipher mode (Not implemented yet)
 	BLOCK_CIPHER_3DES_EDE3_OFB,       ///< Triple DES with 3 keys using OFB cipher mode (Not implemented yet)
+	BLOCK_CIPHER_3DES_EDE3_CTR,       ///< Triple DES with 3 keys using CTR cipher mode (Not implemented yet)
 	BLOCK_CIPHER_3DES_EDE3 =
 			BLOCK_CIPHER_3DES_EDE3_CBC,///< Triple DES with 3 keys (defaults to CBC mode) (Not implemented yet)
 
@@ -67,6 +70,7 @@ enum block_cipher {
 	BLOCK_CIPHER_AES128_CFB1,      ///< Advanced Encryption Standard with a 128 bits key using CFB1 cipher mode
 	BLOCK_CIPHER_AES128_CFB8,      ///< Advanced Encryption Standard with a 128 bits key using CFB8 cipher mode
 	BLOCK_CIPHER_AES128_OFB,       ///< Advanced Encryption Standard with a 128 bits key using OFB cipher mode
+	BLOCK_CIPHER_AES128_CTR,       ///< Advanced Encryption Standard with a 128 bits key using CTR cipher mode
 	BLOCK_CIPHER_AES128 =
 			BLOCK_CIPHER_AES128_CBC,///< Advanced Encryption Standard with a 128 bits key (defaults to CBC mode)
 
@@ -76,6 +80,7 @@ enum block_cipher {
 	BLOCK_CIPHER_AES192_CFB1,      ///< Advanced Encryption Standard with a 192 bits key using CFB1 cipher mode
 	BLOCK_CIPHER_AES192_CFB8,      ///< Advanced Encryption Standard with a 192 bits key using CFB8 cipher mode
 	BLOCK_CIPHER_AES192_OFB,       ///< Advanced Encryption Standard with a 192 bits key using OFB cipher mode
+	BLOCK_CIPHER_AES192_CTR,       ///< Advanced Encryption Standard with a 192 bits key using CTR cipher mode
 	BLOCK_CIPHER_AES192 =
 			BLOCK_CIPHER_AES192_CBC,///< Advanced Encryption Standard with a 192 bits key (defaults to CBC mode)
 
@@ -85,6 +90,7 @@ enum block_cipher {
 	BLOCK_CIPHER_AES256_CFB1,      ///< Advanced Encryption Standard with a 256 bits key using CFB1 cipher mode
 	BLOCK_CIPHER_AES256_CFB8,      ///< Advanced Encryption Standard with a 256 bits key using CFB8 cipher mode
 	BLOCK_CIPHER_AES256_OFB,       ///< Advanced Encryption Standard with a 256 bits key using OFB cipher mode
+	BLOCK_CIPHER_AES256_CTR,       ///< Advanced Encryption Standard with a 256 bits key using CTR cipher mode
 	BLOCK_CIPHER_AES256 =
 			BLOCK_CIPHER_AES256_CBC,///< Advanced Encryption Standard with a 256 bits key (defaults to CBC mode)
 };
@@ -109,6 +115,9 @@ struct cipher_ctx {
 
 	uint8_t                *iv;    ///< Initialization vector used for the cipher mode
 	size_t                  iv_len;///< Initialization vector length in bytes
+
+	uint8_t                *nonce;    ///< Nonce (only used in the CTR encryption mode)
+	size_t                  nonce_len;///< Nonce's length in bytes (only used in the CTR encryption mode)
 
 	uint8_t                *plaintext;    ///< Plaintext to be encrypted
 	size_t                  plaintext_len;///< Plaintext length in bytes

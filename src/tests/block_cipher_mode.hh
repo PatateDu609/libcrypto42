@@ -28,6 +28,7 @@ private:
 	std::vector<uint8_t>    plaintext{};
 	std::vector<uint8_t>    key{};
 	std::vector<uint8_t>    iv{};
+	std::vector<uint8_t>    nonce{};
 	std::vector<uint8_t>    true_expected{};
 
 	friend class BlockCipherModeTests;
