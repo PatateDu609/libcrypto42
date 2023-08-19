@@ -139,11 +139,9 @@ uint8_t *block_decipher(struct cipher_ctx *ctx);
  *
  * @return The encrypted block.
  *
- * @note This functions should be used with one of the cipher block modes.
- * @note The key must be given in its raw form (i.e. 64 bits), all the processing
- * is done by the function.
+ * @note These functions should be used with one of the cipher block modes.
  */
-uint64_t des_encrypt(uint64_t block, uint64_t key);
+uint8_t *des_encrypt(uint8_t *block, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 64 bits with the DES algorithm.
@@ -153,11 +151,68 @@ uint64_t des_encrypt(uint64_t block, uint64_t key);
  *
  * @return The decrypted block.
  *
- * @note This functions should be used with one of the cipher block modes.
- * @note The key must be given in its raw form (i.e. 64 bits), all the processing
- * is done by the function.
+ * @note These functions should be used with one of the cipher block modes.
  */
-uint64_t des_decrypt(uint64_t block, uint64_t key);
+uint8_t *des_decrypt(uint8_t *block, const uint8_t *key);
+
+/* ************************* TDES related functions ************************* */
+
+
+/**
+ * @brief Encrypt a single block of 64 bits with the TDES algorithm in EDE mode (encrypt-decrypt-encrypt),
+ * using 3 different keys.
+ *
+ * @param block The block to encrypt.
+ * @param key The key to use for the encryption.
+ *
+ * @return The encrypted block.
+ *
+ * @note These functions should be used with one of the cipher block modes.
+ * @note Keys must be given one after the other, without any padding.
+ */
+uint8_t *tdes_ede3_encrypt(uint8_t *block, const uint8_t *key);
+
+/**
+ * @brief Encrypt a single block of 64 bits with the TDES algorithm in EDE mode (encrypt-decrypt-encrypt),
+ * using 2 different keys.
+ *
+ * @param block The block to encrypt.
+ * @param key The key to use for the encryption.
+ *
+ * @return The encrypted block.
+ *
+ * @note These functions should be used with one of the cipher block modes.
+ * @note Keys must be given one after the other, without any padding.
+ */
+uint8_t *tdes_ede2_encrypt(uint8_t *block, const uint8_t *key);
+
+/**
+ * @brief Decrypt a single block of 64 bits with the TDES algorithm in EDE mode (encrypt-decrypt-encrypt),
+ * using 3 different keys.
+ *
+ * @param block The block to decrypt.
+ * @param key The key to use for the decryption.
+ *
+ * @return The decrypted block.
+ *
+ * @note These functions should be used with one of the cipher block modes.
+ * @note Keys must be given one after the other, without any padding.
+ */
+uint8_t *tdes_ede3_decrypt(uint8_t *block, const uint8_t *key);
+
+/**
+ * @brief Decrypt a single block of 64 bits with the TDES algorithm in EDE mode (encrypt-decrypt-encrypt),
+ * using 2 different keys.
+ *
+ * @param block The block to decrypt.
+ * @param key The key to use for the decryption.
+ *
+ * @return The decrypted block.
+ *
+ * @note These functions should be used with one of the cipher block modes.
+ * @note Keys must be given one after the other, without any padding.
+ */
+uint8_t *tdes_ede2_decrypt(uint8_t *block, const uint8_t *key);
 
 /* ************************** AES related functions ************************* */
 

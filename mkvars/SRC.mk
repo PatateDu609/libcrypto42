@@ -11,6 +11,7 @@ SHA2_SRC_BASENAME			=	sha2/sha2						\
 								sha2/final						\
 
 DES_SRC_BASENAME			=	DES/DES							\
+								DES/TDES						\
 								DES/key							\
 								DES/permutation					\
 								DES/round						\

@@ -181,6 +181,12 @@ std::string BlockCipherTestParams::get_alg(enum cipher_mode mode, enum block_cip
 	case BLOCK_CIPHER_DES:
 		oss << "DES";
 		break;
+	case BLOCK_CIPHER_3DES_EDE2:
+		oss << "DES-EDE";
+		break;
+	case BLOCK_CIPHER_3DES_EDE3:
+		oss << "DES-EDE3";
+		break;
 	default:
 		throw std::invalid_argument("unexpected block_cipher type: " + block_cipher_translator[type]);
 	}
