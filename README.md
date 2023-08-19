@@ -43,9 +43,9 @@ To compile an executable using this library, you need to add the following libra
     + [x] AES128
     + [x] AES192
     + [x] AES256
-+ [ ] 3DES (EDE only)
-    + [ ] 2 Keys option
-    + [ ] 3 Keys option
++ [x] 3DES (EDE only)
+    + [x] 2 Keys option
+    + [x] 3 Keys option
 + [x] Operation modes for symmetric encryption
     + [x] ECB
     + [x] CBC
