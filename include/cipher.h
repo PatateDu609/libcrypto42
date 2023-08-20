@@ -145,7 +145,7 @@ struct cipher_ctx {
 	size_t                  ciphertext_len;///< Ciphertext length in bytes
 };
 
-struct cipher_ctx *new_cipher_context(enum block_cipher algo, bool is_enc);
+struct cipher_ctx *new_cipher_context(enum block_cipher algo);
 
 uint8_t           *block_cipher(struct cipher_ctx *ctx);
 uint8_t           *block_decipher(struct cipher_ctx *ctx);

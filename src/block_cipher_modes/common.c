@@ -2,7 +2,7 @@
 #include "cipher.h"
 #include "internal.h"
 
-static struct algo get_algo(enum block_cipher cipher) {
+static inline struct algo get_algo(enum block_cipher cipher) {
 	union {
 		struct algo       alg;
 		enum block_cipher cipher;
@@ -23,6 +23,39 @@ enum algo_types get_block_cipher_algorithm(enum block_cipher type) {
 	struct algo alg = get_algo(type);
 
 	return alg._alg;
+}
+
+struct cipher_ctx *new_cipher_context(enum block_cipher algo) {
+	struct cipher_ctx *ctx = calloc(1, sizeof *ctx);
+	if (!ctx) return NULL;
+
+	ctx->algo = setup_algo(algo);
+	if (!ctx->algo.blk_size)
+	{
+		free(ctx);
+		crypto42_errno = CRYPTO_ALGO_UNKNOWN;
+		return NULL;
+	}
+
+	enum cipher_mode mode = block_cipher_get_mode(algo);
+
+	if (mode == CIPHER_MODE_CTR) {
+		ctx->nonce_len = ctx->algo.blk_size;
+		ctx->nonce = calloc(ctx->nonce_len, sizeof *ctx->nonce);
+		if (!ctx->nonce) {
+			free(ctx);
+			return NULL;
+		}
+	} else if (mode != CIPHER_MODE_ECB) {
+		ctx->iv_len = ctx->algo.blk_size;
+		ctx->iv = calloc(ctx->iv_len, sizeof *ctx->iv);
+		if (!ctx->iv) {
+			free(ctx);
+			return NULL;
+		}
+	}
+
+	return ctx;
 }
 
 struct block_cipher_ctx setup_algo(enum block_cipher algo) {
