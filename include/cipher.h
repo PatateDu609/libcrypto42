@@ -35,64 +35,83 @@ extern "C" {
  * @brief Enumerate all available block cipher algorithms.
  */
 enum block_cipher {
-	BLOCK_CIPHER_DES_ECB = 0x0,             ///< Data Encryption Standard using ECB cipher mode
-	BLOCK_CIPHER_DES_CBC,                   ///< Data Encryption Standard using CBC cipher mode
-	BLOCK_CIPHER_DES_CFB,                   ///< Data Encryption Standard using CFB cipher mode
-	BLOCK_CIPHER_DES_CFB1,                  ///< Data Encryption Standard using CFB1 cipher mode
-	BLOCK_CIPHER_DES_CFB8,                  ///< Data Encryption Standard using CFB8 cipher mode
-	BLOCK_CIPHER_DES_OFB,                   ///< Data Encryption Standard using OFB cipher mode
-	BLOCK_CIPHER_DES_CTR,                   ///< Data Encryption Standard using CTR cipher mode
-	BLOCK_CIPHER_DES = BLOCK_CIPHER_DES_CBC,///< Data Encryption Standard (defaults to CBC mode)
+	BLOCK_CIPHER_DES_ECB  = 0b00000000,///< Data Encryption Standard using ECB cipher mode
+	BLOCK_CIPHER_DES_CBC  = 0b10000010,///< Data Encryption Standard using CBC cipher mode (default cipher mode)
+	BLOCK_CIPHER_DES_OFB  = 0b00000101,///< Data Encryption Standard using OFB cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_DES_CFB  = 0b00000111,///< Data Encryption Standard using CFB cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_DES_CFB1 = 0b00001001,///< Data Encryption Standard using CFB1 cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_DES_CFB8 = 0b00001011,///< Data Encryption Standard using CFB8 cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_DES      = BLOCK_CIPHER_DES_CBC,///< Data Encryption Standard (defaults to CBC cipher mode)
 
-	BLOCK_CIPHER_3DES_EDE2_ECB = 0x10,///< Triple DES with 2 keys using ECB cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE2_CBC,       ///< Triple DES with 2 keys using CBC cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE2_CFB,       ///< Triple DES with 2 keys using CFB cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE2_CFB1,      ///< Triple DES with 2 keys using CFB1 cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE2_CFB8,      ///< Triple DES with 2 keys using CFB8 cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE2_OFB,       ///< Triple DES with 2 keys using OFB cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE2_CTR,       ///< Triple DES with 2 keys using CTR cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE2 =
-			BLOCK_CIPHER_3DES_EDE2_CBC,///< Triple DES with 2 keys (defaults to CBC mode) (Not implemented yet)
-
-	BLOCK_CIPHER_3DES_EDE3_ECB = 0x20,///< Triple DES with 3 keys using ECB cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE3_CBC,       ///< Triple DES with 3 keys using CBC cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE3_CFB,       ///< Triple DES with 3 keys using CFB cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE3_CFB1,      ///< Triple DES with 3 keys using CFB1 cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE3_CFB8,      ///< Triple DES with 3 keys using CFB8 cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE3_OFB,       ///< Triple DES with 3 keys using OFB cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE3_CTR,       ///< Triple DES with 3 keys using CTR cipher mode (Not implemented yet)
-	BLOCK_CIPHER_3DES_EDE3 =
-			BLOCK_CIPHER_3DES_EDE3_CBC,///< Triple DES with 3 keys (defaults to CBC mode) (Not implemented yet)
-
-	BLOCK_CIPHER_AES128_ECB = 0x30,///< Advanced Encryption Standard with a 128 bits key using ECB cipher mode
-	BLOCK_CIPHER_AES128_CBC,       ///< Advanced Encryption Standard with a 128 bits key using CBC cipher mode
-	BLOCK_CIPHER_AES128_CFB,       ///< Advanced Encryption Standard with a 128 bits key using CFB cipher mode
-	BLOCK_CIPHER_AES128_CFB1,      ///< Advanced Encryption Standard with a 128 bits key using CFB1 cipher mode
-	BLOCK_CIPHER_AES128_CFB8,      ///< Advanced Encryption Standard with a 128 bits key using CFB8 cipher mode
-	BLOCK_CIPHER_AES128_OFB,       ///< Advanced Encryption Standard with a 128 bits key using OFB cipher mode
-	BLOCK_CIPHER_AES128_CTR,       ///< Advanced Encryption Standard with a 128 bits key using CTR cipher mode
+	BLOCK_CIPHER_AES128_ECB = 0b00010000,///< Advanced Encryption Standard with a 128 bits key using ECB cipher mode
+	BLOCK_CIPHER_AES128_CBC =
+			0b10010010,///< Advanced Encryption Standard with a 128 bits key using CBC cipher mode (default cipher mode)
+	BLOCK_CIPHER_AES128_OFB  = 0b00010101,///< Advanced Encryption Standard with a 128 bits key using OFB cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES128_CFB  = 0b00010111,///< Advanced Encryption Standard with a 128 bits key using CFB cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES128_CFB1 = 0b00011001,///< Advanced Encryption Standard with a 128 bits key using CFB1 cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES128_CFB8 = 0b00011011,///< Advanced Encryption Standard with a 128 bits key using CFB8 cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES128_CTR  = 0b00011101,///< Advanced Encryption Standard with a 128 bits key using CTR cipher mode
+	                                      ///< (acts as a stream cipher)
 	BLOCK_CIPHER_AES128 =
-			BLOCK_CIPHER_AES128_CBC,///< Advanced Encryption Standard with a 128 bits key (defaults to CBC mode)
+			BLOCK_CIPHER_AES128_CBC,///< Advanced Encryption Standard with a 128 bits key (defaults to CBC cipher mode)
 
-	BLOCK_CIPHER_AES192_ECB = 0x40,///< Advanced Encryption Standard with a 192 bits key using ECB cipher mode
-	BLOCK_CIPHER_AES192_CBC,       ///< Advanced Encryption Standard with a 192 bits key using CBC cipher mode
-	BLOCK_CIPHER_AES192_CFB,       ///< Advanced Encryption Standard with a 192 bits key using CFB cipher mode
-	BLOCK_CIPHER_AES192_CFB1,      ///< Advanced Encryption Standard with a 192 bits key using CFB1 cipher mode
-	BLOCK_CIPHER_AES192_CFB8,      ///< Advanced Encryption Standard with a 192 bits key using CFB8 cipher mode
-	BLOCK_CIPHER_AES192_OFB,       ///< Advanced Encryption Standard with a 192 bits key using OFB cipher mode
-	BLOCK_CIPHER_AES192_CTR,       ///< Advanced Encryption Standard with a 192 bits key using CTR cipher mode
+	BLOCK_CIPHER_AES192_ECB = 0b00100000,///< Advanced Encryption Standard with a 192 bits key using ECB cipher mode
+	BLOCK_CIPHER_AES192_CBC =
+			0b10100010,///< Advanced Encryption Standard with a 192 bits key using CBC cipher mode (default cipher mode)
+	BLOCK_CIPHER_AES192_OFB  = 0b00100101,///< Advanced Encryption Standard with a 192 bits key using OFB cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES192_CFB  = 0b00100111,///< Advanced Encryption Standard with a 192 bits key using CFB cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES192_CFB1 = 0b00101001,///< Advanced Encryption Standard with a 192 bits key using CFB1 cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES192_CFB8 = 0b00101011,///< Advanced Encryption Standard with a 192 bits key using CFB8 cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES192_CTR  = 0b00101101,///< Advanced Encryption Standard with a 192 bits key using CTR cipher mode
+	                                      ///< (acts as a stream cipher)
 	BLOCK_CIPHER_AES192 =
-			BLOCK_CIPHER_AES192_CBC,///< Advanced Encryption Standard with a 192 bits key (defaults to CBC mode)
+			BLOCK_CIPHER_AES192_CBC,///< Advanced Encryption Standard with a 192 bits key (defaults to CBC cipher mode)
 
-	BLOCK_CIPHER_AES256_ECB = 0x50,///< Advanced Encryption Standard with a 256 bits key using ECB cipher mode
-	BLOCK_CIPHER_AES256_CBC,       ///< Advanced Encryption Standard with a 256 bits key using CBC cipher mode
-	BLOCK_CIPHER_AES256_CFB,       ///< Advanced Encryption Standard with a 256 bits key using CFB cipher mode
-	BLOCK_CIPHER_AES256_CFB1,      ///< Advanced Encryption Standard with a 256 bits key using CFB1 cipher mode
-	BLOCK_CIPHER_AES256_CFB8,      ///< Advanced Encryption Standard with a 256 bits key using CFB8 cipher mode
-	BLOCK_CIPHER_AES256_OFB,       ///< Advanced Encryption Standard with a 256 bits key using OFB cipher mode
-	BLOCK_CIPHER_AES256_CTR,       ///< Advanced Encryption Standard with a 256 bits key using CTR cipher mode
+	BLOCK_CIPHER_AES256_ECB = 0b00110000,///< Advanced Encryption Standard with a 256 bits key using ECB cipher mode
+	BLOCK_CIPHER_AES256_CBC =
+			0b10110010,///< Advanced Encryption Standard with a 256 bits key using CBC cipher mode (default cipher mode)
+	BLOCK_CIPHER_AES256_OFB  = 0b00110101,///< Advanced Encryption Standard with a 256 bits key using OFB cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES256_CFB  = 0b00110111,///< Advanced Encryption Standard with a 256 bits key using CFB cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES256_CFB1 = 0b00111001,///< Advanced Encryption Standard with a 256 bits key using CFB1 cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES256_CFB8 = 0b00111011,///< Advanced Encryption Standard with a 256 bits key using CFB8 cipher mode
+	                                      ///< (acts as a stream cipher)
+	BLOCK_CIPHER_AES256_CTR  = 0b00111101,///< Advanced Encryption Standard with a 256 bits key using CTR cipher mode
+	                                      ///< (acts as a stream cipher)
 	BLOCK_CIPHER_AES256 =
-			BLOCK_CIPHER_AES256_CBC,///< Advanced Encryption Standard with a 256 bits key (defaults to CBC mode)
+			BLOCK_CIPHER_AES256_CBC,///< Advanced Encryption Standard with a 256 bits key (defaults to CBC cipher mode)
+
+	BLOCK_CIPHER_3DES_EDE2_ECB = 0b01000000,///< Triple DES with 2 keys using ECB cipher mode
+	BLOCK_CIPHER_3DES_EDE2_CBC = 0b11000010,///< Triple DES with 2 keys using CBC cipher mode (default cipher mode)
+	BLOCK_CIPHER_3DES_EDE2_OFB = 0b01000101,///< Triple DES with 2 keys using OFB cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_3DES_EDE2_CFB = 0b01000111,///< Triple DES with 2 keys using CFB cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_3DES_EDE2_CFB1 =
+			0b01001001,///< Triple DES with 2 keys using CFB1 cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_3DES_EDE2_CFB8 =
+			0b01001011,                     ///< Triple DES with 2 keys using CFB8 cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_3DES_EDE2_CTR = 0b01001101,///< Triple DES with 2 keys using CTR cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_3DES_EDE2     = BLOCK_CIPHER_3DES_EDE2_CBC,///< Triple DES with 2 keys (defaults to CBC cipher mode)
+
+	BLOCK_CIPHER_3DES_EDE3_ECB = 0b01010000,///< Triple DES with 3 keys using ECB cipher mode
+	BLOCK_CIPHER_3DES_EDE3_CBC = 0b11010010,///< Triple DES with 3 keys using CBC cipher mode (default cipher mode)
+	BLOCK_CIPHER_3DES_EDE3_OFB = 0b01010101,///< Triple DES with 3 keys using OFB cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_3DES_EDE3_CFB = 0b01010111,///< Triple DES with 3 keys using CFB cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_3DES_EDE3_CFB1 =
+			0b01011001,///< Triple DES with 3 keys using CFB1 cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_3DES_EDE3_CFB8 =
+			0b01011011,                     ///< Triple DES with 3 keys using CFB8 cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_3DES_EDE3_CTR = 0b01011101,///< Triple DES with 3 keys using CTR cipher mode (acts as a stream cipher)
+	BLOCK_CIPHER_3DES_EDE3     = BLOCK_CIPHER_3DES_EDE3_CBC,///< Triple DES with 3 keys (defaults to CBC cipher mode)
 };
 
 struct block_cipher_ctx {
@@ -126,8 +145,10 @@ struct cipher_ctx {
 	size_t                  ciphertext_len;///< Ciphertext length in bytes
 };
 
-uint8_t *block_cipher(struct cipher_ctx *ctx);
-uint8_t *block_decipher(struct cipher_ctx *ctx);
+struct cipher_ctx *new_cipher_context(enum block_cipher algo, bool is_enc);
+
+uint8_t           *block_cipher(struct cipher_ctx *ctx);
+uint8_t           *block_decipher(struct cipher_ctx *ctx);
 
 /* ************************** DES related functions ************************* */
 
@@ -141,7 +162,7 @@ uint8_t *block_decipher(struct cipher_ctx *ctx);
  *
  * @note These functions should be used with one of the cipher block modes.
  */
-uint8_t *des_encrypt(uint8_t *block, const uint8_t *key);
+uint8_t           *des_encrypt(uint8_t *block, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 64 bits with the DES algorithm.
@@ -153,7 +174,7 @@ uint8_t *des_encrypt(uint8_t *block, const uint8_t *key);
  *
  * @note These functions should be used with one of the cipher block modes.
  */
-uint8_t *des_decrypt(uint8_t *block, const uint8_t *key);
+uint8_t           *des_decrypt(uint8_t *block, const uint8_t *key);
 
 /* ************************* TDES related functions ************************* */
 
@@ -170,7 +191,7 @@ uint8_t *des_decrypt(uint8_t *block, const uint8_t *key);
  * @note These functions should be used with one of the cipher block modes.
  * @note Keys must be given one after the other, without any padding.
  */
-uint8_t *tdes_ede3_encrypt(uint8_t *block, const uint8_t *key);
+uint8_t           *tdes_ede3_encrypt(uint8_t *block, const uint8_t *key);
 
 /**
  * @brief Encrypt a single block of 64 bits with the TDES algorithm in EDE mode (encrypt-decrypt-encrypt),
@@ -184,7 +205,7 @@ uint8_t *tdes_ede3_encrypt(uint8_t *block, const uint8_t *key);
  * @note These functions should be used with one of the cipher block modes.
  * @note Keys must be given one after the other, without any padding.
  */
-uint8_t *tdes_ede2_encrypt(uint8_t *block, const uint8_t *key);
+uint8_t           *tdes_ede2_encrypt(uint8_t *block, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 64 bits with the TDES algorithm in EDE mode (encrypt-decrypt-encrypt),
@@ -198,7 +219,7 @@ uint8_t *tdes_ede2_encrypt(uint8_t *block, const uint8_t *key);
  * @note These functions should be used with one of the cipher block modes.
  * @note Keys must be given one after the other, without any padding.
  */
-uint8_t *tdes_ede3_decrypt(uint8_t *block, const uint8_t *key);
+uint8_t           *tdes_ede3_decrypt(uint8_t *block, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 64 bits with the TDES algorithm in EDE mode (encrypt-decrypt-encrypt),
@@ -212,7 +233,7 @@ uint8_t *tdes_ede3_decrypt(uint8_t *block, const uint8_t *key);
  * @note These functions should be used with one of the cipher block modes.
  * @note Keys must be given one after the other, without any padding.
  */
-uint8_t *tdes_ede2_decrypt(uint8_t *block, const uint8_t *key);
+uint8_t           *tdes_ede2_decrypt(uint8_t *block, const uint8_t *key);
 
 /* ************************** AES related functions ************************* */
 
@@ -228,7 +249,7 @@ uint8_t *tdes_ede2_decrypt(uint8_t *block, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes128_encrypt(uint8_t *blk, const uint8_t *key);
+uint8_t           *aes128_encrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Encrypt a single block of 192 bits using the AES algorithm with a key size of 192.
@@ -242,7 +263,7 @@ uint8_t *aes128_encrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes192_encrypt(uint8_t *blk, const uint8_t *key);
+uint8_t           *aes192_encrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Encrypt a single block of 256 bits using the AES algorithm with a key size of 256.
@@ -256,7 +277,7 @@ uint8_t *aes192_encrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes256_encrypt(uint8_t *blk, const uint8_t *key);
+uint8_t           *aes256_encrypt(uint8_t *blk, const uint8_t *key);
 
 
 /**
@@ -271,7 +292,7 @@ uint8_t *aes256_encrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes128_decrypt(uint8_t *blk, const uint8_t *key);
+uint8_t           *aes128_decrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 192 bits with the AES algorithm with a key size of 192.
@@ -285,7 +306,7 @@ uint8_t *aes128_decrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes192_decrypt(uint8_t *blk, const uint8_t *key);
+uint8_t           *aes192_decrypt(uint8_t *blk, const uint8_t *key);
 
 /**
  * @brief Decrypt a single block of 256 bits with the AES algorithm with a key size of 256.
@@ -299,7 +320,7 @@ uint8_t *aes192_decrypt(uint8_t *blk, const uint8_t *key);
  *
  * @warning The value returned by this function must be freed.
  */
-uint8_t *aes256_decrypt(uint8_t *blk, const uint8_t *key);
+uint8_t           *aes256_decrypt(uint8_t *blk, const uint8_t *key);
 
 #ifdef __cplusplus
 };

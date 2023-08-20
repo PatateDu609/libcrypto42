@@ -2,156 +2,60 @@
 #include "cipher.h"
 #include "internal.h"
 
-enum cipher_mode block_cipher_get_mode(enum block_cipher type) {
-	switch (type) {
-	case BLOCK_CIPHER_DES_CFB:
-	case BLOCK_CIPHER_AES128_CFB:
-	case BLOCK_CIPHER_AES192_CFB:
-	case BLOCK_CIPHER_AES256_CFB:
-	case BLOCK_CIPHER_3DES_EDE2_CFB:
-	case BLOCK_CIPHER_3DES_EDE3_CFB:
-		return CIPHER_MODE_CFB;
+static struct algo get_algo(enum block_cipher cipher) {
+	union {
+		struct algo       alg;
+		enum block_cipher cipher;
+	} conv;
 
-	case BLOCK_CIPHER_AES128_CFB1:
-	case BLOCK_CIPHER_AES192_CFB1:
-	case BLOCK_CIPHER_AES256_CFB1:
-	case BLOCK_CIPHER_DES_CFB1:
-	case BLOCK_CIPHER_3DES_EDE2_CFB1:
-	case BLOCK_CIPHER_3DES_EDE3_CFB1:
-		return CIPHER_MODE_CFB1;
+	conv.cipher = cipher;
 
-	case BLOCK_CIPHER_AES128_CFB8:
-	case BLOCK_CIPHER_AES192_CFB8:
-	case BLOCK_CIPHER_AES256_CFB8:
-	case BLOCK_CIPHER_DES_CFB8:
-	case BLOCK_CIPHER_3DES_EDE2_CFB8:
-	case BLOCK_CIPHER_3DES_EDE3_CFB8:
-		return CIPHER_MODE_CFB8;
-
-	case BLOCK_CIPHER_AES128_OFB:
-	case BLOCK_CIPHER_AES192_OFB:
-	case BLOCK_CIPHER_AES256_OFB:
-	case BLOCK_CIPHER_DES_OFB:
-	case BLOCK_CIPHER_3DES_EDE2_OFB:
-	case BLOCK_CIPHER_3DES_EDE3_OFB:
-		return CIPHER_MODE_OFB;
-
-
-	case BLOCK_CIPHER_DES_CTR:
-	case BLOCK_CIPHER_AES128_CTR:
-	case BLOCK_CIPHER_AES192_CTR:
-	case BLOCK_CIPHER_AES256_CTR:
-	case BLOCK_CIPHER_3DES_EDE2_CTR:
-	case BLOCK_CIPHER_3DES_EDE3_CTR:
-		return CIPHER_MODE_CTR;
-
-	case BLOCK_CIPHER_AES128_ECB:
-	case BLOCK_CIPHER_AES192_ECB:
-	case BLOCK_CIPHER_AES256_ECB:
-	case BLOCK_CIPHER_DES_ECB:
-	case BLOCK_CIPHER_3DES_EDE2_ECB:
-	case BLOCK_CIPHER_3DES_EDE3_ECB:
-		return CIPHER_MODE_ECB;
-
-	case BLOCK_CIPHER_AES128_CBC:
-	case BLOCK_CIPHER_AES192_CBC:
-	case BLOCK_CIPHER_AES256_CBC:
-	case BLOCK_CIPHER_DES_CBC:
-	case BLOCK_CIPHER_3DES_EDE2_CBC:
-	case BLOCK_CIPHER_3DES_EDE3_CBC:
-		return CIPHER_MODE_CBC;
-	}
+	return conv.alg;
 }
 
-enum block_cipher get_block_cipher_algorithm(enum block_cipher type) {
-	switch (type) {
-	case BLOCK_CIPHER_DES_ECB:
-	case BLOCK_CIPHER_DES_CBC:
-	case BLOCK_CIPHER_DES_CFB:
-	case BLOCK_CIPHER_DES_CFB1:
-	case BLOCK_CIPHER_DES_CFB8:
-	case BLOCK_CIPHER_DES_OFB:
-	case BLOCK_CIPHER_DES_CTR:
-		return BLOCK_CIPHER_DES;
+enum cipher_mode block_cipher_get_mode(enum block_cipher type) {
+	struct algo alg = get_algo(type);
 
-	case BLOCK_CIPHER_3DES_EDE2_ECB:
-	case BLOCK_CIPHER_3DES_EDE2_CBC:
-	case BLOCK_CIPHER_3DES_EDE2_CFB:
-	case BLOCK_CIPHER_3DES_EDE2_CFB1:
-	case BLOCK_CIPHER_3DES_EDE2_CFB8:
-	case BLOCK_CIPHER_3DES_EDE2_OFB:
-	case BLOCK_CIPHER_3DES_EDE2_CTR:
-		return BLOCK_CIPHER_3DES_EDE2;
+	return alg._mode;
+}
 
-	case BLOCK_CIPHER_3DES_EDE3_ECB:
-	case BLOCK_CIPHER_3DES_EDE3_CBC:
-	case BLOCK_CIPHER_3DES_EDE3_CFB:
-	case BLOCK_CIPHER_3DES_EDE3_CFB1:
-	case BLOCK_CIPHER_3DES_EDE3_CFB8:
-	case BLOCK_CIPHER_3DES_EDE3_OFB:
-	case BLOCK_CIPHER_3DES_EDE3_CTR:
-		return BLOCK_CIPHER_3DES_EDE3;
+enum algo_types get_block_cipher_algorithm(enum block_cipher type) {
+	struct algo alg = get_algo(type);
 
-	case BLOCK_CIPHER_AES128_ECB:
-	case BLOCK_CIPHER_AES128_CBC:
-	case BLOCK_CIPHER_AES128_CFB:
-	case BLOCK_CIPHER_AES128_CFB1:
-	case BLOCK_CIPHER_AES128_CFB8:
-	case BLOCK_CIPHER_AES128_OFB:
-	case BLOCK_CIPHER_AES128_CTR:
-		return BLOCK_CIPHER_AES128;
-
-	case BLOCK_CIPHER_AES192_ECB:
-	case BLOCK_CIPHER_AES192_CBC:
-	case BLOCK_CIPHER_AES192_CFB:
-	case BLOCK_CIPHER_AES192_CFB1:
-	case BLOCK_CIPHER_AES192_CFB8:
-	case BLOCK_CIPHER_AES192_OFB:
-	case BLOCK_CIPHER_AES192_CTR:
-		return BLOCK_CIPHER_AES192;
-
-	case BLOCK_CIPHER_AES256_ECB:
-	case BLOCK_CIPHER_AES256_CBC:
-	case BLOCK_CIPHER_AES256_CFB:
-	case BLOCK_CIPHER_AES256_CFB1:
-	case BLOCK_CIPHER_AES256_CFB8:
-	case BLOCK_CIPHER_AES256_OFB:
-	case BLOCK_CIPHER_AES256_CTR:
-		return BLOCK_CIPHER_AES256;
-	}
+	return alg._alg;
 }
 
 struct block_cipher_ctx setup_algo(enum block_cipher algo) {
-	size_t            blk_size, key_size, mode_blk_size_bits;
+	size_t           blk_size, key_size, mode_blk_size_bits;
 
-	enum block_cipher type = get_block_cipher_algorithm(algo);
-	enum cipher_mode  mode = block_cipher_get_mode(algo);
+	enum algo_types  type = get_block_cipher_algorithm(algo);
+	enum cipher_mode mode = block_cipher_get_mode(algo);
 
 	switch (type) {
-	case BLOCK_CIPHER_DES:
+	case ALGO_TYPE_DES:
 		blk_size = 8;
 		key_size = 8;
 		break;
 
-	case BLOCK_CIPHER_3DES_EDE2:
+	case ALGO_TYPE_3DES_EDE2:
 		blk_size = 8;
 		key_size = 16;
 		break;
 
-	case BLOCK_CIPHER_3DES_EDE3:
+	case ALGO_TYPE_3DES_EDE3:
 		blk_size = 8;
 		key_size = 24;
 		break;
 
-	case BLOCK_CIPHER_AES128:
+	case ALGO_TYPE_AES128:
 		blk_size = AES_BLK_SIZE_BYTES;
 		key_size = AES128_KEY_SIZE_BYTES;
 		break;
-	case BLOCK_CIPHER_AES192:
+	case ALGO_TYPE_AES192:
 		blk_size = AES_BLK_SIZE_BYTES;
 		key_size = AES192_KEY_SIZE_BYTES;
 		break;
-	case BLOCK_CIPHER_AES256:
+	case ALGO_TYPE_AES256:
 		blk_size = AES_BLK_SIZE_BYTES;
 		key_size = AES256_KEY_SIZE_BYTES;
 		break;
@@ -529,15 +433,15 @@ void block_delete(struct block *blk) {
 
 void block_encrypt(const struct cipher_ctx *ctx, struct block *res, const struct block *a) {
 	static uint8_t *(*alg_op[])(uint8_t *, const uint8_t *) = {
-		[BLOCK_CIPHER_AES128] = aes128_encrypt,       [BLOCK_CIPHER_AES192] = aes192_encrypt,
-		[BLOCK_CIPHER_AES256] = aes256_encrypt,       [BLOCK_CIPHER_DES] = des_encrypt,
-		[BLOCK_CIPHER_3DES_EDE3] = tdes_ede3_encrypt, [BLOCK_CIPHER_3DES_EDE2] = tdes_ede2_encrypt,
+		[ALGO_TYPE_AES128] = aes128_encrypt,       [ALGO_TYPE_AES192] = aes192_encrypt,
+		[ALGO_TYPE_AES256] = aes256_encrypt,       [ALGO_TYPE_DES] = des_encrypt,
+		[ALGO_TYPE_3DES_EDE3] = tdes_ede3_encrypt, [ALGO_TYPE_3DES_EDE2] = tdes_ede2_encrypt,
 	};
 	res->size = a->size;
 
-	const enum block_cipher type = get_block_cipher_algorithm(ctx->algo.type);
+	const enum algo_types type = get_block_cipher_algorithm(ctx->algo.type);
 
-	uint8_t                *fn_res = alg_op[type](a->data, ctx->key);
+	uint8_t              *fn_res = alg_op[type](a->data, ctx->key);
 	memcpy(res->data, fn_res, res->size);
 	free(fn_res);
 }
@@ -545,14 +449,14 @@ void block_encrypt(const struct cipher_ctx *ctx, struct block *res, const struct
 void block_decrypt(const struct cipher_ctx *ctx, struct block *res, const struct block *a) {
 	res->size                                               = a->size;
 	static uint8_t *(*alg_op[])(uint8_t *, const uint8_t *) = {
-		[BLOCK_CIPHER_AES128] = aes128_decrypt,       [BLOCK_CIPHER_AES192] = aes192_decrypt,
-		[BLOCK_CIPHER_AES256] = aes256_decrypt,       [BLOCK_CIPHER_DES] = des_decrypt,
-		[BLOCK_CIPHER_3DES_EDE3] = tdes_ede3_decrypt, [BLOCK_CIPHER_3DES_EDE2] = tdes_ede2_decrypt,
+		[ALGO_TYPE_AES128] = aes128_decrypt,       [ALGO_TYPE_AES192] = aes192_decrypt,
+		[ALGO_TYPE_AES256] = aes256_decrypt,       [ALGO_TYPE_DES] = des_decrypt,
+		[ALGO_TYPE_3DES_EDE3] = tdes_ede3_decrypt, [ALGO_TYPE_3DES_EDE2] = tdes_ede2_decrypt,
 	};
 
-	const enum block_cipher type = get_block_cipher_algorithm(ctx->algo.type);
+	const enum algo_types type = get_block_cipher_algorithm(ctx->algo.type);
 
-	uint8_t                *fn_res = alg_op[type](a->data, ctx->key);
+	uint8_t              *fn_res = alg_op[type](a->data, ctx->key);
 	memcpy(res->data, fn_res, res->size);
 	free(fn_res);
 }

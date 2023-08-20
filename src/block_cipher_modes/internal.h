@@ -10,13 +10,29 @@ extern "C" {
 #include <stdbool.h>
 
 enum cipher_mode {
-	CIPHER_MODE_ECB,
-	CIPHER_MODE_CBC,
-	CIPHER_MODE_CFB,
-	CIPHER_MODE_CFB1,
-	CIPHER_MODE_CFB8,
-	CIPHER_MODE_OFB,
-	CIPHER_MODE_CTR,
+	CIPHER_MODE_ECB  = 0b000,
+	CIPHER_MODE_CBC  = 0b001,
+	CIPHER_MODE_OFB  = 0b010,
+	CIPHER_MODE_CFB  = 0b011,
+	CIPHER_MODE_CFB1 = 0b100,
+	CIPHER_MODE_CFB8 = 0b101,
+	CIPHER_MODE_CTR  = 0b110,
+};
+
+enum algo_types {
+	ALGO_TYPE_DES       = 0b000,
+	ALGO_TYPE_AES128    = 0b001,
+	ALGO_TYPE_AES192    = 0b010,
+	ALGO_TYPE_AES256    = 0b011,
+	ALGO_TYPE_3DES_EDE2 = 0b100,
+	ALGO_TYPE_3DES_EDE3 = 0b101,
+};
+
+struct __packed algo {
+	uint8_t _is_stream  : 1;
+	uint8_t _mode       : 3;
+	uint8_t _alg        : 3;
+	uint8_t _is_default : 1;
 };
 
 struct block {
@@ -246,7 +262,7 @@ uint8_t                                    *OFB_decrypt(struct cipher_ctx *ctx) 
 uint8_t                                    *CTR_decrypt(struct cipher_ctx *ctx) __visibility_internal;
 
 enum cipher_mode                            block_cipher_get_mode(enum block_cipher type) __visibility_internal;
-enum block_cipher                           get_block_cipher_algorithm(enum block_cipher type) __visibility_internal;
+enum algo_types                             get_block_cipher_algorithm(enum block_cipher type) __visibility_internal;
 
 __visibility_internal static inline uint8_t gen_left_mask(size_t r) {
 	// clang-format off

@@ -115,7 +115,6 @@ static enum block_cipher       mix_cipher_mode_and_operation_mode(enum cipher_mo
     };
 
     static std::map<enum block_cipher, enum block_cipher> translator_ctr {
-			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_CTR      },
 			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CTR},
 			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CTR},
 			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CTR   },
