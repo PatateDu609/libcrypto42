@@ -27,11 +27,11 @@ enum algo_types get_block_cipher_algorithm(enum block_cipher type) {
 
 struct cipher_ctx *new_cipher_context(enum block_cipher algo) {
 	struct cipher_ctx *ctx = calloc(1, sizeof *ctx);
-	if (!ctx) return NULL;
+	if (!ctx)
+		return NULL;
 
 	ctx->algo = setup_algo(algo);
-	if (!ctx->algo.blk_size)
-	{
+	if (!ctx->algo.blk_size) {
 		free(ctx);
 		crypto42_errno = CRYPTO_ALGO_UNKNOWN;
 		return NULL;
@@ -39,21 +39,10 @@ struct cipher_ctx *new_cipher_context(enum block_cipher algo) {
 
 	enum cipher_mode mode = block_cipher_get_mode(algo);
 
-	if (mode == CIPHER_MODE_CTR) {
+	if (mode == CIPHER_MODE_CTR)
 		ctx->nonce_len = ctx->algo.blk_size;
-		ctx->nonce = calloc(ctx->nonce_len, sizeof *ctx->nonce);
-		if (!ctx->nonce) {
-			free(ctx);
-			return NULL;
-		}
-	} else if (mode != CIPHER_MODE_ECB) {
+	else if (mode != CIPHER_MODE_ECB)
 		ctx->iv_len = ctx->algo.blk_size;
-		ctx->iv = calloc(ctx->iv_len, sizeof *ctx->iv);
-		if (!ctx->iv) {
-			free(ctx);
-			return NULL;
-		}
-	}
 
 	return ctx;
 }
