@@ -12,6 +12,9 @@ endif
 
 all:							$(NAME) $(TEST_NAME)
 
+compiledb:
+	$(BEAR)	-- $(NMAKE) re
+
 $(PATH_OBJ)/%.o:			$(PATH_SRC)/%.c
 	$(MKDIR) $(dir $@)
 

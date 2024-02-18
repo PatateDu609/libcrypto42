@@ -132,6 +132,8 @@ struct cipher_ctx {
 	uint8_t                *key;    ///< Key used for the cipher mode
 	size_t                  key_len;///< Key length in bytes
 
+	bool final; ///< Final context?
+
 	uint8_t                *iv;    ///< Initialization vector used for the cipher mode
 	size_t                  iv_len;///< Initialization vector length in bytes
 

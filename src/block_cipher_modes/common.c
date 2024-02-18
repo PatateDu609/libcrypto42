@@ -37,6 +37,8 @@ struct cipher_ctx *new_cipher_context(enum block_cipher algo) {
 		return NULL;
 	}
 
+	ctx->key_len = ctx->algo.key_size;
+
 	enum cipher_mode mode = block_cipher_get_mode(algo);
 
 	if (mode == CIPHER_MODE_CTR)
@@ -120,14 +122,16 @@ bool __init_cipher_mode_enc(struct cipher_ctx *ctx, enum cipher_mode mode) {
 	if (!__cipher_ctx_valid(ctx, mode, true))
 		return false;
 
-	if (mode == CIPHER_MODE_ECB || mode == CIPHER_MODE_CBC) {
-		uint8_t *p = pad(ctx->plaintext, &ctx->plaintext_len, ctx->algo.blk_size);
-		if (p == NULL) {
-			perror("error: couldn't allocate memory");
-			return false;
-		}
+	if (ctx->final) {
+		if (mode == CIPHER_MODE_ECB || mode == CIPHER_MODE_CBC) {
+			uint8_t *p = pad(ctx->plaintext, &ctx->plaintext_len, ctx->algo.blk_size);
+			if (p == NULL) {
+				perror("error: couldn't allocate memory");
+				return false;
+			}
 
-		ctx->plaintext = p;
+			ctx->plaintext = p;
+		}
 	}
 
 	if (ctx->ciphertext_len == ctx->plaintext_len && ctx->ciphertext) {
@@ -155,8 +159,6 @@ bool __cipher_ctx_valid(struct cipher_ctx *ctx, enum cipher_mode cipher_mode, bo
 	if (enc) {
 		if (ctx->plaintext == NULL && ctx->plaintext_len != 0)
 			crypto42_errno = CRYPTO_PLAINTEXT_NULL;
-		if (ctx->plaintext_len == 0 && ctx->plaintext != NULL)
-			crypto42_errno = CRYPTO_PLAINTEXT_LEN_ZERO;
 	} else {
 		if (ctx->ciphertext == NULL && ctx->ciphertext_len != 0)
 			crypto42_errno = CRYPTO_CIPHERTEXT_NULL;
@@ -190,7 +192,13 @@ uint8_t *pad(uint8_t *plaintext, size_t *len, size_t blk_size) {
 	if (!(0 < padding && padding <= 16))
 		return NULL;
 
-	uint8_t *p = realloc(plaintext, *len + padding);
+	uint8_t *p;
+	if (*len == 0) {
+		p = calloc(padding, sizeof *plaintext);
+	} else {
+		p = realloc(plaintext, *len + padding);
+	}
+
 	if (p == NULL)
 		return NULL;
 
