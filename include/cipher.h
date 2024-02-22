@@ -119,6 +119,8 @@ struct block_cipher_ctx {
 	size_t            blk_size;
 	size_t            key_size;
 	size_t            mode_blk_size_bits;
+
+	bool              need_padding;
 };
 
 /**
@@ -132,7 +134,7 @@ struct cipher_ctx {
 	uint8_t                *key;    ///< Key used for the cipher mode
 	size_t                  key_len;///< Key length in bytes
 
-	bool final; ///< Final context?
+	bool                    final;///< Final context?
 
 	uint8_t                *iv;    ///< Initialization vector used for the cipher mode
 	size_t                  iv_len;///< Initialization vector length in bytes

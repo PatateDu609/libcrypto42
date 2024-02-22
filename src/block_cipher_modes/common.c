@@ -112,6 +112,7 @@ struct block_cipher_ctx setup_algo(enum block_cipher algo) {
 
 	return (struct block_cipher_ctx){
 		.type               = algo,
+		.need_padding       = mode == CIPHER_MODE_ECB || mode == CIPHER_MODE_CBC,
 		.blk_size           = blk_size,
 		.key_size           = key_size,
 		.mode_blk_size_bits = mode_blk_size_bits,
