@@ -26,6 +26,10 @@ uint8_t *CBC_encrypt(struct cipher_ctx *ctx) {
 		return NULL;
 	}
 
+	if (!ctx->final) {
+		memcpy(ctx->iv, ctx->ciphertext, ctx->iv_len * sizeof *ctx->iv);
+	}
+
 	return ctx->ciphertext;
 }
 
