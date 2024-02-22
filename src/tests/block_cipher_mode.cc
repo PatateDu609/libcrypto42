@@ -299,6 +299,7 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_cipher() {
 
 	auto     func = get_block_cipher_func_cipher();
 	auto     mode = block_cipher_get_mode(ctx.algo.type);
+	ctx.final = true;
 	uint8_t *ret  = func(&ctx);
 	EXPECT_EQ(ret, ctx.ciphertext);
 	if (ret == nullptr &&
