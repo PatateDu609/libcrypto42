@@ -65,8 +65,12 @@ uint8_t *CBC_decrypt(struct cipher_ctx *ctx) {
 		return NULL;
 	}
 
-	uint8_t *temp = unpad(ctx->plaintext, &ctx->plaintext_len);
-	free(ctx->plaintext);
-	ctx->plaintext = temp;
+	if (ctx->final) {
+		uint8_t *temp = unpad(ctx->plaintext, &ctx->plaintext_len);
+		free(ctx->plaintext);
+		ctx->plaintext = temp;
+	} else {
+		memcpy(ctx->iv, iv.data, ctx->iv_len * sizeof *ctx->iv);
+	}
 	return ctx->plaintext;
 }
