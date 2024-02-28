@@ -299,6 +299,12 @@ void        stream_base64_enc_flush(FILE *out);
 size_t      stream_base64_dec(FILE *in, uint8_t *buf, size_t len);
 
 /**
+ * Returns true if there is nothing to read, and false otherwise
+ * @return
+ */
+bool stream_base64_dec_eof();
+
+/**
  * @brief Moves the pointer in the base64 stream.
  *
  * @warning This operation does not relay on an actual seek operation, because of the nature of base64

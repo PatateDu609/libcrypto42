@@ -1,5 +1,5 @@
 #ifndef HAVE_CLANG_COMPILER
-#define _POSIX_SOURCE
+#	define _POSIX_SOURCE
 #endif
 
 #include "common.h"
@@ -16,7 +16,7 @@ char *base64_encode(const uint8_t *bytes, size_t len) {
 	size_t flen = (size_t) ceil((double) len / 3.) * 4;
 	char  *res  = malloc((flen + 1) * sizeof *res);
 
-	size_t j    = 0;
+	size_t j = 0;
 	for (size_t i = 0; i < len; i += 3) {
 		uint8_t index = (bytes[i] & 0b11111100) >> 2;
 		res[j++]      = set[index];
@@ -38,7 +38,8 @@ char *base64_encode(const uint8_t *bytes, size_t len) {
 		index    = bytes[i + 2] & 0b00111111;
 		res[j++] = set[index];
 	}
-	for (; j < flen; j++) res[j] = BASE64_CHAR_PADDING;
+	for (; j < flen; j++)
+		res[j] = BASE64_CHAR_PADDING;
 	res[flen] = '\0';
 	return res;
 }
@@ -56,7 +57,7 @@ uint8_t *base64_decode(const char *str, size_t *flen) {
 	}
 	if (padding > 2)// Invalid padding.
 		return NULL;
-	*flen        = (len / 4) * 3 - padding;
+	*flen = (len / 4) * 3 - padding;
 
 	// It is a raw array not a string. \0 can be part of the array and should not be used as a terminator
 	uint8_t *res = malloc(*flen * sizeof *res);
@@ -83,7 +84,9 @@ struct stream_ctx {
 	uint8_t buf[48];
 	size_t  pos;
 	uint8_t ref;///< May be the line position if the ctx is in encoder mode, or how much there is
-				///< to copy in the buffer if the ctx is in decryption mode
+	            ///< to copy in the buffer if the ctx is in decryption mode
+
+	bool    feof;
 };
 
 // Static globals are initialized to 0
@@ -102,12 +105,12 @@ void stream_base64_enc_flush(FILE *out) {
 	if (encoder.pos == 0)
 		return;
 
-	char *encoded       = base64_encode(encoder.buf, encoder.pos);
-	encoder.pos         = 0;
+	char *encoded = base64_encode(encoder.buf, encoder.pos);
+	encoder.pos   = 0;
 
-	size_t len          = strlen(encoded);
-	size_t before_break = 64 - encoder.ref;
-	encoder.ref += len;
+	size_t len           = strlen(encoded);
+	size_t before_break  = 64 - encoder.ref;
+	encoder.ref         += len;
 
 	if (len < before_break)
 		fwrite(encoded, 1, len, out);
@@ -154,15 +157,19 @@ static size_t stream_sanitize_buffer(FILE *in, char *__buf, size_t len) {
 	if (lost_counter == 0)
 		return old_len;
 
-	size_t sane_chars_end = old_len - lost_counter;
-	size_t ret = fread(__buf + sane_chars_end, sizeof *__buf, old_len - sane_chars_end, in);
-	if (ret == 0 && feof(in))
+	if (decoder.feof)
 		return old_len;
 
+	size_t sane_chars_end = old_len - lost_counter;
+	size_t ret            = fread(__buf + sane_chars_end, sizeof *__buf, old_len - sane_chars_end, in);
 	if (ferror(in)) {
 		perror("error: couldn't read stream");
 		exit(1);
 	}
+
+	decoder.feof = feof(in);
+	if (ret == 0 && decoder.feof)
+		return old_len;
 
 	return len;
 }
@@ -191,40 +198,46 @@ static void stream_base64_dec_update_buf(char *__buf) {
 }
 
 size_t stream_base64_dec(FILE *in, uint8_t *buf, size_t len) {
+	if (stream_base64_dec_eof())
+		return 0;
+
 	memset(buf, 0, len);
 
 	if (feof(in) && decoder.pos >= decoder.ref)
 		return 0;
 
 	size_t result;
-	bool   feof_seen = false;
 
 	for (result = 0; result < len; result++) {
-		if (!decoder.buf[0] || decoder.pos >= sizeof decoder.buf) {
+		if (decoder.pos >= decoder.ref) {
 			decoder.pos = 0;
 
-			char   __buf[65];
+			char __buf[65];
 			memset(__buf, 0, sizeof __buf);
 
-			size_t size = sizeof __buf[0];
-			size_t n = (sizeof __buf) - size;
+			static const size_t size = sizeof __buf[0];
+			static const size_t n    = (sizeof __buf) - size;
 
-			size_t res = fread(__buf, size, n, in);
+			if (!decoder.feof) {
+				size_t res = fread(__buf, size, n, in);
+				if (ferror(in)) {// error...
+					perror("error: couldn't read stream");
+					exit(1);
+				}
 
-			if (res == n || (feof(in) && !feof_seen)) {
-				if (feof(in))
-					feof_seen = true;
+				decoder.feof = feof(in);
 
-				stream_sanitize_buffer(in, __buf, res);
-				stream_base64_dec_update_buf(__buf);
-			} else if (ferror(in)) {// error...
-				perror("error: couldn't read stream");
-				exit(1);
+				if (res == n || decoder.feof) {
+					stream_sanitize_buffer(in, __buf, res);
+					stream_base64_dec_update_buf(__buf);
+				}
 			}
 		}
 		buf[result] = decoder.buf[decoder.pos];
-		if (feof(in) && ((!feof_seen && decoder.pos >= decoder.ref) || (feof_seen && decoder.pos + 1 >= decoder.ref)))
+		if (decoder.feof && decoder.pos >= decoder.ref) {
+			decoder.pos++;
 			return result ? result + 1 : result;
+		}
 		decoder.pos++;
 	}
 
@@ -245,4 +258,10 @@ void stream_base64_seek(FILE *in, off_t off) {
 void stream_base64_reset_all() {
 	memset(&decoder, 0, sizeof decoder);
 	memset(&encoder, 0, sizeof encoder);
+
+	decoder.feof = false;
+}
+
+bool stream_base64_dec_eof() {
+	return decoder.feof && decoder.pos >= decoder.ref;
 }

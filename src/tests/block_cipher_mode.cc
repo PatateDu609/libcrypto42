@@ -7,53 +7,53 @@
 #include <sstream>
 
 static std::map<enum block_cipher, std::string> block_cipher_translator{
-	{BLOCK_CIPHER_AES128,          "AES128"        },
-	{ BLOCK_CIPHER_AES128_ECB,     "AES128-ECB"    },
-	{ BLOCK_CIPHER_AES128_CBC,     "AES128-CBC"    },
-	{ BLOCK_CIPHER_AES128_CFB,     "AES128-CFB"    },
-	{ BLOCK_CIPHER_AES128_CFB1,    "AES128-CFB1"   },
-	{ BLOCK_CIPHER_AES128_CFB8,    "AES128-CFB8"   },
-	{ BLOCK_CIPHER_AES128_OFB,     "AES128-OFB"    },
+	{ BLOCK_CIPHER_AES128,         "AES128"         },
+	{ BLOCK_CIPHER_AES128_ECB,     "AES128-ECB"     },
+	{ BLOCK_CIPHER_AES128_CBC,     "AES128-CBC"     },
+	{ BLOCK_CIPHER_AES128_CFB,     "AES128-CFB"     },
+	{ BLOCK_CIPHER_AES128_CFB1,    "AES128-CFB1"    },
+	{ BLOCK_CIPHER_AES128_CFB8,    "AES128-CFB8"    },
+	{ BLOCK_CIPHER_AES128_OFB,     "AES128-OFB"     },
 
-	{ BLOCK_CIPHER_AES192,         "AES192"        },
-	{ BLOCK_CIPHER_AES192_ECB,     "AES192-ECB"    },
-	{ BLOCK_CIPHER_AES192_CBC,     "AES192-CBC"    },
-	{ BLOCK_CIPHER_AES192_CFB,     "AES192-CFB"    },
-	{ BLOCK_CIPHER_AES192_CFB1,    "AES192-CFB1"   },
-	{ BLOCK_CIPHER_AES192_CFB8,    "AES192-CFB8"   },
-	{ BLOCK_CIPHER_AES192_OFB,     "AES192-OFB"    },
+	{ BLOCK_CIPHER_AES192,         "AES192"         },
+	{ BLOCK_CIPHER_AES192_ECB,     "AES192-ECB"     },
+	{ BLOCK_CIPHER_AES192_CBC,     "AES192-CBC"     },
+	{ BLOCK_CIPHER_AES192_CFB,     "AES192-CFB"     },
+	{ BLOCK_CIPHER_AES192_CFB1,    "AES192-CFB1"    },
+	{ BLOCK_CIPHER_AES192_CFB8,    "AES192-CFB8"    },
+	{ BLOCK_CIPHER_AES192_OFB,     "AES192-OFB"     },
 
-	{ BLOCK_CIPHER_AES256,         "AES256"        },
-	{ BLOCK_CIPHER_AES256_ECB,     "AES256-ECB"    },
-	{ BLOCK_CIPHER_AES256_CBC,     "AES256-CBC"    },
-	{ BLOCK_CIPHER_AES256_CFB,     "AES256-CFB"    },
-	{ BLOCK_CIPHER_AES256_CFB1,    "AES256-CFB1"   },
-	{ BLOCK_CIPHER_AES256_CFB8,    "AES256-CFB8"   },
-	{ BLOCK_CIPHER_AES256_OFB,     "AES256-OFB"    },
+	{ BLOCK_CIPHER_AES256,         "AES256"         },
+	{ BLOCK_CIPHER_AES256_ECB,     "AES256-ECB"     },
+	{ BLOCK_CIPHER_AES256_CBC,     "AES256-CBC"     },
+	{ BLOCK_CIPHER_AES256_CFB,     "AES256-CFB"     },
+	{ BLOCK_CIPHER_AES256_CFB1,    "AES256-CFB1"    },
+	{ BLOCK_CIPHER_AES256_CFB8,    "AES256-CFB8"    },
+	{ BLOCK_CIPHER_AES256_OFB,     "AES256-OFB"     },
 
-	{ BLOCK_CIPHER_DES,            "DES"           },
-	{ BLOCK_CIPHER_DES_ECB,        "DES-ECB"       },
-	{ BLOCK_CIPHER_DES_CBC,        "DES-CBC"       },
-	{ BLOCK_CIPHER_DES_CFB,        "DES-CFB"       },
-	{ BLOCK_CIPHER_DES_CFB1,       "DES-CFB1"      },
-	{ BLOCK_CIPHER_DES_CFB8,       "DES-CFB8"      },
-	{ BLOCK_CIPHER_DES_OFB,        "DES-OFB"       },
+	{ BLOCK_CIPHER_DES,            "DES"            },
+	{ BLOCK_CIPHER_DES_ECB,        "DES-ECB"        },
+	{ BLOCK_CIPHER_DES_CBC,        "DES-CBC"        },
+	{ BLOCK_CIPHER_DES_CFB,        "DES-CFB"        },
+	{ BLOCK_CIPHER_DES_CFB1,       "DES-CFB1"       },
+	{ BLOCK_CIPHER_DES_CFB8,       "DES-CFB8"       },
+	{ BLOCK_CIPHER_DES_OFB,        "DES-OFB"        },
 
-	{ BLOCK_CIPHER_3DES_EDE2,      "3DES_EDE2"     },
-	{ BLOCK_CIPHER_3DES_EDE2_ECB,  "3DES_EDE2-ECB" },
-	{ BLOCK_CIPHER_3DES_EDE2_CBC,  "3DES_EDE2-CBC" },
-	{ BLOCK_CIPHER_3DES_EDE2_CFB,  "3DES_EDE2-CFB" },
-	{ BLOCK_CIPHER_3DES_EDE2_CFB1, "3DES_EDE2-CFB1"},
-	{ BLOCK_CIPHER_3DES_EDE2_CFB8, "3DES_EDE2-CFB8"},
-	{ BLOCK_CIPHER_3DES_EDE2_OFB,  "3DES_EDE2-OFB" },
+	{ BLOCK_CIPHER_3DES_EDE2,      "3DES_EDE2"      },
+	{ BLOCK_CIPHER_3DES_EDE2_ECB,  "3DES_EDE2-ECB"  },
+	{ BLOCK_CIPHER_3DES_EDE2_CBC,  "3DES_EDE2-CBC"  },
+	{ BLOCK_CIPHER_3DES_EDE2_CFB,  "3DES_EDE2-CFB"  },
+	{ BLOCK_CIPHER_3DES_EDE2_CFB1, "3DES_EDE2-CFB1" },
+	{ BLOCK_CIPHER_3DES_EDE2_CFB8, "3DES_EDE2-CFB8" },
+	{ BLOCK_CIPHER_3DES_EDE2_OFB,  "3DES_EDE2-OFB"  },
 
-	{ BLOCK_CIPHER_3DES_EDE3,      "3DES_EDE3"     },
-	{ BLOCK_CIPHER_3DES_EDE3_ECB,  "3DES_EDE3-ECB" },
-	{ BLOCK_CIPHER_3DES_EDE3_CBC,  "3DES_EDE3-CBC" },
-	{ BLOCK_CIPHER_3DES_EDE3_CFB,  "3DES_EDE3-CFB" },
-	{ BLOCK_CIPHER_3DES_EDE3_CFB1, "3DES_EDE3-CFB1"},
-	{ BLOCK_CIPHER_3DES_EDE3_CFB8, "3DES_EDE3-CFB8"},
-	{ BLOCK_CIPHER_3DES_EDE3_OFB,  "3DES_EDE3-OFB" },
+	{ BLOCK_CIPHER_3DES_EDE3,      "3DES_EDE3"      },
+	{ BLOCK_CIPHER_3DES_EDE3_ECB,  "3DES_EDE3-ECB"  },
+	{ BLOCK_CIPHER_3DES_EDE3_CBC,  "3DES_EDE3-CBC"  },
+	{ BLOCK_CIPHER_3DES_EDE3_CFB,  "3DES_EDE3-CFB"  },
+	{ BLOCK_CIPHER_3DES_EDE3_CFB1, "3DES_EDE3-CFB1" },
+	{ BLOCK_CIPHER_3DES_EDE3_CFB8, "3DES_EDE3-CFB8" },
+	{ BLOCK_CIPHER_3DES_EDE3_OFB,  "3DES_EDE3-OFB"  },
 };
 
 __unused static OSSL_PROVIDER *OSSL_legacy  = OSSL_PROVIDER_load(nullptr, "legacy");
@@ -61,65 +61,65 @@ __unused static OSSL_PROVIDER *OSSL_default = OSSL_PROVIDER_load(nullptr, "defau
 
 static enum block_cipher       mix_cipher_mode_and_operation_mode(enum cipher_mode mode, enum block_cipher type) {
     static std::map<enum block_cipher, enum block_cipher> translator_ecb {
-			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_ECB      },
-			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_ECB},
-			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_ECB},
-			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_ECB   },
-			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_ECB   },
-			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_ECB   },
+			  { BLOCK_CIPHER_DES,       BLOCK_CIPHER_DES_ECB       },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_ECB },
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_ECB },
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_ECB    },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_ECB    },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_ECB    },
     };
 
     static std::map<enum block_cipher, enum block_cipher> translator_cbc {
-			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_CBC      },
-			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CBC},
-			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CBC},
-			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CBC   },
-			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CBC   },
-			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CBC   },
+			  { BLOCK_CIPHER_DES,       BLOCK_CIPHER_DES_CBC       },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CBC },
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CBC },
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CBC    },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CBC    },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CBC    },
     };
 
     static std::map<enum block_cipher, enum block_cipher> translator_cfb {
-			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_CFB      },
-			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CFB},
-			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CFB},
-			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CFB   },
-			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CFB   },
-			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CFB   },
+			  { BLOCK_CIPHER_DES,       BLOCK_CIPHER_DES_CFB       },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CFB },
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CFB },
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CFB    },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CFB    },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CFB    },
     };
 
     static std::map<enum block_cipher, enum block_cipher> translator_cfb1 {
-			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_CFB1      },
-			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CFB1},
-			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CFB1},
-			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CFB1   },
-			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CFB1   },
-			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CFB1   },
+			  { BLOCK_CIPHER_DES,       BLOCK_CIPHER_DES_CFB1       },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CFB1 },
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CFB1 },
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CFB1    },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CFB1    },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CFB1    },
     };
 
     static std::map<enum block_cipher, enum block_cipher> translator_cfb8 {
-			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_CFB8      },
-			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CFB8},
-			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CFB8},
-			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CFB8   },
-			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CFB8   },
-			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CFB8   },
+			  { BLOCK_CIPHER_DES,       BLOCK_CIPHER_DES_CFB8       },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CFB8 },
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CFB8 },
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CFB8    },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CFB8    },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CFB8    },
     };
 
     static std::map<enum block_cipher, enum block_cipher> translator_ofb {
-			  {BLOCK_CIPHER_DES,        BLOCK_CIPHER_DES_OFB      },
-			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_OFB},
-			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_OFB},
-			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_OFB   },
-			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_OFB   },
-			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_OFB   },
+			  { BLOCK_CIPHER_DES,       BLOCK_CIPHER_DES_OFB       },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_OFB },
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_OFB },
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_OFB    },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_OFB    },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_OFB    },
     };
 
     static std::map<enum block_cipher, enum block_cipher> translator_ctr {
-			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CTR},
-			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CTR},
-			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CTR   },
-			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CTR   },
-			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CTR   },
+			  { BLOCK_CIPHER_3DES_EDE2, BLOCK_CIPHER_3DES_EDE2_CTR },
+			  { BLOCK_CIPHER_3DES_EDE3, BLOCK_CIPHER_3DES_EDE3_CTR },
+			  { BLOCK_CIPHER_AES128,    BLOCK_CIPHER_AES128_CTR    },
+			  { BLOCK_CIPHER_AES192,    BLOCK_CIPHER_AES192_CTR    },
+			  { BLOCK_CIPHER_AES256,    BLOCK_CIPHER_AES256_CTR    },
     };
 
     switch (mode) {
@@ -278,6 +278,7 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_cipher() {
 	ctx.key           = param.key.data();
 	ctx.plaintext_len = param.plaintext.size();
 	ctx.plaintext     = plaintext;
+	ctx.final         = true;
 
 	if (!param.iv.empty()) {
 		ctx.iv_len = param.iv.size();
@@ -299,7 +300,6 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_cipher() {
 
 	auto     func = get_block_cipher_func_cipher();
 	auto     mode = block_cipher_get_mode(ctx.algo.type);
-	ctx.final = true;
 	uint8_t *ret  = func(&ctx);
 	EXPECT_EQ(ret, ctx.ciphertext);
 	if (ret == nullptr &&
@@ -335,6 +335,7 @@ std::vector<uint8_t> BlockCipherModeTests::get_actual_result_decipher(const std:
 	ctx.key            = param.key.data();
 	ctx.ciphertext_len = ciphertext.size();
 	ctx.ciphertext     = ciphertext_copy;
+	ctx.final          = true;
 
 	if (!param.iv.empty()) {
 		ctx.iv_len = param.iv.size();

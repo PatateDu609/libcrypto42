@@ -51,8 +51,10 @@ uint8_t *ECB_decrypt(struct cipher_ctx *ctx) {
 		return NULL;
 	}
 
-	uint8_t *temp = unpad(ctx->plaintext, &ctx->plaintext_len);
-	free(ctx->plaintext);
-	ctx->plaintext = temp;
+	if (ctx->final) {
+		uint8_t *temp = unpad(ctx->plaintext, &ctx->plaintext_len);
+		free(ctx->plaintext);
+		ctx->plaintext = temp;
+	}
 	return ctx->plaintext;
 }
