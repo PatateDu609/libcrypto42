@@ -18,7 +18,7 @@ GTEST_OUT_FOLDER			:=	$(GTEST_BUILD_FOLDER)/out
 GTEST_LIB_FOLDER			:=	$(GTEST_OUT_FOLDER)/lib
 GTEST_LIB					:=	$(GTEST_OUT_FOLDER)/lib/libgtest.a
 
-TEST_LDFLAGS				:=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lm -L$(GTEST_LIB_FOLDER) -lgtest -lpthread
+TEST_LDFLAGS				:=	-L. -Llibft -lcrypto -lssl -lcrypto42 -lft -lm -L$(GTEST_LIB_FOLDER) -L$(GTEST_LIB_FOLDER)64 -lgtest -lpthread
 
 ifeq ($(shell uname),Darwin)
 	TEST_LDFLAGS			+=	-L/opt/homebrew/lib
@@ -40,7 +40,8 @@ $(GTEST_FOLDER):
 	$(MKDIR) -p $(GTEST_OUT_FOLDER)
 
 $(GTEST_LIB):				$(GTEST_FOLDER)
-	cd $(GTEST_BUILD_FOLDER) ; \
+	$(MKDIR) -p $(GTEST_BUILD_FOLDER)
+	@cd $(GTEST_BUILD_FOLDER) ; \
 	pwd ; \
 	$(NPRINTF) " $(GREEN_79)$(DOUBLEGREATER) Generating $(UNDERLINE)Google Test$(TRESET)\n" ; \
 	cmake .. -DBUILD_GMOCK=OFF -DCMAKE_INSTALL_PREFIX=$(notdir $(GTEST_OUT_FOLDER)) ; \

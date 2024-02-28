@@ -58,3 +58,5 @@ main.cc
 main.cpp
 
 .idea
+
+compile_commands.json

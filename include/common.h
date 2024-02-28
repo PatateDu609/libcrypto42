@@ -75,11 +75,11 @@ extern enum crypto_error crypto42_errno;
 #define bswap_128(x) ((((__uint128_t) bswap_64(x)) << 64) | bswap_64(x >> 64))
 
 #ifndef __visibility_internal
-#	define __visibility_internal __attribute__((visibility("internal")))
+#	define __visibility_internal
 #endif
 
 #ifndef __hidden
-#	define __hidden __attribute__((visibility("hidden")))
+#	define __hidden
 #endif
 
 #ifndef __unused
