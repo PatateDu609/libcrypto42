@@ -89,9 +89,9 @@ uint8_t *OFB_encrypt(struct cipher_ctx *ctx) {
 	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_OFB, true))
 		return NULL;
 
-	if (ctx->ciphertext) {
+	if (ctx->ciphertext)
 		free(ctx->ciphertext);
-	}
+
 	ctx->ciphertext_len = ctx->plaintext_len;
 	ctx->ciphertext     = calloc(ctx->ciphertext_len, sizeof *ctx->ciphertext);
 	if (!ctx->ciphertext) {
@@ -127,9 +127,9 @@ uint8_t *OFB_decrypt(struct cipher_ctx *ctx) {
 	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_OFB, false))
 		return NULL;
 
-	if (ctx->plaintext) {
+	if (ctx->plaintext)
 		free(ctx->plaintext);
-	}
+
 	ctx->plaintext_len = ctx->ciphertext_len;
 	ctx->plaintext     = calloc(ctx->plaintext_len, sizeof *ctx->plaintext);
 	if (!ctx->plaintext) {

@@ -39,6 +39,8 @@ uint8_t *CBC_decrypt(struct cipher_ctx *ctx) {
 	if (!ctx->ciphertext_len && ctx->ciphertext == NULL)
 		return NULL;
 
+	if (ctx->plaintext)
+		free(ctx->plaintext);
 	ctx->plaintext_len = ctx->ciphertext_len;
 	ctx->plaintext     = calloc(sizeof *ctx->plaintext, ctx->plaintext_len);
 	if (!ctx->plaintext)
