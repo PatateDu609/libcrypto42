@@ -8,6 +8,8 @@ static uint8_t *CFB_encrypt(struct cipher_ctx *ctx) {
 	if (!__cipher_ctx_valid(ctx, block_cipher_get_mode(ctx->algo.type), true))
 		return NULL;
 
+	if (ctx->ciphertext)
+		free(ctx->ciphertext);
 	ctx->ciphertext_len = ctx->plaintext_len;
 	ctx->ciphertext     = calloc(ctx->ciphertext_len, sizeof *ctx->ciphertext);
 	if (!ctx->ciphertext) {
@@ -133,6 +135,8 @@ static uint8_t *CFB_decrypt(struct cipher_ctx *ctx) {
 	if (!__cipher_ctx_valid(ctx, block_cipher_get_mode(ctx->algo.type), false))
 		return NULL;
 
+	if (ctx->plaintext)
+		free(ctx->plaintext);
 	ctx->plaintext_len = ctx->ciphertext_len;
 	ctx->plaintext     = calloc(ctx->plaintext_len, sizeof *ctx->plaintext);
 	if (!ctx->plaintext) {

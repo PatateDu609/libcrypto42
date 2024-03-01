@@ -78,6 +78,8 @@ uint8_t *CTR_encrypt(struct cipher_ctx *ctx) {
 	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_CTR, true))
 		return NULL;
 
+	if (ctx->ciphertext)
+		free(ctx->ciphertext);
 	ctx->ciphertext_len = ctx->plaintext_len;
 	ctx->ciphertext     = calloc(ctx->ciphertext_len, sizeof *ctx->ciphertext);
 	if (!ctx->ciphertext) {
@@ -113,6 +115,8 @@ uint8_t *CTR_decrypt(struct cipher_ctx *ctx) {
 	if (!__cipher_ctx_valid(ctx, CIPHER_MODE_CTR, false))
 		return NULL;
 
+	if (ctx->plaintext)
+		free(ctx->plaintext);
 	ctx->plaintext_len = ctx->ciphertext_len;
 	ctx->plaintext     = calloc(ctx->plaintext_len, sizeof *ctx->plaintext);
 	if (!ctx->plaintext) {
