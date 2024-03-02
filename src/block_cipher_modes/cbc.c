@@ -5,9 +5,9 @@ uint8_t *CBC_encrypt(struct cipher_ctx *ctx) {
 	if (!__init_cipher_mode_enc(ctx, CIPHER_MODE_CBC))
 		return NULL;
 
-	struct block src, last, cipher;
-	src.size = last.size = cipher.size = ctx->algo.blk_size;
-	last.data                          = ctx->iv;
+	struct blk src, last, cipher;
+	src.len = last.len = cipher.len = ctx->algo.blk_size;
+	last.data                       = ctx->iv;
 
 	size_t idx = 0;
 	for (; idx < ctx->plaintext_len; idx += ctx->algo.blk_size) {
@@ -46,9 +46,9 @@ uint8_t *CBC_decrypt(struct cipher_ctx *ctx) {
 	if (!ctx->plaintext)
 		return NULL;
 
-	struct block src, iv, plain;
-	src.size = iv.size = plain.size = ctx->algo.blk_size;
-	iv.data                         = ctx->iv;
+	struct blk src, iv, plain;
+	src.len = iv.len = plain.len = ctx->algo.blk_size;
+	iv.data                      = ctx->iv;
 
 	size_t idx = 0;
 	for (; idx < ctx->plaintext_len; idx += ctx->algo.blk_size) {

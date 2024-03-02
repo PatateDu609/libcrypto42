@@ -35,11 +35,6 @@ struct __packed algo {
 	uint8_t _is_default : 1;
 };
 
-struct block {
-	uint8_t *data;
-	size_t   size;
-};
-
 /**
  * @brief Check if the context is valid.
  *
@@ -86,25 +81,25 @@ uint8_t      *unpad(uint8_t *plaintext, size_t *len) __visibility_internal;
  * @param a Left hand operand.
  * @param b Right hand operand.
  */
-void          block_xor(struct block *res, const struct block *a, const struct block *b) __visibility_internal;
+void          block_xor(struct blk *res, const struct blk *a, const struct blk *b) __visibility_internal;
 
-void          block_right_shift(struct block *a, size_t s) __visibility_internal;
+void          block_right_shift(struct blk *a, size_t s) __visibility_internal;
 
-void          block_left_shift(struct block *a, size_t n) __visibility_internal;
+void          block_left_shift(struct blk *a, size_t n) __visibility_internal;
 
-void          block_bit_assign(struct block *res, struct block *src, size_t start, size_t nb) __visibility_internal;
+void          block_bit_assign(struct blk *res, struct blk *src, size_t start, size_t nb) __visibility_internal;
 
-void          block_increment(struct block *blk, size_t bit_limit) __visibility_internal;
+void          block_increment(struct blk *blk, size_t bit_limit) __visibility_internal;
 
-struct block *block_dup(const struct block *src) __visibility_internal;
+struct blk *block_dup(const struct blk *src) __visibility_internal;
 
-struct block *block_dup_data(uint8_t *data, size_t size) __visibility_internal;
+struct blk *block_dup_data(uint8_t *data, size_t size) __visibility_internal;
 
-struct block *block_create(size_t size) __visibility_internal;
+struct blk *block_create(size_t size) __visibility_internal;
 
-void          block_delete(struct block *blk) __visibility_internal;
+void          block_delete(struct blk *blk) __visibility_internal;
 
-struct block *block_bit_extract(const struct block *blk, size_t sub) __visibility_internal;
+struct blk *block_bit_extract(const struct blk *blk, size_t sub) __visibility_internal;
 
 /**
  * @brief Encrypts a given block using a context and saving the result
@@ -113,7 +108,7 @@ struct block *block_bit_extract(const struct block *blk, size_t sub) __visibilit
  * @param res Where the result will be stored.
  * @param a The plain block to encrypt.
  */
-void block_encrypt(const struct cipher_ctx *ctx, struct block *res, const struct block *a) __visibility_internal;
+void block_encrypt(const struct cipher_ctx *ctx, struct blk *res, const struct blk *a) __visibility_internal;
 
 /**
  * @brief Decrypts a given block using a context and saving the result
@@ -122,7 +117,7 @@ void block_encrypt(const struct cipher_ctx *ctx, struct block *res, const struct
  * @param res Where the result will be stored.
  * @param a The plain block to decrypt.
  */
-void block_decrypt(const struct cipher_ctx *ctx, struct block *res, const struct block *a) __visibility_internal;
+void block_decrypt(const struct cipher_ctx *ctx, struct blk *res, const struct blk *a) __visibility_internal;
 
 bool __init_cipher_mode_enc(struct cipher_ctx *ctx, enum cipher_mode mode) __visibility_internal;
 

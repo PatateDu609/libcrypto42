@@ -5,8 +5,8 @@ uint8_t *ECB_encrypt(struct cipher_ctx *ctx) {
 	if (!__init_cipher_mode_enc(ctx, CIPHER_MODE_ECB))
 		return NULL;
 
-	struct block src, cipher;
-	src.size = cipher.size = ctx->algo.blk_size;
+	struct blk src, cipher;
+	src.len = cipher.len = ctx->algo.blk_size;
 
 	size_t idx = 0;
 	for (; idx < ctx->plaintext_len; idx += ctx->algo.blk_size) {
@@ -36,8 +36,8 @@ uint8_t *ECB_decrypt(struct cipher_ctx *ctx) {
 	ctx->plaintext_len = ctx->ciphertext_len;
 	ctx->plaintext     = malloc(ctx->plaintext_len);
 
-	struct block src, plain;
-	src.size = plain.size = ctx->algo.blk_size;
+	struct blk src, plain;
+	src.len = plain.len = ctx->algo.blk_size;
 
 	size_t idx = 0;
 	for (; idx < ctx->plaintext_len; idx += ctx->algo.blk_size) {

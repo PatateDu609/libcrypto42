@@ -17,11 +17,11 @@ static uint8_t *CFB_encrypt(struct cipher_ctx *ctx) {
 		return NULL;
 	}
 
-	const size_t  s                   = ctx->algo.mode_blk_size_bits;
-	const size_t  plaintext_size_bits = ctx->plaintext_len * 8;
-	const size_t  blk_size_bits       = ctx->algo.blk_size * 8;
+	const size_t s                   = ctx->algo.mode_blk_size_bits;
+	const size_t plaintext_size_bits = ctx->plaintext_len * 8;
+	const size_t blk_size_bits       = ctx->algo.blk_size * 8;
 
-	struct block *src = block_dup_data(ctx->iv, ctx->iv_len);
+	struct blk  *src = block_dup_data(ctx->iv, ctx->iv_len);
 	if (!src) {
 		perror("error: block_dup_data");
 		free(ctx->ciphertext);
@@ -29,7 +29,7 @@ static uint8_t *CFB_encrypt(struct cipher_ctx *ctx) {
 		return NULL;
 	}
 
-	struct block *raw_cipher = block_create(src->size);
+	struct blk *raw_cipher = block_create(src->len);
 	if (!raw_cipher) {
 		perror("error: block_create");
 		free(ctx->ciphertext);
@@ -38,7 +38,7 @@ static uint8_t *CFB_encrypt(struct cipher_ctx *ctx) {
 		return NULL;
 	}
 
-	struct block *plain = block_dup_data(ctx->plaintext, ctx->plaintext_len);
+	struct blk *plain = block_dup_data(ctx->plaintext, ctx->plaintext_len);
 	if (!plain) {
 		perror("error: block_dup_data");
 		free(ctx->ciphertext);
@@ -48,12 +48,12 @@ static uint8_t *CFB_encrypt(struct cipher_ctx *ctx) {
 		return NULL;
 	}
 
-	struct block cipher = { .data = ctx->ciphertext, .size = ctx->ciphertext_len };
+	struct blk cipher = { .data = ctx->ciphertext, .len = ctx->ciphertext_len };
 
 	for (size_t idx = 0; idx < plaintext_size_bits; idx += s) {
 		block_encrypt(ctx, raw_cipher, src);
 
-		struct block *ciphered_s_bits = block_bit_extract(raw_cipher, s);
+		struct blk *ciphered_s_bits = block_bit_extract(raw_cipher, s);
 		if (!ciphered_s_bits) {
 			free(ctx->ciphertext);
 			ctx->ciphertext = NULL;
@@ -63,7 +63,7 @@ static uint8_t *CFB_encrypt(struct cipher_ctx *ctx) {
 			return NULL;
 		}
 
-		struct block *plain_s_bits = block_bit_extract(plain, s);
+		struct blk *plain_s_bits = block_bit_extract(plain, s);
 		if (!plain_s_bits) {
 			free(ctx->ciphertext);
 			ctx->ciphertext = NULL;
@@ -76,7 +76,7 @@ static uint8_t *CFB_encrypt(struct cipher_ctx *ctx) {
 
 		block_xor(ciphered_s_bits, ciphered_s_bits, plain_s_bits);
 
-		struct block *ciphered_duped = block_dup(ciphered_s_bits);
+		struct blk *ciphered_duped = block_dup(ciphered_s_bits);
 		if (!ciphered_duped) {
 			free(ctx->ciphertext);
 			ctx->ciphertext = NULL;
@@ -93,8 +93,8 @@ static uint8_t *CFB_encrypt(struct cipher_ctx *ctx) {
 		block_bit_assign(src, ciphered_duped, blk_size_bits - s, s);
 		block_delete(ciphered_duped);
 
-		if (ciphered_s_bits->size < cipher.size) {
-			uint8_t *tmp = realloc(ciphered_s_bits->data, cipher.size * sizeof *tmp);
+		if (ciphered_s_bits->len < cipher.len) {
+			uint8_t *tmp = realloc(ciphered_s_bits->data, cipher.len * sizeof *tmp);
 
 			if (!tmp) {
 				perror("error: realloc");
@@ -110,7 +110,7 @@ static uint8_t *CFB_encrypt(struct cipher_ctx *ctx) {
 			}
 
 			ciphered_s_bits->data = tmp;
-			ciphered_s_bits->size = cipher.size;
+			ciphered_s_bits->len  = cipher.len;
 		}
 
 		block_right_shift(ciphered_s_bits, idx);
@@ -121,7 +121,7 @@ static uint8_t *CFB_encrypt(struct cipher_ctx *ctx) {
 		block_delete(plain_s_bits);
 	}
 
-	memcpy(ctx->iv, src->data, src->size * sizeof *src->data);
+	memcpy(ctx->iv, src->data, src->len * sizeof *src->data);
 	block_delete(src);
 	block_delete(raw_cipher);
 	block_delete(plain);
@@ -144,11 +144,11 @@ static uint8_t *CFB_decrypt(struct cipher_ctx *ctx) {
 		return NULL;
 	}
 
-	const size_t  s                    = ctx->algo.mode_blk_size_bits;
-	const size_t  ciphertext_size_bits = ctx->ciphertext_len * 8;
-	const size_t  blk_size_bits        = ctx->algo.blk_size * 8;
+	const size_t s                    = ctx->algo.mode_blk_size_bits;
+	const size_t ciphertext_size_bits = ctx->ciphertext_len * 8;
+	const size_t blk_size_bits        = ctx->algo.blk_size * 8;
 
-	struct block *src = block_dup_data(ctx->iv, ctx->iv_len);
+	struct blk  *src = block_dup_data(ctx->iv, ctx->iv_len);
 	if (!src) {
 		perror("error: block_dup_data");
 		free(ctx->plaintext);
@@ -156,7 +156,7 @@ static uint8_t *CFB_decrypt(struct cipher_ctx *ctx) {
 		return NULL;
 	}
 
-	struct block *raw_cipher = block_create(ctx->algo.blk_size);
+	struct blk *raw_cipher = block_create(ctx->algo.blk_size);
 	if (!raw_cipher) {
 		perror("error: block_create");
 		free(ctx->plaintext);
@@ -165,7 +165,7 @@ static uint8_t *CFB_decrypt(struct cipher_ctx *ctx) {
 		return NULL;
 	}
 
-	struct block *cipher = block_dup_data(ctx->ciphertext, ctx->ciphertext_len);
+	struct blk *cipher = block_dup_data(ctx->ciphertext, ctx->ciphertext_len);
 	if (!cipher) {
 		perror("error: block_dup_data");
 		free(ctx->plaintext);
@@ -175,12 +175,12 @@ static uint8_t *CFB_decrypt(struct cipher_ctx *ctx) {
 		return NULL;
 	}
 
-	struct block plain = { .data = ctx->plaintext, .size = ctx->plaintext_len };
+	struct blk plain = { .data = ctx->plaintext, .len = ctx->plaintext_len };
 
 	for (size_t idx = 0; idx < ciphertext_size_bits; idx += s) {
 		block_encrypt(ctx, raw_cipher, src);
 
-		struct block *src_ciphered_s_bits = block_bit_extract(raw_cipher, s);
+		struct blk *src_ciphered_s_bits = block_bit_extract(raw_cipher, s);
 		if (!src_ciphered_s_bits) {
 			free(ctx->plaintext);
 			ctx->plaintext = NULL;
@@ -190,7 +190,7 @@ static uint8_t *CFB_decrypt(struct cipher_ctx *ctx) {
 			return NULL;
 		}
 
-		struct block *input_ciphered_s_bits = block_bit_extract(cipher, s);
+		struct blk *input_ciphered_s_bits = block_bit_extract(cipher, s);
 		if (!input_ciphered_s_bits) {
 			free(ctx->plaintext);
 			ctx->plaintext = NULL;
@@ -200,8 +200,8 @@ static uint8_t *CFB_decrypt(struct cipher_ctx *ctx) {
 			return NULL;
 		}
 
-		if (input_ciphered_s_bits->size < plain.size || input_ciphered_s_bits->size < ctx->algo.blk_size) {
-			size_t   size = plain.size < ctx->algo.blk_size ? ctx->algo.blk_size : plain.size;
+		if (input_ciphered_s_bits->len < plain.len || input_ciphered_s_bits->len < ctx->algo.blk_size) {
+			size_t   size = plain.len < ctx->algo.blk_size ? ctx->algo.blk_size : plain.len;
 			uint8_t *tmp  = realloc(input_ciphered_s_bits->data, size * sizeof *tmp);
 
 			if (!tmp) {
@@ -218,10 +218,10 @@ static uint8_t *CFB_decrypt(struct cipher_ctx *ctx) {
 			}
 
 			input_ciphered_s_bits->data = tmp;
-			input_ciphered_s_bits->size = size;
+			input_ciphered_s_bits->len  = size;
 		}
 
-		struct block *input_ciphered_s_bits_duped = block_dup(input_ciphered_s_bits);
+		struct blk *input_ciphered_s_bits_duped = block_dup(input_ciphered_s_bits);
 		if (!input_ciphered_s_bits_duped) {
 			free(ctx->plaintext);
 			ctx->plaintext = NULL;
@@ -248,7 +248,7 @@ static uint8_t *CFB_decrypt(struct cipher_ctx *ctx) {
 		block_delete(input_ciphered_s_bits);
 	}
 
-	memcpy(ctx->iv, src->data, src->size * sizeof *src->data);
+	memcpy(ctx->iv, src->data, src->len * sizeof *src->data);
 	block_delete(raw_cipher);
 	block_delete(cipher);
 	block_delete(src);
