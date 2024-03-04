@@ -233,8 +233,10 @@ size_t stream_base64_dec(FILE *in, uint8_t *buf, size_t len) {
 				}
 			}
 		}
+		
 		buf[result] = decoder.buf[decoder.pos];
-		if (decoder.feof && decoder.pos >= decoder.ref) {
+		if (decoder.feof && ((decoder.pos >= decoder.ref) || (decoder.pos + 1 >= decoder.ref))) {
+			// handles cases of output buffer is bigger than inner buffer and usual cases.
 			decoder.pos++;
 			return result ? result + 1 : result;
 		}
